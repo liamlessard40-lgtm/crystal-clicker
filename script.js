@@ -1,8 +1,8 @@
 let crystals = 0;
 const upgrades = {
-    pickaxe: { qty: 0, cost: 15, baseCost: 15, cps: 0.1 },
-    drone: { qty: 0, cost: 100, baseCost: 100, cps: 1 },
-    quarry: { qty: 0, cost: 1100, baseCost: 1100, cps: 8 }
+    pickaxe1: { qty: 0, cost: 15, baseCost: 15, cps: 0.1 },
+    pickaxe2: { qty: 0, cost: 100, baseCost: 100, cps: 1 },
+    pickaxe3: { qty: 0, cost: 1100, baseCost: 1100, cps: 8 }
 };
 if (localStorage.getItem('crystalClickerSave')) {
     const data = JSON.parse(localStorage.getItem('crystalClickerSave'));
