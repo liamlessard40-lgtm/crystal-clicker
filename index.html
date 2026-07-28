@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crystal Clicker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stats-panel">
+        <h1 id="crystalCount">0 Crystals</h1>
+        <div class="cps" id="cpsCount">per second: 0</div>
+    </div>
+    <div class="crystal-container" id="crystalContainer">
+        <div class="crystal" id="crystalBtn"></div>
+    </div>
+    <div class="shop-panel">
+        <div class="shop-item">
+            <div class="item-info">
+                <div>Sonic Pickaxe</div>
+                <div id="pickaxeCost">Cost: 15</div>
+            </div>
+            <button id="buyPickaxe" onclick="buyUpgrade('pickaxe')">Buy (<span id="pickaxeQty">0</span>)</button>
+        </div>
+        <div class="shop-item">
+            <div class="item-info">
+                <div>Mining Drone</div>
+                <div id="droneCost">Cost: 100</div>
+            </div>
+            <button id="buyDrone" onclick="buyUpgrade('drone')">Buy (<span id="droneQty">0</span>)</button>
+        </div>
+        <div class="shop-item">
+            <div class="item-info">
+                <div>Quantum Quarry</div>
+                <div id="quarryCost">Cost: 1100</div>
+            </div>
+            <button id="buyQuarry" onclick="buyUpgrade('quarry')">Buy (<span id="quarryQty">0</span>)</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
