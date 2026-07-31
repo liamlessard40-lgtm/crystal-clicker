@@ -10,7 +10,7 @@
         }
         body {
             margin: 0;
-            background: radial-gradient(circle at center, #151128 0%, #0a0814 100%);
+            background: #080612;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -20,40 +20,55 @@
             overflow: hidden;
             user-select: none;
         }
-        .stats-panel {
+        .header-panel {
+            width: 100%;
+            background: #110d21;
+            border-bottom: 2px solid #21193d;
+            padding: 15px 0;
             text-align: center;
-            margin-top: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 10;
         }
         h1 {
-            font-size: 36px;
-            font-weight: 700;
-            margin: 0 0 6px 0;
+            font-size: 30px;
+            margin: 0 0 4px 0;
             color: #00f0ff;
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
-            letter-spacing: 1px;
-        }
-        .cps {
-            font-size: 15px;
-            color: #c4b5fd;
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
             letter-spacing: 0.5px;
         }
+        .cps {
+            font-size: 14px;
+            color: #9d8ec4;
+            letter-spacing: 0.5px;
+        }
+        .main-layout {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+        }
         .crystal-container {
-            position: relative;
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
+            position: relative;
         }
         .crystal {
-            width: 140px;
-            height: 170px;
+            width: 130px;
+            height: 160px;
             background: linear-gradient(135deg, #00ffff 0%, #7000ff 50%, #ff0077 100%);
             clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
-            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.5));
+            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.6));
             cursor: pointer;
-            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.05s ease;
             position: relative;
         }
         .crystal::after {
@@ -61,7 +76,7 @@
             position: absolute;
             top: 5%; left: 5%;
             width: 90%; height: 90%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 40%, rgba(0,0,0,0.4) 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 40%, rgba(0,0,0,0.4) 100%);
             clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
             pointer-events: none;
         }
@@ -70,143 +85,126 @@
             position: absolute;
             top: 10%; left: 10%;
             width: 80%; height: 80%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(0,0,0,0.3) 100%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(0,0,0,0.3) 100%);
             clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
             z-index: 1;
             pointer-events: none;
         }
         .crystal:active {
-            transform: scale(0.90) rotate(4deg);
-            filter: drop-shadow(0 0 40px rgba(255, 0, 119, 0.7));
+            transform: scale(0.92) rotate(3deg);
         }
         .shop-panel {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(20, 17, 36, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-top: 1px solid rgba(0, 240, 255, 0.3);
-            border-left: 1px solid rgba(0, 240, 255, 0.15);
-            border-right: 1px solid rgba(0, 240, 255, 0.15);
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            padding: 16px 12px;
+            width: 360px;
+            background: #0d0b18;
+            border-left: 2px solid #21193d;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: 42vh;
+            gap: 8px;
             overflow-y: auto;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+        }
+        @media (max-width: 768px) {
+            .shop-panel {
+                width: 100%;
+                max-height: 45vh;
+                border-left: none;
+                border-top: 2px solid #21193d;
+            }
         }
         .shop-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(27, 23, 48, 0.65);
-            backdrop-filter: blur(10px);
-            margin: 0 4px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 240, 255, 0.25);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.08), inset 0 0 10px rgba(255, 255, 255, 0.02);
-            transition: all 0.2s ease;
+            background: #151128;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.04);
+            transition: border-color 0.2s ease;
         }
         .shop-item:hover {
-            border-color: rgba(0, 240, 255, 0.6);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            border-color: rgba(0, 240, 255, 0.4);
         }
         .shop-item button {
-            background: linear-gradient(135deg, #00f0ff 0%, #0088ff 100%);
+            background: #00f0ff;
             color: #0d0b18;
             border: none;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 14px;
+            padding: 6px 14px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 13px;
             cursor: pointer;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
             transition: transform 0.1s ease, filter 0.1s ease;
         }
         .shop-item button:hover:not(:disabled) {
-            transform: scale(1.05);
-            filter: brightness(1.15);
+            transform: scale(1.03);
+            filter: brightness(1.1);
         }
         .shop-item button:active:not(:disabled) {
-            transform: scale(0.95);
+            transform: scale(0.97);
         }
         .shop-item button:disabled {
-            background: rgba(51, 45, 80, 0.5);
-            color: rgba(100, 92, 138, 0.7);
+            background: #231e3d;
+            color: #5c5280;
             cursor: not-allowed;
             box-shadow: none;
-            border: 1px solid rgba(255, 255, 255, 0.03);
         }
         .item-info div:first-child {
-            font-weight: 700;
-            font-size: 16px;
-            color: #ff00ff;
-            text-shadow: 0 0 8px rgba(255, 0, 255, 0.3);
+            font-weight: bold;
+            font-size: 14px;
+            color: #ff88dc;
         }
         .item-info div:last-child {
-            font-size: 12px;
-            color: #c4b5fd;
+            font-size: 11px;
+            color: #9d8ec4;
             margin-top: 2px;
         }
         .floating-text {
             position: absolute;
             color: #00f0ff;
-            font-weight: 800;
-            font-size: 24px;
+            font-weight: bold;
+            font-size: 22px;
             pointer-events: none;
-            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00f0ff;
-            animation: floatUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            text-shadow: 0 0 8px #ff00ff;
+            animation: floatUp 0.8s ease-out forwards;
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-130px) scale(0.7); }
+            100% { opacity: 0; transform: translateY(-120px) scale(0.8); }
         }
     </style>
 </head>
 <body>
-    <div class="stats-panel">
+    <div class="header-panel">
         <h1 id="crystalCount">0 Crystals</h1>
         <div class="cps" id="cpsCount">per second: 0</div>
     </div>
     
-    <div class="crystal-container" id="crystalContainer">
-        <div class="crystal" id="crystalBtn"></div>
-    </div>
-    
-    <div class="shop-panel">
-        <div class="shop-item">
-            <div class="item-info">
-                <div>Tier I Pickaxe</div>
-                <div id="pickaxe1Cost">Cost: 15</div>
-            </div>
-            <button id="buyPickaxe1" onclick="buyUpgrade('pickaxe1')">Buy (<span id="pickaxe1Qty">0</span>)</button>
+    <div class="main-layout">
+        <div class="crystal-container" id="crystalContainer">
+            <div class="crystal" id="crystalBtn"></div>
         </div>
-        <div class="shop-item">
-            <div class="item-info">
-                <div>Tier II Pickaxe</div>
-                <div id="pickaxe2Cost">Cost: 100</div>
-            </div>
-            <button id="buyPickaxe2" onclick="buyUpgrade('pickaxe2')">Buy (<span id="pickaxe2Qty">0</span>)</button>
-        </div>
-        <div class="shop-item">
-            <div class="item-info">
-                <div>Tier III Pickaxe</div>
-                <div id="pickaxe3Cost">Cost: 1100</div>
-            </div>
-            <button id="buyPickaxe3" onclick="buyUpgrade('pickaxe3')">Buy (<span id="pickaxe3Qty">0</span>)</button>
+        
+        <div class="shop-panel" id="shopPanel">
+            <!-- Dynamically populated shop items for 10 tiers -->
         </div>
     </div>
 
     <script>
         let crystals = 0;
+        
         const upgrades = {
-            pickaxe1: { qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
-            pickaxe2: { qty: 0, cost: 100, baseCost: 100, cps: 3 },
-            pickaxe3: { qty: 0, cost: 1100, baseCost: 1000, cps: 25 }
+            pickaxe1:  { name: "Copper Pickaxe", qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
+            pickaxe2:  { name: "Tin Pickaxe", qty: 0, cost: 100, baseCost: 100, cps: 1.2 },
+            pickaxe3:  { name: "Bronze Pickaxe", qty: 0, cost: 850, baseCost: 850, cps: 8 },
+            pickaxe4:  { name: "Iron Pickaxe", qty: 0, cost: 5200, baseCost: 5200, cps: 45 },
+            pickaxe5:  { name: "Steel Pickaxe", qty: 0, cost: 32000, baseCost: 32000, cps: 260 },
+            pickaxe6:  { name: "Silver Pickaxe", qty: 0, cost: 190000, baseCost: 190000, cps: 1400 },
+            pickaxe7:  { name: "Gold Pickaxe", qty: 0, cost: 1100000, baseCost: 1100000, cps: 7800 },
+            pickaxe8:  { name: "Platinum Pickaxe", qty: 0, cost: 6500000, baseCost: 6500000, cps: 44000 },
+            pickaxe9:  { name: "Titanium Pickaxe", qty: 0, cost: 38000000, baseCost: 38000000, cps: 260000 },
+            pickaxe10: { name: "Quantum Pickaxe", qty: 0, cost: 220000000, baseCost: 220000000, cps: 1500000 }
         };
 
         const SECRET_SALT = "MySuperSecretCrystalKey123!";
@@ -220,6 +218,22 @@
             }
             return hash.toString(36);
         }
+
+        // Build shop UI dynamically for 10 items
+        const shopPanel = document.getElementById('shopPanel');
+        Object.keys(upgrades).forEach(key => {
+            const item = upgrades[key];
+            const div = document.createElement('div');
+            div.className = 'shop-item';
+            div.innerHTML = `
+                <div class="item-info">
+                    <div>${item.name}</div>
+                    <div id="${key}Cost">Cost: ${item.cost}</div>
+                </div>
+                <button id="buy${key.charAt(0).toUpperCase() + key.slice(1)}" onclick="buyUpgrade('${key}')">Buy (<span id="${key}Qty">0</span>)</button>
+            `;
+            shopPanel.appendChild(div);
+        });
 
         if (localStorage.getItem('crystalClickerSave')) {
             try {
