@@ -278,9 +278,14 @@
             border: 1px solid rgba(255, 0, 119, 0.2);
             gap: 10px;
         }
+        .card-item.ready {
+            border-color: rgba(255, 234, 0, 0.8);
+            background: #1d1b11;
+        }
         .card-item.completed {
             border-color: rgba(0, 255, 100, 0.5);
             background: #111a18;
+            opacity: 0.8;
         }
         .card-icon {
             width: 38px;
@@ -292,6 +297,9 @@
             justify-content: center;
             font-size: 18px;
             flex-shrink: 0;
+        }
+        .card-item.ready .card-icon {
+            background: linear-gradient(135deg, #ffea00 0%, #ff6600 100%);
         }
         .card-item.completed .card-icon {
             background: linear-gradient(135deg, #00ff88 0%, #0088ff 100%);
@@ -305,6 +313,16 @@
         .card-title { font-weight: bold; font-size: 12px; color: #ffffff; }
         .card-desc { font-size: 10px; color: #9d8ec4; }
         .card-reward { font-size: 9px; color: #ffea00; font-weight: bold; }
+        
+        .claim-btn {
+            background: #ffea00 !important;
+            color: #0d0b18 !important;
+            animation: pulseBtn 1s infinite alternate;
+        }
+        @keyframes pulseBtn {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
 
         /* Stats & Stats Grid */
         .stats-grid {
@@ -359,6 +377,8 @@
         <button class="tab-btn" onclick="switchTab('achievements')">Achievements</button>
         <button class="tab-btn" onclick="switchTab('quests')">Quests</button>
         <button class="tab-btn" onclick="switchTab('artifacts')">Artifacts</button>
+        <button class="tab-btn" onclick="switchTab('pets')">Pets</button>
+        <button class="tab-btn" onclick="switchTab('ascendTree')">Skill Tree</button>
         <button class="tab-btn" onclick="switchTab('stats')">Stats</button>
         <button class="tab-btn" onclick="switchTab('skins')">Skins</button>
     </div>
@@ -385,6 +405,8 @@
             <div id="achievementsContent" class="panel-tab-content hidden"></div>
             <div id="questsContent" class="panel-tab-content hidden"></div>
             <div id="artifactsContent" class="panel-tab-content hidden"></div>
+            <div id="petsContent" class="panel-tab-content hidden"></div>
+            <div id="ascendTreeContent" class="panel-tab-content hidden"></div>
             <div id="statsContent" class="panel-tab-content hidden"></div>
             <div id="skinsContent" class="panel-tab-content hidden"></div>
         </div>
@@ -495,12 +517,16 @@
             pickaxe40: { name: "Absolute Pickaxe", qty: 0, cost: 250000000000000000000000000000000n, baseCost: 250000000000000000000000000000000n, cps: 2000000000000000000000000000000n }
         };
 
-        // Click Upgrades
+        // Click Upgrades (Starting at 75k and scaling up fast)
         const clickUpgrades = {
-            click1: { name: "Sharpened Edge", cost: 100, mult: 2, purchased: false },
-            click2: { name: "Diamond Tip", cost: 2500, mult: 3, purchased: false },
-            click3: { name: "Hydraulic Striker", cost: 50000, mult: 4, purchased: false },
-            click4: { name: "Laser Focus", cost: 1000000, mult: 5, purchased: false }
+            click1: { name: "Sharpened Edge", cost: 75000, mult: 2, purchased: false },
+            click2: { name: "Diamond Tip", cost: 850000, mult: 3, purchased: false },
+            click3: { name: "Hydraulic Striker", cost: 12000000, mult: 4, purchased: false },
+            click4: { name: "Laser Focus", cost: 180000000, mult: 5, purchased: false },
+            click5: { name: "Antimatter Edge", cost: 2500000000, mult: 6, purchased: false },
+            click6: { name: "Quantum Breaker", cost: 35000000000, mult: 8, purchased: false },
+            click7: { name: "Singularity Striker", cost: 500000000000, mult: 10, purchased: false },
+            click8: { name: "Cosmic Hammer", cost: 8000000000000, mult: 15, purchased: false }
         };
 
         // Artifacts (Prestige Shop)
@@ -510,20 +536,52 @@
             art3: { name: "Fever Generator", desc: "Fever meter builds 20% faster", cost: 15, level: 0, max: 5 }
         };
 
-        // Achievements
+        // New feature: Pets
+        const pets = {
+            pet1: { name: "Ruby Sprite", desc: "Auto-clicks once every 3 seconds", cost: 50, owned: false },
+            pet2: { name: "Astral Wisp", desc: "+10% Shard gain multiplier", cost: 200, owned: false },
+            pet3: { name: "Void Guardian", desc: "+25% Global Production Multiplier", cost: 1000, owned: false }
+        };
+
+        // New feature: Ascension Skill Tree
+        const ascendTree = {
+            node1: { name: "Hyper Strike", desc: "+10% Click power per level", cost: 2, level: 0, max: 5 },
+            node2: { name: "Deep Earth", desc: "+15% Pickaxe production per level", cost: 3, level: 0, max: 5 },
+            node3: { name: "Fever Mastery", desc: "+2 seconds duration on Fever mode", cost: 5, level: 0, max: 3 }
+        };
+
+        // Skins Shop Setup
+        const skinsShop = {
+            'default': { name: "Default Skin", cost: 0, owned: true },
+            'ruby': { name: "Ruby Skin", cost: 500000, owned: false },
+            'sapphire': { name: "Sapphire Skin", cost: 5000000, owned: false },
+            'emerald': { name: "Emerald Skin", cost: 50000000, owned: false },
+            'gold-theme': { name: "Gold Theme Skin", cost: 500000000, owned: false }
+        };
+
+        // Expanded Achievements (status: 0 = locked, 1 = ready to claim, 2 = claimed)
         const achievements = {
-            ach1: { title: "First Spark", desc: "Reach 50 crystals", reward: "+10 Crystals", icon: "💎", completed: false, check: () => crystals >= 50, rewardGiven: () => crystals += 10 },
-            ach2: { title: "Steady Pounding", desc: "Reach 500 crystals", reward: "+50 Crystals", icon: "⛏️", completed: false, check: () => crystals >= 500, rewardGiven: () => crystals += 50 },
-            ach3: { title: "Crystal Hoarder", desc: "Reach 5,000 crystals", reward: "+200 Crystals", icon: "✨", completed: false, check: () => crystals >= 5000, rewardGiven: () => crystals += 200 },
-            ach4: { title: "Crystal Millionaire", desc: "Reach 1,000,000 crystals", reward: "+10,000 Crystals", icon: "🌟", completed: false, check: () => crystals >= 1000000, rewardGiven: () => crystals += 10000 },
-            ach5: { title: "Tool Up", desc: "Buy 10 total pickaxes", reward: "+50 Crystals", icon: "🛠️", completed: false, check: () => getTotalPickaxes() >= 10, rewardGiven: () => crystals += 50 },
-            ach6: { title: "Industrial Mining", desc: "Buy 50 total pickaxes", reward: "+1,000 Crystals", icon: "🏭", completed: false, check: () => getTotalPickaxes() >= 50, rewardGiven: () => crystals += 1000 },
-            ach7: { title: "First Ascension", desc: "Perform your first Ascend", reward: "+500 Crystals", icon: "🌌", completed: false, check: () => prestigeCount >= 1, rewardGiven: () => crystals += 500 }
+            ach1: { title: "First Spark", desc: "Reach 50 crystals", reward: "+10 Crystals", icon: "💎", status: 0, check: () => crystals >= 50, rewardGiven: () => crystals += 10 },
+            ach2: { title: "Steady Pounding", desc: "Reach 500 crystals", reward: "+50 Crystals", icon: "⛏️", status: 0, check: () => crystals >= 500, rewardGiven: () => crystals += 50 },
+            ach3: { title: "Crystal Hoarder", desc: "Reach 5,000 crystals", reward: "+200 Crystals", icon: "✨", status: 0, check: () => crystals >= 5000, rewardGiven: () => crystals += 200 },
+            ach4: { title: "Crystal Millionaire", desc: "Reach 1,000,000 crystals", reward: "+10,000 Crystals", icon: "🌟", status: 0, check: () => crystals >= 1000000, rewardGiven: () => crystals += 10000 },
+            ach5: { title: "Billionaire Miner", desc: "Reach 1,000,000,000 crystals", reward: "+500,000 Crystals", icon: "💰", status: 0, check: () => crystals >= 1000000000, rewardGiven: () => crystals += 500000 },
+            ach6: { title: "Trillionaire Tycoon", desc: "Reach 1,000,000,000,000 crystals", reward: "+50M Crystals", icon: "👑", status: 0, check: () => crystals >= 1000000000000, rewardGiven: () => crystals += 50000000 },
+            ach7: { title: "Tool Up", desc: "Buy 10 total pickaxes", reward: "+50 Crystals", icon: "🛠️", status: 0, check: () => getTotalPickaxes() >= 10, rewardGiven: () => crystals += 50 },
+            ach8: { title: "Industrial Mining", desc: "Buy 50 total pickaxes", reward: "+1,000 Crystals", icon: "🏭", status: 0, check: () => getTotalPickaxes() >= 50, rewardGiven: () => crystals += 1000 },
+            ach9: { title: "Pickaxe Master", desc: "Buy 150 total pickaxes", reward: "+50,000 Crystals", icon: "🏗️", status: 0, check: () => getTotalPickaxes() >= 150, rewardGiven: () => crystals += 50000 },
+            ach10: { title: "Pickaxe Army", desc: "Buy 300 total pickaxes", reward: "+2,000,000 Crystals", icon: "🏰", status: 0, check: () => getTotalPickaxes() >= 300, rewardGiven: () => crystals += 2000000 },
+            ach11: { title: "Click Beginner", desc: "Click 100 times total", reward: "+100 Crystals", icon: "👆", status: 0, check: () => totalClicks >= 100, rewardGiven: () => crystals += 100 },
+            ach12: { title: "Click Enthusiast", desc: "Click 1,000 times total", reward: "+5,000 Crystals", icon: "🖱️", status: 0, check: () => totalClicks >= 1000, rewardGiven: () => crystals += 5000 },
+            ach13: { title: "Carpal Tunnel", desc: "Click 10,000 times total", reward: "+250,000 Crystals", icon: "⚡", status: 0, check: () => totalClicks >= 10000, rewardGiven: () => crystals += 250000 },
+            ach14: { title: "First Ascension", desc: "Perform your first Ascend", reward: "+500 Crystals", icon: "🌌", status: 0, check: () => prestigeCount >= 1, rewardGiven: () => crystals += 500 },
+            ach15: { title: "Reborn Veteran", desc: "Perform 5 Ascensions", reward: "+25,000 Crystals", icon: "🌀", status: 0, check: () => prestigeCount >= 5, rewardGiven: () => crystals += 25000 },
+            ach16: { title: "Transcendent", desc: "Perform 20 Ascensions", reward: "+1,000,000 Crystals", icon: "🪐", status: 0, check: () => prestigeCount >= 20, rewardGiven: () => crystals += 1000000 }
         };
 
         // Quests
         const quests = {
-            q1: { title: "Quick Hands", desc: "Click 50 times in a session", reward: "+100 Crystals", completed: false, check: () => totalClicks >= (window.sessionClicks || 0) + 50, rewardGiven: () => crystals += 100 }
+            q1: { title: "Quick Hands", desc: "Click 50 times in a session", reward: "+100 Crystals", status: 0, check: () => totalClicks >= (window.sessionClicks || 0) + 50, rewardGiven: () => crystals += 100 }
         };
 
         const SECRET_SALT = "CrystalClickerUltimate2026!";
@@ -566,7 +624,7 @@
                 const div = document.createElement('div');
                 div.className = 'card-item';
                 div.id = `card_${key}`;
-                div.innerHTML = `<div class="card-icon">${ach.icon}</div><div class="card-details"><div class="card-title">${ach.title}</div><div class="card-desc">${ach.desc}</div><div class="card-reward">Reward: ${ach.reward}</div></div>`;
+                div.innerHTML = `<div class="card-icon">${ach.icon}</div><div class="card-details"><div class="card-title">${ach.title}</div><div class="card-desc">${ach.desc}</div><div class="card-reward">Reward: ${ach.reward}</div></div><button class="tab-btn" id="claim_${key}" onclick="claimAchievement('${key}')" style="display:none;">Claim</button>`;
                 achPanel.appendChild(div);
             });
 
@@ -577,7 +635,7 @@
                 const div = document.createElement('div');
                 div.className = 'card-item';
                 div.id = `quest_${key}`;
-                div.innerHTML = `<div class="card-icon">🎯</div><div class="card-details"><div class="card-title">${q.title}</div><div class="card-desc">${q.desc}</div><div class="card-reward">Reward: ${q.reward}</div></div>`;
+                div.innerHTML = `<div class="card-icon">🎯</div><div class="card-details"><div class="card-title">${q.title}</div><div class="card-desc">${q.desc}</div><div class="card-reward">Reward: ${q.reward}</div></div><button class="tab-btn" id="claim_q_${key}" onclick="claimQuest('${key}')" style="display:none;">Claim</button>`;
                 questPanel.appendChild(div);
             });
 
@@ -591,12 +649,33 @@
                 artPanel.appendChild(div);
             });
 
-            // Skins
-            const skinPanel = document.getElementById('skinsContent');
-            ['default', 'ruby', 'sapphire', 'emerald', 'gold-theme'].forEach(skin => {
+            // Pets Panel
+            const petPanel = document.getElementById('petsContent');
+            Object.keys(pets).forEach(key => {
+                const pet = pets[key];
                 const div = document.createElement('div');
                 div.className = 'shop-item';
-                div.innerHTML = `<div class="item-info"><div>${skin.toUpperCase()} Skin</div></div><button onclick="setSkin('${skin}')">Select</button>`;
+                div.innerHTML = `<div class="item-info"><div>${pet.name}</div><div>${pet.desc}</div><div>Cost: ${pet.cost} Shards</div></div><button id="petBtn_${key}" onclick="buyPet('${key}')">Buy</button>`;
+                petPanel.appendChild(div);
+            });
+
+            // Skill Tree Panel
+            const treePanel = document.getElementById('ascendTreeContent');
+            Object.keys(ascendTree).forEach(key => {
+                const node = ascendTree[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${node.name} (Lvl <span id="${key}Lvl">0</span>/${node.max})</div><div>${node.desc}</div><div>Cost: <span id="${key}Cost">${node.cost}</span> Shards</div></div><button onclick="buySkillNode('${key}')">Unlock</button>`;
+                treePanel.appendChild(div);
+            });
+
+            // Skins
+            const skinPanel = document.getElementById('skinsContent');
+            Object.keys(skinsShop).forEach(skinKey => {
+                const skin = skinsShop[skinKey];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${skin.name}</div><div>Cost: ${formatNum(skin.cost)} Crystals</div></div><button id="skinBtn_${skinKey}" onclick="buyOrSelectSkin('${skinKey}')">Select</button>`;
                 skinPanel.appendChild(div);
             });
 
@@ -629,6 +708,11 @@
                     if (d.upgrades) Object.keys(d.upgrades).forEach(k => { upgrades[k].qty = d.upgrades[k].qty; upgrades[k].cost = BigInt(d.upgrades[k].cost); });
                     if (d.clickUpgrades) Object.keys(d.clickUpgrades).forEach(k => { clickUpgrades[k].purchased = d.clickUpgrades[k]; });
                     if (d.artifacts) Object.keys(d.artifacts).forEach(k => { artifacts[k].level = d.artifacts[k]; });
+                    if (d.pets) Object.keys(d.pets).forEach(k => { pets[k].owned = d.pets[k]; });
+                    if (d.ascendTree) Object.keys(d.ascendTree).forEach(k => { ascendTree[k].level = d.ascendTree[k]; });
+                    if (d.skinsShop) Object.keys(d.skinsShop).forEach(k => { skinsShop[k].owned = d.skinsShop[k]; });
+                    if (d.achievements) Object.keys(d.achievements).forEach(k => { if(achievements[k]) achievements[k].status = d.achievements[k]; });
+                    if (d.quests) Object.keys(d.quests).forEach(k => { if(quests[k]) quests[k].status = d.quests[k]; });
 
                     // Offline progression simulation
                     if (d.lastTimestamp) {
@@ -647,13 +731,13 @@
         const crystalBtn = document.getElementById('crystalBtn');
         const crystalContainer = document.getElementById('crystalContainer');
 
-        crystalBtn.addEventListener('pointerdown', (e) => {
-            e.preventDefault();
+        function triggerClick(clientX, clientY) {
             totalClicks++;
             playSound('click');
 
             let clickMultiplier = 1;
             Object.keys(clickUpgrades).forEach(k => { if (clickUpgrades[k].purchased) clickMultiplier *= clickUpgrades[k].mult; });
+            clickMultiplier *= (1 + ascendTree.node1.level * 0.1);
             
             const isCrit = Math.random() < 0.05;
             let gain = (isCrit ? 5 : 1) * clickMultiplier * (shrineActive ? shrineMultiplier : 1);
@@ -663,15 +747,22 @@
             lifetimeCrystals += gain;
 
             comboMeter = Math.min(100, comboMeter + 10);
-            feverMeter = Math.min(100, feverMeter + (artifacts.art3.level > 0 ? 3 : 2));
+            let feverSpeed = 2;
+            if (artifacts.art3.level > 0) feverSpeed = 2.4;
+            feverMeter = Math.min(100, feverMeter + feverSpeed);
             if (feverMeter >= 100 && !isFeverActive) {
                 isFeverActive = true;
-                feverTimer = 10; // 10 seconds of fever
+                feverTimer = 10 + (ascendTree.node3.level * 2); // 10 seconds + skill tree upgrade
             }
 
-            createFloatingText(e.clientX, e.clientY, isCrit ? `+${formatNum(gain)} CRIT!` : `+${formatNum(gain)}`, isCrit);
+            createFloatingText(clientX, clientY, isCrit ? `+${formatNum(gain)} CRIT!` : `+${formatNum(gain)}`, isCrit);
             checkAchievements();
             updateUI();
+        }
+
+        crystalBtn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            triggerClick(e.clientX, e.clientY);
         });
 
         function buyUpgrade(type) {
@@ -709,6 +800,40 @@
             }
         }
 
+        function buyPet(type) {
+            const pet = pets[type];
+            if (!pet.owned && shards >= pet.cost) {
+                shards -= pet.cost;
+                pet.owned = true;
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function buySkillNode(type) {
+            const node = ascendTree[type];
+            if (shards >= node.cost && node.level < node.max) {
+                shards -= node.cost;
+                node.level++;
+                node.cost = Math.floor(node.cost * 1.8);
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function buyOrSelectSkin(skinKey) {
+            const skin = skinsShop[skinKey];
+            if (skin.owned) {
+                setSkin(skinKey);
+            } else if (crystals >= skin.cost) {
+                crystals -= skin.cost;
+                skin.owned = true;
+                setSkin(skinKey);
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
         function setSkin(skin, playSnd = true) {
             currentSkin = skin;
             crystalBtn.className = 'crystal ' + (skin === 'default' ? '' : skin);
@@ -732,13 +857,17 @@
                 total += qty * Number(upgrades[k].cps) * mult;
             });
             total *= (1 + artifacts.art2.level * 0.15);
+            total *= (1 + ascendTree.node2.level * 0.15);
+            if (pets.pet3.owned) total *= 1.25;
             if (shrineActive) total *= shrineMultiplier;
             return total;
         }
 
         function triggerPrestige() {
             if (crystals < 1000000) return;
-            const earnedShards = Math.floor(Math.sqrt(crystals / 1000000) * (1 + artifacts.art1.level * 0.1));
+            let shardMultiplier = 1 + artifacts.art1.level * 0.1;
+            if (pets.pet2.owned) shardMultiplier += 0.1;
+            const earnedShards = Math.floor(Math.sqrt(crystals / 1000000) * shardMultiplier);
             shards += earnedShards;
             prestigeCount++;
             crystals = 0;
@@ -749,7 +878,7 @@
         }
 
         function switchTab(tab) {
-            ['shopContent', 'clicksContent', 'achievementsContent', 'questsContent', 'artifactsContent', 'statsContent', 'skinsContent'].forEach(id => {
+            ['shopContent', 'clicksContent', 'achievementsContent', 'questsContent', 'artifactsContent', 'petsContent', 'ascendTreeContent', 'statsContent', 'skinsContent'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.querySelectorAll('.nav-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -760,22 +889,36 @@
         function checkAchievements() {
             Object.keys(achievements).forEach(key => {
                 const ach = achievements[key];
-                if (!ach.completed && ach.check()) {
-                    ach.completed = true;
-                    ach.rewardGiven();
-                    playSound('unlock');
-                    document.getElementById(`card_${key}`).classList.add('completed');
+                if (ach.status === 0 && ach.check()) {
+                    ach.status = 1; // ready to claim
                 }
             });
             Object.keys(quests).forEach(key => {
                 const q = quests[key];
-                if (!q.completed && q.check()) {
-                    q.completed = true;
-                    q.rewardGiven();
-                    playSound('unlock');
-                    document.getElementById(`quest_${key}`).classList.add('completed');
+                if (q.status === 0 && q.check()) {
+                    q.status = 1; // ready to claim
                 }
             });
+        }
+
+        function claimAchievement(key) {
+            const ach = achievements[key];
+            if (ach.status === 1) {
+                ach.status = 2; // claimed
+                ach.rewardGiven();
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function claimQuest(key) {
+            const q = quests[key];
+            if (q.status === 1) {
+                q.status = 2; // claimed
+                q.rewardGiven();
+                playSound('unlock');
+                updateUI();
+            }
         }
 
         function formatNum(num) {
@@ -798,8 +941,18 @@
             setTimeout(() => text.remove(), 800);
         }
 
-        // Random Shrine Events
+        // Random Shrine Events & Pet auto-clicker
+        let petTimer = 0;
         setInterval(() => {
+            if (pets.pet1.owned) {
+                petTimer++;
+                if (petTimer >= 30) { // every 3 seconds
+                    petTimer = 0;
+                    const rect = crystalContainer.getBoundingClientRect();
+                    triggerClick(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                }
+            }
+
             if (!shrineActive && Math.random() < 0.2) {
                 shrineActive = true;
                 shrineMultiplier = 2;
@@ -814,7 +967,7 @@
                 crystalContainer.appendChild(shrine);
                 setTimeout(() => { if (shrine.parentElement) shrine.remove(); shrineActive = false; }, 6000);
             }
-        }, 15000);
+        }, 100);
 
         function updateUI() {
             document.getElementById('crystalCount').innerText = formatNum(crystals) + " Crystals";
@@ -851,9 +1004,83 @@
                 }
             });
 
+            // Update Achievements UI
+            Object.keys(achievements).forEach(k => {
+                const ach = achievements[k];
+                const card = document.getElementById(`card_${k}`);
+                const claimBtn = document.getElementById(`claim_${k}`);
+                card.className = 'card-item';
+                if (ach.status === 1) {
+                    card.classList.add('ready');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'tab-btn claim-btn';
+                    claimBtn.innerText = 'Claim';
+                } else if (ach.status === 2) {
+                    card.classList.add('completed');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'tab-btn';
+                    claimBtn.innerText = 'Claimed';
+                    claimBtn.disabled = true;
+                } else {
+                    claimBtn.style.display = 'none';
+                }
+            });
+
+            // Update Quests UI
+            Object.keys(quests).forEach(k => {
+                const q = quests[k];
+                const card = document.getElementById(`quest_${k}`);
+                const claimBtn = document.getElementById(`claim_q_${k}`);
+                card.className = 'card-item';
+                if (q.status === 1) {
+                    card.classList.add('ready');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'tab-btn claim-btn';
+                    claimBtn.innerText = 'Claim';
+                } else if (q.status === 2) {
+                    card.classList.add('completed');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'tab-btn';
+                    claimBtn.innerText = 'Claimed';
+                    claimBtn.disabled = true;
+                } else {
+                    claimBtn.style.display = 'none';
+                }
+            });
+
             Object.keys(artifacts).forEach(k => {
                 document.getElementById(k + 'Lvl').innerText = artifacts[k].level;
                 document.getElementById(k + 'Cost').innerText = artifacts[k].cost;
+            });
+
+            Object.keys(pets).forEach(k => {
+                const btn = document.getElementById(`petBtn_${k}`);
+                if (pets[k].owned) {
+                    btn.innerText = "Owned";
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = shards < pets[k].cost;
+                }
+            });
+
+            Object.keys(ascendTree).forEach(k => {
+                document.getElementById(k + 'Lvl').innerText = ascendTree[k].level;
+                document.getElementById(k + 'Cost').innerText = ascendTree[k].cost;
+            });
+
+            Object.keys(skinsShop).forEach(skinKey => {
+                const skin = skinsShop[skinKey];
+                const btn = document.getElementById(`skinBtn_${skinKey}`);
+                if (currentSkin === skinKey) {
+                    btn.innerText = "Active";
+                    btn.disabled = true;
+                } else if (skin.owned) {
+                    btn.innerText = "Select";
+                    btn.disabled = false;
+                } else {
+                    btn.innerText = "Buy";
+                    btn.disabled = crystals < skin.cost;
+                }
             });
         }
 
@@ -881,6 +1108,11 @@
                     upgrades: Object.fromEntries(Object.keys(upgrades).map(k => [k, { qty: upgrades[k].qty, cost: upgrades[k].cost.toString() }])),
                     clickUpgrades: Object.fromEntries(Object.keys(clickUpgrades).map(k => [k, clickUpgrades[k].purchased])),
                     artifacts: Object.fromEntries(Object.keys(artifacts).map(k => [k, artifacts[k].level])),
+                    pets: Object.fromEntries(Object.keys(pets).map(k => [k, pets[k].owned])),
+                    ascendTree: Object.fromEntries(Object.keys(ascendTree).map(k => [k, ascendTree[k].level])),
+                    skinsShop: Object.fromEntries(Object.keys(skinsShop).map(k => [k, skinsShop[k].owned])),
+                    achievements: Object.fromEntries(Object.keys(achievements).map(k => [k, achievements[k].status])),
+                    quests: Object.fromEntries(Object.keys(quests).map(k => [k, quests[k].status])),
                     lastTimestamp: Date.now()
                 }
             };
