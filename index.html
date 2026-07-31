@@ -4,7 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Crystal Clicker</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            background: #0d0b18;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+        .stats-panel {
+            text-align: center;
+            margin-top: 20px;
+        }
+        h1 {
+            font-size: 32px;
+            margin: 0 0 5px 0;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        .cps {
+            font-size: 16px;
+            color: #bfa6ff;
+        }
+        .crystal-container {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .crystal {
+            width: 130px;
+            height: 160px;
+            background: linear-gradient(135deg, #00ffff 0%, #7000ff 50%, #ff0077 100%);
+            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
+            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.6));
+            cursor: pointer;
+            transition: transform 0.05s ease;
+            position: relative;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+        .crystal::after {
+            content: '';
+            position: absolute;
+            top: 5%; left: 5%;
+            width: 90%; height: 90%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 40%, rgba(0,0,0,0.4) 100%);
+            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
+        }
+        .crystal::before {
+            content: '';
+            position: absolute;
+            top: 10%; left: 10%;
+            width: 80%; height: 80%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(0,0,0,0.3) 100%);
+            clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .crystal:active {
+            transform: scale(0.92) rotate(3deg);
+        }
+        .shop-panel {
+            width: 100%;
+            background: #141124;
+            border-top: 2px solid #251f3d;
+            padding: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 40vh;
+            overflow-y: auto;
+        }
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1b1730;
+            margin: 0 15px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #2e2752;
+        }
+        .shop-item button {
+            background: #00f0ff;
+            color: #0d0b18;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+        .shop-item button:disabled {
+            background: #332d50;
+            color: #645c8a;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .item-info div:first-child {
+            font-weight: bold;
+            font-size: 16px;
+            color: #ff00ff;
+        }
+        .item-info div:last-child {
+            font-size: 12px;
+            color: #a59bc9;
+        }
+        .floating-text {
+            position: absolute;
+            color: #00f0ff;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+            text-shadow: 0 0 8px #ff00ff;
+            animation: floatUp 0.8s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-120px) scale(0.8); }
+        }
+    </style>
 </head>
 <body>
     <div class="stats-panel">
@@ -20,23 +148,136 @@
                 <div>Tier I Pickaxe</div>
                 <div id="pickaxe1Cost">Cost: 15</div>
             </div>
-            <button id="buyPickaxe1" onclick="buyUpgrade('pickaxe1')">Buy (<span id="pickaxe1Qty">0</span>)</button>
+            <button id="buyPickaxe1" onclick="gameBuyUpgrade('pickaxe1')">Buy (<span id="pickaxe1Qty">0</span>)</button>
         </div>
         <div class="shop-item">
             <div class="item-info">
                 <div>Tier II Pickaxe</div>
                 <div id="pickaxe2Cost">Cost: 100</div>
             </div>
-            <button id="buyPickaxe2" onclick="buyUpgrade('pickaxe2')">Buy (<span id="pickaxe2Qty">0</span>)</button>
+            <button id="buyPickaxe2" onclick="gameBuyUpgrade('pickaxe2')">Buy (<span id="pickaxe2Qty">0</span>)</button>
         </div>
         <div class="shop-item">
             <div class="item-info">
                 <div>Tier III Pickaxe</div>
                 <div id="pickaxe3Cost">Cost: 1100</div>
             </div>
-            <button id="buyPickaxe3" onclick="buyUpgrade('pickaxe3')">Buy (<span id="pickaxe3Qty">0</span>)</button>
+            <button id="buyPickaxe3" onclick="gameBuyUpgrade('pickaxe3')">Buy (<span id="pickaxe3Qty">0</span>)</button>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        (function() {
+            let crystals = 0;
+            const upgrades = {
+                pickaxe1: { qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
+                pickaxe2: { qty: 0, cost: 100, baseCost: 100, cps: 3 },
+                pickaxe3: { qty: 0, cost: 1100, baseCost: 1000, cps: 25 }
+            };
+
+            const SECRET_SALT = "MySuperSecretCrystalKey123!";
+
+            function generateSignature(dataText) {
+                let hash = 0;
+                const combined = dataText + SECRET_SALT;
+                for (let i = 0; i < combined.length; i++) {
+                    hash = (hash << 5) - hash + combined.charCodeAt(i);
+                    hash |= 0;
+                }
+                return hash.toString(36);
+            }
+
+            if (localStorage.getItem('crystalClickerSave')) {
+                try {
+                    const savedEnvelope = JSON.parse(localStorage.getItem('crystalClickerSave'));
+                    const expectedSignature = generateSignature(JSON.stringify(savedEnvelope.data));
+                    if (savedEnvelope.signature === expectedSignature) {
+                        const data = savedEnvelope.data;
+                        crystals = data.crystals || 0;
+                        Object.keys(upgrades).forEach(key => {
+                            if (data.upgrades && data.upgrades[key]) {
+                                upgrades[key].qty = data.upgrades[key].qty;
+                                upgrades[key].cost = data.upgrades[key].cost;
+                            }
+                        });
+                    } else {
+                        alert("Cheating detected! Your save data has been reset.");
+                        localStorage.removeItem('crystalClickerSave');
+                    }
+                } catch (e) {
+                    console.error("Failed to load save file safely.");
+                }
+            }
+
+            const crystalBtn = document.getElementById('crystalBtn');
+            const crystalContainer = document.getElementById('crystalContainer');
+
+            crystalBtn.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                crystals += 1;
+                createFloatingText(e.clientX, e.clientY);
+                updateUI();
+            });
+
+            function buyUpgrade(type) {
+                const item = upgrades[type];
+                if (crystals >= item.cost) {
+                    crystals -= item.cost;
+                    item.qty++;
+                    item.cost = Math.floor(item.baseCost * Math.pow(1.15, item.qty));
+                    updateUI();
+                }
+            }
+
+            window.gameBuyUpgrade = buyUpgrade;
+
+            function getCps() {
+                let totalCps = 0;
+                Object.keys(upgrades).forEach(key => {
+                    totalCps += upgrades[key].qty * upgrades[key].cps;
+                });
+                return totalCps;
+            }
+
+            function createFloatingText(x, y) {
+                const text = document.createElement('div');
+                text.className = 'floating-text';
+                text.innerText = '+1';
+                const rect = crystalContainer.getBoundingClientRect();
+                text.style.left = (x ? x : rect.left + rect.width / 2) + 'px';
+                text.style.top = (y ? y : rect.top + rect.height / 2) + 'px';
+                document.body.appendChild(text);
+                setTimeout(() => text.remove(), 800);
+            }
+
+            function updateUI() {
+                document.getElementById('crystalCount').innerText = Math.floor(crystals) + " Crystals";
+                document.getElementById('cpsCount').innerText = "per second: " + getCps().toFixed(1);
+                Object.keys(upgrades).forEach(key => {
+                    document.getElementById(key + 'Cost').innerText = "Cost: " + upgrades[key].cost;
+                    document.getElementById(key + 'Qty').innerText = upgrades[key].qty;
+                    const btn = document.getElementById('buy' + key.charAt(0).toUpperCase() + key.slice(1));
+                    if (btn) btn.disabled = crystals < upgrades[key].cost;
+                });
+            }
+
+            setInterval(() => {
+                crystals += getCps() / 10;
+                updateUI();
+            }, 100);
+
+            setInterval(() => {
+                const rawData = { crystals: crystals, upgrades: upgrades };
+                const dataString = JSON.stringify(rawData);
+                const secureEnvelope = {
+                    data: rawData,
+                    signature: generateSignature(dataString)
+                };
+                localStorage.setItem('crystalClickerSave', JSON.stringify(secureEnvelope));
+            }, 10000);
+
+            updateUI();
+        })();
+    </script>
 </body>
 </html>
