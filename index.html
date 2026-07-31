@@ -45,6 +45,8 @@
             gap: 15px;
             align-items: center;
             font-size: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .cps {
             color: #9d8ec4;
@@ -66,6 +68,23 @@
             color: #5c5280;
             cursor: not-allowed;
             box-shadow: none;
+        }
+        .tab-btn {
+            background: #21193d;
+            color: #9d8ec4;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background: #00f0ff;
+            color: #0d0b18;
+            border-color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
         }
         .main-layout {
             flex: 1;
@@ -121,7 +140,6 @@
         .crystal:active {
             transform: scale(0.92) rotate(3deg);
         }
-        /* Visible Black/Gray Floating Bonus Crystal */
         .bonus-crystal {
             position: absolute;
             width: 55px;
@@ -150,7 +168,7 @@
             100% { transform: translate(280px, 140px) scale(0.8); opacity: 0; }
         }
 
-        .shop-panel {
+        .side-panel {
             width: 360px;
             background: #0d0b18;
             border-left: 2px solid #21193d;
@@ -161,12 +179,20 @@
             overflow-y: auto;
         }
         @media (max-width: 768px) {
-            .shop-panel {
+            .side-panel {
                 width: 100%;
                 max-height: 45vh;
                 border-left: none;
                 border-top: 2px solid #21193d;
             }
+        }
+        .panel-tab-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .hidden {
+            display: none !important;
         }
         .shop-item {
             display: flex;
@@ -217,6 +243,58 @@
             color: #9d8ec4;
             margin-top: 2px;
         }
+
+        /* Achievement list styling with image on left */
+        .achievement-card {
+            display: flex;
+            align-items: center;
+            background: #151128;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 119, 0.2);
+            gap: 12px;
+            transition: border-color 0.2s;
+        }
+        .achievement-card.completed {
+            border-color: rgba(0, 255, 100, 0.5);
+            background: #111a18;
+        }
+        .achievement-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #7000ff 0%, #00f0ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+        }
+        .achievement-card.completed .achievement-img {
+            background: linear-gradient(135deg, #00ff88 0%, #0088ff 100%);
+        }
+        .achievement-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .achievement-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #ffffff;
+        }
+        .achievement-desc {
+            font-size: 11px;
+            color: #9d8ec4;
+        }
+        .achievement-reward {
+            font-size: 10px;
+            color: #ffea00;
+            font-weight: bold;
+        }
+
         .floating-text {
             position: absolute;
             color: #00f0ff;
@@ -244,6 +322,8 @@
         <div class="sub-header">
             <div class="cps" id="cpsCount">per second: 0</div>
             <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Prestige (Req: 1M)</button>
+            <button class="tab-btn active" id="shopTabBtn" onclick="switchTab('shop')">Shop</button>
+            <button class="tab-btn" id="achievementsTabBtn" onclick="switchTab('achievements')">Achievements</button>
         </div>
     </div>
     
@@ -252,12 +332,32 @@
             <div class="crystal" id="crystalBtn"></div>
         </div>
         
-        <div class="shop-panel" id="shopPanel">
-            <!-- Dynamically populated shop items -->
+        <div class="side-panel">
+            <!-- Shop Tab Content -->
+            <div id="shopContent" class="panel-tab-content">
+                <!-- Dynamically populated shop items -->
+            </div>
+
+            <!-- Achievements Tab Content -->
+            <div id="achievementsContent" class="panel-tab-content hidden">
+                <!-- Dynamically populated achievements list -->
+            </div>
         </div>
     </div>
 
     <script>
+        // Disable casual right-click and common dev shortcuts
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (
+                event.key === 'F12' ||
+                (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) ||
+                (event.ctrlKey && event.key === 'U')
+            ) {
+                event.preventDefault();
+            }
+        });
+
         let crystals = 0;
         let prestigeCount = 0;
         
@@ -286,7 +386,33 @@
             pickaxe22: { name: "Infinity Pickaxe", qty: 0, cost: 420000000000000000, baseCost: 420000000000000000, cps: 3200000000000000 },
             pickaxe23: { name: "Eternity Pickaxe", qty: 0, cost: 2600000000000000000, baseCost: 2600000000000000000, cps: 20000000000000000 },
             pickaxe24: { name: "Godhood Pickaxe", qty: 0, cost: 16000000000000000000, baseCost: 16000000000000000000, cps: 125000000000000000 },
-            pickaxe25: { name: "Omni Pickaxe", qty: 0, cost: 100000000000000000000, baseCost: 100000000000000000000, cps: 800000000000000000 }
+            pickaxe25: { name: "Omni Pickaxe", qty: 0, cost: 100000000000000000000, baseCost: 100000000000000000000, cps: 800000000000000000 },
+            // 15 New Pickaxes
+            pickaxe26: { name: "Nexus Pickaxe", qty: 0, cost: 650000000000000000000n, baseCost: 650000000000000000000n, cps: 5000000000000000000n },
+            pickaxe27: { name: "Stellar Pickaxe", qty: 0, cost: 4000000000000000000000n, baseCost: 4000000000000000000000n, cps: 32000000000000000000n },
+            pickaxe28: { name: "Pulsar Pickaxe", qty: 0, cost: 25000000000000000000000n, baseCost: 25000000000000000000000n, cps: 200000000000000000000n },
+            pickaxe29: { name: "Quasar Pickaxe", qty: 0, cost: 160000000000000000000000n, baseCost: 160000000000000000000000n, cps: 1300000000000000000000n },
+            pickaxe30: { name: "Event Horizon Pickaxe", qty: 0, cost: 1000000000000000000000000n, baseCost: 1000000000000000000000000n, cps: 8500000000000000000000n },
+            pickaxe31: { name: "Abyssal Pickaxe", qty: 0, cost: 7000000000000000000000000n, baseCost: 7000000000000000000000000n, cps: 55000000000000000000000n },
+            pickaxe32: { name: "Genesis Pickaxe", qty: 0, cost: 45000000000000000000000000n, baseCost: 45000000000000000000000000n, cps: 360000000000000000000000n },
+            pickaxe33: { name: "Elysian Pickaxe", qty: 0, cost: 300000000000000000000000000n, baseCost: 300000000000000000000000000n, cps: 2400000000000000000000000n },
+            pickaxe34: { name: "Zenith Pickaxe", qty: 0, cost: 2000000000000000000000000000n, baseCost: 2000000000000000000000000000n, cps: 16000000000000000000000000n },
+            pickaxe35: { name: "Apex Pickaxe", qty: 0, cost: 14000000000000000000000000000n, baseCost: 14000000000000000000000000000n, cps: 110000000000000000000000000n },
+            pickaxe36: { name: "Nirvana Pickaxe", qty: 0, cost: 95000000000000000000000000000n, baseCost: 95000000000000000000000000000n, cps: 750000000000000000000000000n },
+            pickaxe37: { name: "Multiverse Pickaxe", qty: 0, cost: 650000000000000000000000000000n, baseCost: 650000000000000000000000000000n, cps: 5000000000000000000000000000n },
+            pickaxe38: { name: "Hyperverse Pickaxe", qty: 0, cost: 4500000000000000000000000000000n, baseCost: 4500000000000000000000000000000n, cps: 35000000000000000000000000000n },
+            pickaxe39: { name: "Alpha & Omega Pickaxe", qty: 0, cost: 32000000000000000000000000000000n, baseCost: 32000000000000000000000000000000n, cps: 250000000000000000000000000000n },
+            pickaxe40: { name: "Absolute Pickaxe", qty: 0, cost: 250000000000000000000000000000000n, baseCost: 250000000000000000000000000000000n, cps: 2000000000000000000000000000000n }
+        };
+
+        // Achievements list
+        const achievements = {
+            ach1: { title: "First Spark", desc: "Reach 100 crystals", reward: "500 Crystals", icon: "💎", completed: false, check: () => crystals >= 100, rewardGiven: () => crystals += 500 },
+            ach2: { title: "Heavy Hitter", desc: "Reach 10,000 crystals", reward: "5,000 Crystals", icon: "⛏️", completed: false, check: () => crystals >= 10000, rewardGiven: () => crystals += 5000 },
+            ach3: { title: "Crystal Millionaire", desc: "Reach 1,000,000 crystals", reward: "1 Prestige Level", icon: "✨", completed: false, check: () => crystals >= 1000000, rewardGiven: () => prestigeCount++ },
+            ach4: { title: "Tool Up", desc: "Buy 10 total pickaxes", reward: "10,000 Crystals", icon: "🔧", completed: false, check: () => getTotalPickaxes() >= 10, rewardGiven: () => crystals += 10000 },
+            ach5: { title: "Industrial Mining", desc: "Buy 50 total pickaxes", reward: "100,000 Crystals", icon: "🏭", completed: false, check: () => getTotalPickaxes() >= 50, rewardGiven: () => crystals += 100000 },
+            ach6: { title: "First Resonance", desc: "Perform your first Prestige", reward: "1,000 Crystals", icon: "🌌", completed: false, check: () => prestigeCount >= 1, rewardGiven: () => crystals += 1000 }
         };
 
         const SECRET_SALT = "MySuperSecretCrystalKey123!";
@@ -301,8 +427,8 @@
             return hash.toString(36);
         }
 
-        // Build shop UI dynamically for all 25 tiers
-        const shopPanel = document.getElementById('shopPanel');
+        // Build shop UI dynamically
+        const shopPanel = document.getElementById('shopContent');
         Object.keys(upgrades).forEach(key => {
             const item = upgrades[key];
             const div = document.createElement('div');
@@ -310,11 +436,29 @@
             div.innerHTML = `
                 <div class="item-info">
                     <div>${item.name}</div>
-                    <div id="${key}Cost">Cost: ${item.cost}</div>
+                    <div id="${key}Cost">Cost: ${formatNum(item.cost)}</div>
                 </div>
                 <button id="buy${key.charAt(0).toUpperCase() + key.slice(1)}" onclick="buyUpgrade('${key}')">Buy (<span id="${key}Qty">0</span>)</button>
             `;
             shopPanel.appendChild(div);
+        });
+
+        // Build achievements UI list dynamically
+        const achPanel = document.getElementById('achievementsContent');
+        Object.keys(achievements).forEach(key => {
+            const ach = achievements[key];
+            const div = document.createElement('div');
+            div.className = 'achievement-card';
+            div.id = `card_${key}`;
+            div.innerHTML = `
+                <div class="achievement-img" id="icon_${key}">${ach.icon}</div>
+                <div class="achievement-details">
+                    <div class="achievement-title">${ach.title}</div>
+                    <div class="achievement-desc">${ach.desc}</div>
+                    <div class="achievement-reward">Reward: ${ach.reward}</div>
+                </div>
+            `;
+            achPanel.appendChild(div);
         });
 
         if (localStorage.getItem('crystalClickerSave')) {
@@ -323,14 +467,19 @@
                 const expectedSignature = generateSignature(JSON.stringify(savedEnvelope.data));
                 if (savedEnvelope.signature === expectedSignature) {
                     const data = savedEnvelope.data;
-                    crystals = data.crystals || 0;
+                    crystals = Number(data.crystals || 0);
                     prestigeCount = data.prestigeCount || 0;
                     Object.keys(upgrades).forEach(key => {
                         if (data.upgrades && data.upgrades[key]) {
                             upgrades[key].qty = data.upgrades[key].qty;
-                            upgrades[key].cost = data.upgrades[key].cost;
+                            upgrades[key].cost = BigInt(data.upgrades[key].cost);
                         }
                     });
+                    if (data.achievements) {
+                        Object.keys(data.achievements).forEach(key => {
+                            if (achievements[key]) achievements[key].completed = data.achievements[key];
+                        });
+                    }
                 } else {
                     alert("Cheating detected! Your save data has been reset.");
                     localStorage.removeItem('crystalClickerSave');
@@ -343,7 +492,6 @@
         const crystalBtn = document.getElementById('crystalBtn');
         const crystalContainer = document.getElementById('crystalContainer');
 
-        // Manual Click Handler with Reduced Critical Hit chance (1%)
         crystalBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             const isCrit = Math.random() < 0.01;
@@ -351,23 +499,35 @@
             const clickPower = (isCrit ? 5 : 1) * mult;
             crystals += clickPower;
             createFloatingText(e.clientX, e.clientY, isCrit ? `+${clickPower.toFixed(1)} CRIT!` : `+${mult.toFixed(1)}`, isCrit);
+            checkAchievements();
             updateUI();
         });
 
         function buyUpgrade(type) {
             const item = upgrades[type];
-            if (crystals >= item.cost) {
-                crystals -= item.cost;
+            if (crystals >= Number(item.cost)) {
+                crystals -= Number(item.cost);
                 item.qty++;
-                item.cost = Math.floor(item.baseCost * Math.pow(1.15, item.qty));
+                let nextCost = item.baseCost;
+                for(let i=0; i<item.qty; i++) {
+                    nextCost = (nextCost * 115n) / 100n;
+                }
+                item.cost = nextCost;
+                checkAchievements();
                 updateUI();
             }
+        }
+
+        function getTotalPickaxes() {
+            let total = 0;
+            Object.keys(upgrades).forEach(key => total += upgrades[key].qty);
+            return total;
         }
 
         function getCps() {
             let totalCps = 0;
             Object.keys(upgrades).forEach(key => {
-                totalCps += upgrades[key].qty * upgrades[key].cps;
+                totalCps += upgrades[key].qty * Number(upgrades[key].cps);
             });
             const mult = prestigeCount > 0 ? (1.5 + (prestigeCount - 1) * 0.5) : 1;
             return totalCps * mult;
@@ -376,12 +536,53 @@
         function triggerPrestige() {
             if (crystals < 1000000) return;
             prestigeCount++;
-            crystals = prestigeCount * 100; // 100 on 1st prestige, 200 on 2nd, etc.
+            crystals = prestigeCount * 100;
             Object.keys(upgrades).forEach(key => {
                 upgrades[key].qty = 0;
                 upgrades[key].cost = upgrades[key].baseCost;
             });
+            checkAchievements();
             updateUI();
+        }
+
+        function switchTab(tab) {
+            const shopBtn = document.getElementById('shopTabBtn');
+            const achBtn = document.getElementById('achievementsTabBtn');
+            const shopCont = document.getElementById('shopContent');
+            const achCont = document.getElementById('achievementsContent');
+
+            if (tab === 'shop') {
+                shopBtn.classList.add('active');
+                achBtn.classList.remove('active');
+                shopCont.classList.remove('hidden');
+                achCont.classList.add('hidden');
+            } else {
+                achBtn.classList.add('active');
+                shopBtn.classList.remove('active');
+                achCont.classList.remove('hidden');
+                shopCont.classList.add('hidden');
+            }
+        }
+
+        function checkAchievements() {
+            Object.keys(achievements).forEach(key => {
+                const ach = achievements[key];
+                if (!ach.completed && ach.check()) {
+                    ach.completed = true;
+                    ach.rewardGiven();
+                    const card = document.getElementById(`card_${key}`);
+                    if (card) card.classList.add('completed');
+                }
+            });
+        }
+
+        function formatNum(num) {
+            let n = Number(num);
+            if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T';
+            if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+            if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(2) + 'k';
+            return Math.floor(n).toLocaleString();
         }
 
         function createFloatingText(x, y, textVal, isCrit = false) {
@@ -395,7 +596,6 @@
             setTimeout(() => text.remove(), 800);
         }
 
-        // Spawn bonus drifting crystal randomly (Visible Black/Gray crystal style)
         function spawnBonusCrystal() {
             const bonus = document.createElement('div');
             bonus.className = 'bonus-crystal';
@@ -407,6 +607,7 @@
                 const reward = Math.max(50, Math.floor(getCps() * 15));
                 crystals += reward;
                 createFloatingText(e.clientX, e.clientY, `+${reward} BONUS!`, true);
+                checkAchievements();
                 bonus.remove();
                 updateUI();
             });
@@ -418,14 +619,14 @@
         }
 
         setInterval(() => {
-            if (Math.random() < 0.25) { // ~Every 20-40 sec average check
+            if (Math.random() < 0.25) {
                 spawnBonusCrystal();
             }
         }, 10000);
 
         function updateUI() {
-            document.getElementById('crystalCount').innerText = Math.floor(crystals).toLocaleString() + " Crystals";
-            document.getElementById('cpsCount').innerText = "per second: " + getCps().toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+            document.getElementById('crystalCount').innerText = formatNum(crystals) + " Crystals";
+            document.getElementById('cpsCount').innerText = "per second: " + formatNum(getCps());
             
             const prestigeBtn = document.getElementById('prestigeBtn');
             prestigeBtn.disabled = crystals < 1000000;
@@ -434,20 +635,38 @@
             prestigeBtn.innerText = `Prestige (${nextMult}x, +${nextBonus} start)`;
 
             Object.keys(upgrades).forEach(key => {
-                document.getElementById(key + 'Cost').innerText = "Cost: " + upgrades[key].cost.toLocaleString();
+                document.getElementById(key + 'Cost').innerText = "Cost: " + formatNum(upgrades[key].cost);
                 document.getElementById(key + 'Qty').innerText = upgrades[key].qty;
                 const btn = document.getElementById('buy' + key.charAt(0).toUpperCase() + key.slice(1));
-                if (btn) btn.disabled = crystals < upgrades[key].cost;
+                if (btn) btn.disabled = crystals < Number(upgrades[key].cost);
+            });
+
+            // Update achievement cards visual statuses
+            Object.keys(achievements).forEach(key => {
+                const ach = achievements[key];
+                const card = document.getElementById(`card_${key}`);
+                if (card && ach.completed) {
+                    card.classList.add('completed');
+                }
             });
         }
 
         setInterval(() => {
             crystals += getCps() / 10;
+            checkAchievements();
             updateUI();
         }, 100);
 
         setInterval(() => {
-            const rawData = { crystals: crystals, prestigeCount: prestigeCount, upgrades: upgrades };
+            const rawUpgrades = {};
+            Object.keys(upgrades).forEach(k => {
+                rawUpgrades[k] = { qty: upgrades[k].qty, cost: upgrades[k].cost.toString() };
+            });
+            const rawAchievements = {};
+            Object.keys(achievements).forEach(k => {
+                rawAchievements[k] = achievements[k].completed;
+            });
+            const rawData = { crystals: crystals, prestigeCount: prestigeCount, upgrades: rawUpgrades, achievements: rawAchievements };
             const dataString = JSON.stringify(rawData);
             const secureEnvelope = {
                 data: rawData,
