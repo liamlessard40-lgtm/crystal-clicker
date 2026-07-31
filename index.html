@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crystal Clicker</title>
+    <title>Crystal Clicker Ultimate</title>
     <style>
         * {
             box-sizing: border-box;
@@ -24,17 +24,17 @@
             width: 100%;
             background: #110d21;
             border-bottom: 2px solid #21193d;
-            padding: 12px 0;
+            padding: 10px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
         h1 {
-            font-size: 28px;
+            font-size: 26px;
             margin: 0;
             color: #00f0ff;
             text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
@@ -42,14 +42,18 @@
         }
         .sub-header {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             flex-wrap: wrap;
             justify-content: center;
         }
         .cps {
             color: #9d8ec4;
+        }
+        .shards-display {
+            color: #ff00aa;
+            font-weight: bold;
         }
         .prestige-btn {
             background: linear-gradient(135deg, #ff0077 0%, #7000ff 100%);
@@ -61,7 +65,6 @@
             font-size: 11px;
             cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 0, 119, 0.4);
-            display: inline-block;
         }
         .prestige-btn:disabled {
             background: #231e3d;
@@ -69,14 +72,24 @@
             cursor: not-allowed;
             box-shadow: none;
         }
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 4px;
+            background: #0d0b18;
+            width: 100%;
+            border-bottom: 1px solid #21193d;
+        }
         .tab-btn {
             background: #21193d;
             color: #9d8ec4;
             border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -91,7 +104,7 @@
             display: flex;
             flex-direction: row;
             width: 100%;
-            max-width: 900px;
+            max-width: 950px;
             overflow: hidden;
         }
         @media (max-width: 768px) {
@@ -102,10 +115,12 @@
         .crystal-container {
             flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
             overflow: hidden;
+            gap: 20px;
         }
         .crystal {
             width: 130px;
@@ -118,6 +133,12 @@
             position: relative;
             z-index: 2;
         }
+        /* Crystal Themes */
+        .crystal.ruby { background: linear-gradient(135deg, #ff3333 0%, #990000 50%, #550000 100%); filter: drop-shadow(0 0 25px rgba(255, 50, 50, 0.6)); }
+        .crystal.sapphire { background: linear-gradient(135deg, #3366ff 0%, #000099 50%, #000044 100%); filter: drop-shadow(0 0 25px rgba(50, 100, 255, 0.6)); }
+        .crystal.emerald { background: linear-gradient(135deg, #33ff66 0%, #009933 50%, #004411 100%); filter: drop-shadow(0 0 25px rgba(50, 255, 100, 0.6)); }
+        .crystal.gold-theme { background: linear-gradient(135deg, #ffcc00 0%, #cc6600 50%, #663300 100%); filter: drop-shadow(0 0 25px rgba(255, 200, 0, 0.6)); }
+
         .crystal::after {
             content: '';
             position: absolute;
@@ -127,39 +148,54 @@
             clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
             pointer-events: none;
         }
-        .crystal::before {
-            content: '';
-            position: absolute;
-            top: 10%; left: 10%;
-            width: 80%; height: 80%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(0,0,0,0.3) 100%);
-            clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
-            z-index: 1;
-            pointer-events: none;
-        }
         .crystal:active {
             transform: scale(0.92) rotate(3deg);
         }
-        .bonus-crystal {
+        
+        /* Meters & UI Bars */
+        .meters-container {
+            width: 80%;
+            max-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 5;
+        }
+        .meter-label {
+            font-size: 11px;
+            color: #9d8ec4;
+            display: flex;
+            justify-content: space-between;
+        }
+        .meter-bar {
+            width: 100%;
+            height: 8px;
+            background: #151128;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            overflow: hidden;
+        }
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f0ff, #ff0077);
+            transition: width 0.1s linear;
+        }
+        .meter-fill.fever {
+            background: linear-gradient(90deg, #ffea00, #ff0000);
+        }
+
+        .bonus-crystal, .shrine-obj {
             position: absolute;
-            width: 55px;
-            height: 70px;
-            background: linear-gradient(135deg, #777777 0%, #222222 50%, #000000 100%);
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(135deg, #ffea00 0%, #ff6600 100%);
             clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
             cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.5));
-            z-index: 5;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            filter: drop-shadow(0 0 18px rgba(255, 234, 0, 0.8));
+            z-index: 6;
             animation: driftAcross 8s linear forwards;
-        }
-        .bonus-crystal::after {
-            content: '';
-            position: absolute;
-            top: 5%; left: 5%;
-            width: 90%; height: 90%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.6) 100%);
-            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
-            pointer-events: none;
         }
         @keyframes driftAcross {
             0% { transform: translate(-150px, 120px) scale(0.5); opacity: 0; }
@@ -199,33 +235,21 @@
             justify-content: space-between;
             align-items: center;
             background: #151128;
-            padding: 10px 12px;
+            padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid rgba(0, 240, 255, 0.15);
             box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.04);
-            transition: border-color 0.2s ease;
-        }
-        .shop-item:hover {
-            border-color: rgba(0, 240, 255, 0.4);
         }
         .shop-item button {
             background: #00f0ff;
             color: #0d0b18;
             border: none;
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 5px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-            transition: transform 0.1s ease, filter 0.1s ease;
-        }
-        .shop-item button:hover:not(:disabled) {
-            transform: scale(1.03);
-            filter: brightness(1.1);
-        }
-        .shop-item button:active:not(:disabled) {
-            transform: scale(0.97);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
         }
         .shop-item button:disabled {
             background: #231e3d;
@@ -235,71 +259,74 @@
         }
         .item-info div:first-child {
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             color: #ff88dc;
         }
         .item-info div:last-child {
-            font-size: 11px;
+            font-size: 10px;
             color: #9d8ec4;
             margin-top: 2px;
         }
 
-        /* Achievement list styling with image on left */
-        .achievement-card {
+        /* Achievement & Quest Cards */
+        .card-item {
             display: flex;
             align-items: center;
             background: #151128;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 8px;
             border: 1px solid rgba(255, 0, 119, 0.2);
-            gap: 12px;
-            transition: border-color 0.2s;
+            gap: 10px;
         }
-        .achievement-card.completed {
+        .card-item.completed {
             border-color: rgba(0, 255, 100, 0.5);
             background: #111a18;
         }
-        .achievement-img {
-            width: 44px;
-            height: 44px;
+        .card-icon {
+            width: 38px;
+            height: 38px;
             border-radius: 6px;
             background: linear-gradient(135deg, #7000ff 0%, #00f0ff 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             flex-shrink: 0;
-            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
         }
-        .achievement-card.completed .achievement-img {
+        .card-item.completed .card-icon {
             background: linear-gradient(135deg, #00ff88 0%, #0088ff 100%);
         }
-        .achievement-details {
+        .card-details {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 2px;
         }
-        .achievement-title {
-            font-weight: bold;
-            font-size: 13px;
-            color: #ffffff;
+        .card-title { font-weight: bold; font-size: 12px; color: #ffffff; }
+        .card-desc { font-size: 10px; color: #9d8ec4; }
+        .card-reward { font-size: 9px; color: #ffea00; font-weight: bold; }
+
+        /* Stats & Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
-        .achievement-desc {
-            font-size: 11px;
-            color: #9d8ec4;
+        .stat-box {
+            background: #151128;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            text-align: center;
         }
-        .achievement-reward {
-            font-size: 10px;
-            color: #ffea00;
-            font-weight: bold;
-        }
+        .stat-val { font-size: 16px; font-weight: bold; color: #00f0ff; margin-top: 4px; }
+        .stat-lbl { font-size: 10px; color: #9d8ec4; }
 
         .floating-text {
             position: absolute;
             color: #00f0ff;
             font-weight: bold;
-            font-size: 22px;
+            font-size: 20px;
             pointer-events: none;
             text-shadow: 0 0 8px #ff00ff;
             animation: floatUp 0.8s ease-out forwards;
@@ -307,12 +334,12 @@
         }
         .floating-text.crit {
             color: #ffea00;
-            font-size: 28px;
+            font-size: 26px;
             text-shadow: 0 0 12px #ff0000;
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-120px) scale(0.8); }
+            100% { opacity: 0; transform: translateY(-100px) scale(0.8); }
         }
     </style>
 </head>
@@ -321,46 +348,110 @@
         <h1 id="crystalCount">0 Crystals</h1>
         <div class="sub-header">
             <div class="cps" id="cpsCount">per second: 0</div>
-            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Prestige (Req: 1M)</button>
-            <button class="tab-btn active" id="shopTabBtn" onclick="switchTab('shop')">Shop</button>
-            <button class="tab-btn" id="achievementsTabBtn" onclick="switchTab('achievements')">Achievements</button>
+            <div>Shards: <span class="shards-display" id="shardsCount">0</span></div>
+            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Ascend (Req: 1M)</button>
         </div>
     </div>
     
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('shop')">Pickaxes</button>
+        <button class="tab-btn" onclick="switchTab('clicks')">Click Upgrades</button>
+        <button class="tab-btn" onclick="switchTab('achievements')">Achievements</button>
+        <button class="tab-btn" onclick="switchTab('quests')">Quests</button>
+        <button class="tab-btn" onclick="switchTab('artifacts')">Artifacts</button>
+        <button class="tab-btn" onclick="switchTab('stats')">Stats</button>
+        <button class="tab-btn" onclick="switchTab('skins')">Skins</button>
+    </div>
+
     <div class="main-layout">
         <div class="crystal-container" id="crystalContainer">
             <div class="crystal" id="crystalBtn"></div>
+            
+            <div class="meters-container">
+                <div>
+                    <div class="meter-label"><span>Fever Meter</span><span id="feverText">0%</span></div>
+                    <div class="meter-bar"><div class="meter-fill fever" id="feverFill"></div></div>
+                </div>
+                <div>
+                    <div class="meter-label"><span>Combo Bar</span><span id="comboText">0x</span></div>
+                    <div class="meter-bar"><div class="meter-fill" id="comboFill"></div></div>
+                </div>
+            </div>
         </div>
         
         <div class="side-panel">
-            <!-- Shop Tab Content -->
-            <div id="shopContent" class="panel-tab-content">
-                <!-- Dynamically populated shop items -->
-            </div>
-
-            <!-- Achievements Tab Content -->
-            <div id="achievementsContent" class="panel-tab-content hidden">
-                <!-- Dynamically populated achievements list -->
-            </div>
+            <div id="shopContent" class="panel-tab-content"></div>
+            <div id="clicksContent" class="panel-tab-content hidden"></div>
+            <div id="achievementsContent" class="panel-tab-content hidden"></div>
+            <div id="questsContent" class="panel-tab-content hidden"></div>
+            <div id="artifactsContent" class="panel-tab-content hidden"></div>
+            <div id="statsContent" class="panel-tab-content hidden"></div>
+            <div id="skinsContent" class="panel-tab-content hidden"></div>
         </div>
     </div>
 
     <script>
-        // Disable casual right-click and common dev shortcuts
+        // Anti-inspect defense
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', event => {
-            if (
-                event.key === 'F12' ||
-                (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) ||
-                (event.ctrlKey && event.key === 'U')
-            ) {
+            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && ['I','J','C'].includes(event.key)) || (event.ctrlKey && event.key === 'U')) {
                 event.preventDefault();
             }
         });
 
+        // Web Audio API Sound Generator
+        let soundEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (!soundEnabled || !audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'click') {
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'buy') {
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'unlock') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            }
+        }
+
         let crystals = 0;
+        let lifetimeCrystals = 0;
+        let shards = 0;
         let prestigeCount = 0;
+        let totalClicks = 0;
+        let timePlayed = 0;
+        let currentSkin = 'default';
         
+        let clickPowerLevel = 1;
+        let critChanceLevel = 0;
+        
+        // Dynamic Meters
+        let comboMeter = 0;
+        let feverMeter = 0;
+        let isFeverActive = false;
+        let feverTimer = 0;
+        let shrineActive = false;
+        let shrineMultiplier = 1;
+
+        // Upgrades (40 Pickaxes)
         const upgrades = {
             pickaxe1:  { name: "Copper Pickaxe", qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
             pickaxe2:  { name: "Tin Pickaxe", qty: 0, cost: 100, baseCost: 100, cps: 1.2 },
@@ -387,7 +478,6 @@
             pickaxe23: { name: "Eternity Pickaxe", qty: 0, cost: 2600000000000000000, baseCost: 2600000000000000000, cps: 20000000000000000 },
             pickaxe24: { name: "Godhood Pickaxe", qty: 0, cost: 16000000000000000000, baseCost: 16000000000000000000, cps: 125000000000000000 },
             pickaxe25: { name: "Omni Pickaxe", qty: 0, cost: 100000000000000000000, baseCost: 100000000000000000000, cps: 800000000000000000 },
-            // 15 New Pickaxes
             pickaxe26: { name: "Nexus Pickaxe", qty: 0, cost: 650000000000000000000n, baseCost: 650000000000000000000n, cps: 5000000000000000000n },
             pickaxe27: { name: "Stellar Pickaxe", qty: 0, cost: 4000000000000000000000n, baseCost: 4000000000000000000000n, cps: 32000000000000000000n },
             pickaxe28: { name: "Pulsar Pickaxe", qty: 0, cost: 25000000000000000000000n, baseCost: 25000000000000000000000n, cps: 200000000000000000000n },
@@ -405,21 +495,41 @@
             pickaxe40: { name: "Absolute Pickaxe", qty: 0, cost: 250000000000000000000000000000000n, baseCost: 250000000000000000000000000000000n, cps: 2000000000000000000000000000000n }
         };
 
-        // Achievements list
-        const achievements = {
-            ach1: { title: "First Spark", desc: "Reach 100 crystals", reward: "500 Crystals", icon: "💎", completed: false, check: () => crystals >= 100, rewardGiven: () => crystals += 500 },
-            ach2: { title: "Heavy Hitter", desc: "Reach 10,000 crystals", reward: "5,000 Crystals", icon: "⛏️", completed: false, check: () => crystals >= 10000, rewardGiven: () => crystals += 5000 },
-            ach3: { title: "Crystal Millionaire", desc: "Reach 1,000,000 crystals", reward: "1 Prestige Level", icon: "✨", completed: false, check: () => crystals >= 1000000, rewardGiven: () => prestigeCount++ },
-            ach4: { title: "Tool Up", desc: "Buy 10 total pickaxes", reward: "10,000 Crystals", icon: "🔧", completed: false, check: () => getTotalPickaxes() >= 10, rewardGiven: () => crystals += 10000 },
-            ach5: { title: "Industrial Mining", desc: "Buy 50 total pickaxes", reward: "100,000 Crystals", icon: "🏭", completed: false, check: () => getTotalPickaxes() >= 50, rewardGiven: () => crystals += 100000 },
-            ach6: { title: "First Resonance", desc: "Perform your first Prestige", reward: "1,000 Crystals", icon: "🌌", completed: false, check: () => prestigeCount >= 1, rewardGiven: () => crystals += 1000 }
+        // Click Upgrades
+        const clickUpgrades = {
+            click1: { name: "Sharpened Edge", cost: 100, mult: 2, purchased: false },
+            click2: { name: "Diamond Tip", cost: 2500, mult: 3, purchased: false },
+            click3: { name: "Hydraulic Striker", cost: 50000, mult: 4, purchased: false },
+            click4: { name: "Laser Focus", cost: 1000000, mult: 5, purchased: false }
         };
 
-        const SECRET_SALT = "MySuperSecretCrystalKey123!";
+        // Artifacts (Prestige Shop)
+        const artifacts = {
+            art1: { name: "Shard Resonance", desc: "+10% Shard gain per Ascension", cost: 5, level: 0, max: 10 },
+            art2: { name: "Crystalline Core", desc: "+15% Global Production Multiplier", cost: 10, level: 0, max: 10 },
+            art3: { name: "Fever Generator", desc: "Fever meter builds 20% faster", cost: 15, level: 0, max: 5 }
+        };
 
-        function generateSignature(dataText) {
+        // Achievements
+        const achievements = {
+            ach1: { title: "First Spark", desc: "Reach 50 crystals", reward: "+10 Crystals", icon: "💎", completed: false, check: () => crystals >= 50, rewardGiven: () => crystals += 10 },
+            ach2: { title: "Steady Pounding", desc: "Reach 500 crystals", reward: "+50 Crystals", icon: "⛏️", completed: false, check: () => crystals >= 500, rewardGiven: () => crystals += 50 },
+            ach3: { title: "Crystal Hoarder", desc: "Reach 5,000 crystals", reward: "+200 Crystals", icon: "✨", completed: false, check: () => crystals >= 5000, rewardGiven: () => crystals += 200 },
+            ach4: { title: "Crystal Millionaire", desc: "Reach 1,000,000 crystals", reward: "+10,000 Crystals", icon: "🌟", completed: false, check: () => crystals >= 1000000, rewardGiven: () => crystals += 10000 },
+            ach5: { title: "Tool Up", desc: "Buy 10 total pickaxes", reward: "+50 Crystals", icon: "🛠️", completed: false, check: () => getTotalPickaxes() >= 10, rewardGiven: () => crystals += 50 },
+            ach6: { title: "Industrial Mining", desc: "Buy 50 total pickaxes", reward: "+1,000 Crystals", icon: "🏭", completed: false, check: () => getTotalPickaxes() >= 50, rewardGiven: () => crystals += 1000 },
+            ach7: { title: "First Ascension", desc: "Perform your first Ascend", reward: "+500 Crystals", icon: "🌌", completed: false, check: () => prestigeCount >= 1, rewardGiven: () => crystals += 500 }
+        };
+
+        // Quests
+        const quests = {
+            q1: { title: "Quick Hands", desc: "Click 50 times in a session", reward: "+100 Crystals", completed: false, check: () => totalClicks >= (window.sessionClicks || 0) + 50, rewardGiven: () => crystals += 100 }
+        };
+
+        const SECRET_SALT = "CrystalClickerUltimate2026!";
+        function generateSignature(text) {
             let hash = 0;
-            const combined = dataText + SECRET_SALT;
+            const combined = text + SECRET_SALT;
             for (let i = 0; i < combined.length; i++) {
                 hash = (hash << 5) - hash + combined.charCodeAt(i);
                 hash |= 0;
@@ -427,66 +537,111 @@
             return hash.toString(36);
         }
 
-        // Build shop UI dynamically
-        const shopPanel = document.getElementById('shopContent');
-        Object.keys(upgrades).forEach(key => {
-            const item = upgrades[key];
-            const div = document.createElement('div');
-            div.className = 'shop-item';
-            div.innerHTML = `
-                <div class="item-info">
-                    <div>${item.name}</div>
-                    <div id="${key}Cost">Cost: ${formatNum(item.cost)}</div>
-                </div>
-                <button id="buy${key.charAt(0).toUpperCase() + key.slice(1)}" onclick="buyUpgrade('${key}')">Buy (<span id="${key}Qty">0</span>)</button>
-            `;
-            shopPanel.appendChild(div);
-        });
+        // Build UI Panels
+        function buildUI() {
+            // Shop
+            const shop = document.getElementById('shopContent');
+            Object.keys(upgrades).forEach(key => {
+                const item = upgrades[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${item.name}</div><div id="${key}Cost">Cost: ${formatNum(item.cost)}</div></div><button id="buy${key}" onclick="buyUpgrade('${key}')">Buy (<span id="${key}Qty">0</span>)</button>`;
+                shop.appendChild(div);
+            });
 
-        // Build achievements UI list dynamically
-        const achPanel = document.getElementById('achievementsContent');
-        Object.keys(achievements).forEach(key => {
-            const ach = achievements[key];
-            const div = document.createElement('div');
-            div.className = 'achievement-card';
-            div.id = `card_${key}`;
-            div.innerHTML = `
-                <div class="achievement-img" id="icon_${key}">${ach.icon}</div>
-                <div class="achievement-details">
-                    <div class="achievement-title">${ach.title}</div>
-                    <div class="achievement-desc">${ach.desc}</div>
-                    <div class="achievement-reward">Reward: ${ach.reward}</div>
-                </div>
-            `;
-            achPanel.appendChild(div);
-        });
+            // Clicks
+            const clickPanel = document.getElementById('clicksContent');
+            Object.keys(clickUpgrades).forEach(key => {
+                const item = clickUpgrades[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${item.name} (${item.mult}x)</div><div>Cost: ${formatNum(item.cost)}</div></div><button id="buyClick_${key}" onclick="buyClickUpgrade('${key}')">Unlock</button>`;
+                clickPanel.appendChild(div);
+            });
 
-        if (localStorage.getItem('crystalClickerSave')) {
+            // Achievements
+            const achPanel = document.getElementById('achievementsContent');
+            Object.keys(achievements).forEach(key => {
+                const ach = achievements[key];
+                const div = document.createElement('div');
+                div.className = 'card-item';
+                div.id = `card_${key}`;
+                div.innerHTML = `<div class="card-icon">${ach.icon}</div><div class="card-details"><div class="card-title">${ach.title}</div><div class="card-desc">${ach.desc}</div><div class="card-reward">Reward: ${ach.reward}</div></div>`;
+                achPanel.appendChild(div);
+            });
+
+            // Quests
+            const questPanel = document.getElementById('questsContent');
+            Object.keys(quests).forEach(key => {
+                const q = quests[key];
+                const div = document.createElement('div');
+                div.className = 'card-item';
+                div.id = `quest_${key}`;
+                div.innerHTML = `<div class="card-icon">🎯</div><div class="card-details"><div class="card-title">${q.title}</div><div class="card-desc">${q.desc}</div><div class="card-reward">Reward: ${q.reward}</div></div>`;
+                questPanel.appendChild(div);
+            });
+
+            // Artifacts
+            const artPanel = document.getElementById('artifactsContent');
+            Object.keys(artifacts).forEach(key => {
+                const art = artifacts[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${art.name} (Lvl <span id="${key}Lvl">0</span>/${art.max})</div><div>${art.desc}</div><div>Cost: <span id="${key}Cost">${art.cost}</span> Shards</div></div><button onclick="buyArtifact('${key}')">Upgrade</button>`;
+                artPanel.appendChild(div);
+            });
+
+            // Skins
+            const skinPanel = document.getElementById('skinsContent');
+            ['default', 'ruby', 'sapphire', 'emerald', 'gold-theme'].forEach(skin => {
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${skin.toUpperCase()} Skin</div></div><button onclick="setSkin('${skin}')">Select</button>`;
+                skinPanel.appendChild(div);
+            });
+
+            // Stats
+            const statsPanel = document.getElementById('statsContent');
+            statsPanel.innerHTML = `<div class="stats-grid">
+                <div class="stat-box"><div class="stat-lbl">Lifetime Mined</div><div class="stat-val" id="statLifetime">0</div></div>
+                <div class="stat-box"><div class="stat-lbl">Total Clicks</div><div class="stat-val" id="statClicks">0</div></div>
+                <div class="stat-box"><div class="stat-lbl">Time Played</div><div class="stat-val" id="statTime">0s</div></div>
+                <div class="stat-box"><div class="stat-lbl">Ascensions</div><div class="stat-val" id="statAscend">0</div></div>
+            </div>`;
+        }
+        buildUI();
+
+        // Load Save & Offline Progression
+        if (localStorage.getItem('crystalClickerUltimateSave')) {
             try {
-                const savedEnvelope = JSON.parse(localStorage.getItem('crystalClickerSave'));
-                const expectedSignature = generateSignature(JSON.stringify(savedEnvelope.data));
-                if (savedEnvelope.signature === expectedSignature) {
-                    const data = savedEnvelope.data;
-                    crystals = Number(data.crystals || 0);
-                    prestigeCount = data.prestigeCount || 0;
-                    Object.keys(upgrades).forEach(key => {
-                        if (data.upgrades && data.upgrades[key]) {
-                            upgrades[key].qty = data.upgrades[key].qty;
-                            upgrades[key].cost = BigInt(data.upgrades[key].cost);
+                const save = JSON.parse(localStorage.getItem('crystalClickerUltimateSave'));
+                if (save.signature === generateSignature(JSON.stringify(save.data))) {
+                    const d = save.data;
+                    crystals = d.crystals || 0;
+                    lifetimeCrystals = d.lifetimeCrystals || 0;
+                    shards = d.shards || 0;
+                    prestigeCount = d.prestigeCount || 0;
+                    totalClicks = d.totalClicks || 0;
+                    timePlayed = d.timePlayed || 0;
+                    currentSkin = d.currentSkin || 'default';
+                    setSkin(currentSkin, false);
+
+                    if (d.upgrades) Object.keys(d.upgrades).forEach(k => { upgrades[k].qty = d.upgrades[k].qty; upgrades[k].cost = BigInt(d.upgrades[k].cost); });
+                    if (d.clickUpgrades) Object.keys(d.clickUpgrades).forEach(k => { clickUpgrades[k].purchased = d.clickUpgrades[k]; });
+                    if (d.artifacts) Object.keys(d.artifacts).forEach(k => { artifacts[k].level = d.artifacts[k]; });
+
+                    // Offline progression simulation
+                    if (d.lastTimestamp) {
+                        const offlineSeconds = (Date.now() - d.lastTimestamp) / 1000;
+                        if (offlineSeconds > 10) {
+                            const earned = getCps() * offlineSeconds * 0.5; // 50% efficiency offline
+                            crystals += earned;
+                            lifetimeCrystals += earned;
+                            setTimeout(() => alert(`Welcome back! While you were away, your pickaxes mined ${formatNum(earned)} crystals.`), 500);
                         }
-                    });
-                    if (data.achievements) {
-                        Object.keys(data.achievements).forEach(key => {
-                            if (achievements[key]) achievements[key].completed = data.achievements[key];
-                        });
                     }
-                } else {
-                    alert("Cheating detected! Your save data has been reset.");
-                    localStorage.removeItem('crystalClickerSave');
                 }
-            } catch (e) {
-                console.error("Failed to load save file safely.");
-            }
+            } catch (e) { console.error("Save load error"); }
         }
 
         const crystalBtn = document.getElementById('crystalBtn');
@@ -494,11 +649,27 @@
 
         crystalBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            const isCrit = Math.random() < 0.01;
-            const mult = prestigeCount > 0 ? (1.5 + (prestigeCount - 1) * 0.5) : 1;
-            const clickPower = (isCrit ? 5 : 1) * mult;
-            crystals += clickPower;
-            createFloatingText(e.clientX, e.clientY, isCrit ? `+${clickPower.toFixed(1)} CRIT!` : `+${mult.toFixed(1)}`, isCrit);
+            totalClicks++;
+            playSound('click');
+
+            let clickMultiplier = 1;
+            Object.keys(clickUpgrades).forEach(k => { if (clickUpgrades[k].purchased) clickMultiplier *= clickUpgrades[k].mult; });
+            
+            const isCrit = Math.random() < 0.05;
+            let gain = (isCrit ? 5 : 1) * clickMultiplier * (shrineActive ? shrineMultiplier : 1);
+            if (isFeverActive) gain *= 3;
+
+            crystals += gain;
+            lifetimeCrystals += gain;
+
+            comboMeter = Math.min(100, comboMeter + 10);
+            feverMeter = Math.min(100, feverMeter + (artifacts.art3.level > 0 ? 3 : 2));
+            if (feverMeter >= 100 && !isFeverActive) {
+                isFeverActive = true;
+                feverTimer = 10; // 10 seconds of fever
+            }
+
+            createFloatingText(e.clientX, e.clientY, isCrit ? `+${formatNum(gain)} CRIT!` : `+${formatNum(gain)}`, isCrit);
             checkAchievements();
             updateUI();
         });
@@ -509,59 +680,81 @@
                 crystals -= Number(item.cost);
                 item.qty++;
                 let nextCost = item.baseCost;
-                for(let i=0; i<item.qty; i++) {
-                    nextCost = (nextCost * 115n) / 100n;
-                }
+                for (let i = 0; i < item.qty; i++) nextCost = (nextCost * 115n) / 100n;
                 item.cost = nextCost;
+                playSound('buy');
                 checkAchievements();
                 updateUI();
             }
         }
 
+        function buyClickUpgrade(type) {
+            const item = clickUpgrades[type];
+            if (!item.purchased && crystals >= item.cost) {
+                crystals -= item.cost;
+                item.purchased = true;
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function buyArtifact(type) {
+            const art = artifacts[type];
+            if (shards >= art.cost && art.level < art.max) {
+                shards -= art.cost;
+                art.level++;
+                art.cost = Math.floor(art.cost * 1.5);
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function setSkin(skin, playSnd = true) {
+            currentSkin = skin;
+            crystalBtn.className = 'crystal ' + (skin === 'default' ? '' : skin);
+            if (playSnd) playSound('click');
+        }
+
         function getTotalPickaxes() {
             let total = 0;
-            Object.keys(upgrades).forEach(key => total += upgrades[key].qty);
+            Object.keys(upgrades).forEach(k => total += upgrades[k].qty);
             return total;
         }
 
         function getCps() {
-            let totalCps = 0;
-            Object.keys(upgrades).forEach(key => {
-                totalCps += upgrades[key].qty * Number(upgrades[key].cps);
+            let total = 0;
+            Object.keys(upgrades).forEach(k => {
+                let qty = upgrades[k].qty;
+                let mult = 1;
+                if (qty >= 100) mult = 4;
+                else if (qty >= 50) mult = 2.5;
+                else if (qty >= 25) mult = 1.5;
+                total += qty * Number(upgrades[k].cps) * mult;
             });
-            const mult = prestigeCount > 0 ? (1.5 + (prestigeCount - 1) * 0.5) : 1;
-            return totalCps * mult;
+            total *= (1 + artifacts.art2.level * 0.15);
+            if (shrineActive) total *= shrineMultiplier;
+            return total;
         }
 
         function triggerPrestige() {
             if (crystals < 1000000) return;
+            const earnedShards = Math.floor(Math.sqrt(crystals / 1000000) * (1 + artifacts.art1.level * 0.1));
+            shards += earnedShards;
             prestigeCount++;
-            crystals = prestigeCount * 100;
-            Object.keys(upgrades).forEach(key => {
-                upgrades[key].qty = 0;
-                upgrades[key].cost = upgrades[key].baseCost;
-            });
+            crystals = 0;
+            Object.keys(upgrades).forEach(k => { upgrades[k].qty = 0; upgrades[k].cost = upgrades[k].baseCost; });
+            playSound('unlock');
             checkAchievements();
             updateUI();
         }
 
         function switchTab(tab) {
-            const shopBtn = document.getElementById('shopTabBtn');
-            const achBtn = document.getElementById('achievementsTabBtn');
-            const shopCont = document.getElementById('shopContent');
-            const achCont = document.getElementById('achievementsContent');
-
-            if (tab === 'shop') {
-                shopBtn.classList.add('active');
-                achBtn.classList.remove('active');
-                shopCont.classList.remove('hidden');
-                achCont.classList.add('hidden');
-            } else {
-                achBtn.classList.add('active');
-                shopBtn.classList.remove('active');
-                achCont.classList.remove('hidden');
-                shopCont.classList.add('hidden');
-            }
+            ['shopContent', 'clicksContent', 'achievementsContent', 'questsContent', 'artifactsContent', 'statsContent', 'skinsContent'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.querySelectorAll('.nav-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Content').classList.remove('hidden');
         }
 
         function checkAchievements() {
@@ -570,8 +763,17 @@
                 if (!ach.completed && ach.check()) {
                     ach.completed = true;
                     ach.rewardGiven();
-                    const card = document.getElementById(`card_${key}`);
-                    if (card) card.classList.add('completed');
+                    playSound('unlock');
+                    document.getElementById(`card_${key}`).classList.add('completed');
+                }
+            });
+            Object.keys(quests).forEach(key => {
+                const q = quests[key];
+                if (!q.completed && q.check()) {
+                    q.completed = true;
+                    q.rewardGiven();
+                    playSound('unlock');
+                    document.getElementById(`quest_${key}`).classList.add('completed');
                 }
             });
         }
@@ -596,83 +798,94 @@
             setTimeout(() => text.remove(), 800);
         }
 
-        function spawnBonusCrystal() {
-            const bonus = document.createElement('div');
-            bonus.className = 'bonus-crystal';
-            bonus.style.top = Math.random() * 60 + 20 + '%';
-            bonus.style.left = Math.random() * 60 + 20 + '%';
-            
-            bonus.addEventListener('pointerdown', (e) => {
-                e.stopPropagation();
-                const reward = Math.max(50, Math.floor(getCps() * 15));
-                crystals += reward;
-                createFloatingText(e.clientX, e.clientY, `+${reward} BONUS!`, true);
-                checkAchievements();
-                bonus.remove();
-                updateUI();
-            });
-
-            crystalContainer.appendChild(bonus);
-            setTimeout(() => {
-                if (bonus.parentElement) bonus.remove();
-            }, 8000);
-        }
-
+        // Random Shrine Events
         setInterval(() => {
-            if (Math.random() < 0.25) {
-                spawnBonusCrystal();
+            if (!shrineActive && Math.random() < 0.2) {
+                shrineActive = true;
+                shrineMultiplier = 2;
+                const shrine = document.createElement('div');
+                shrine.className = 'shrine-obj';
+                shrine.style.top = Math.random() * 50 + 20 + '%';
+                shrine.style.left = Math.random() * 50 + 20 + '%';
+                shrine.onclick = () => {
+                    crystals += getCps() * 30;
+                    shrine.remove();
+                };
+                crystalContainer.appendChild(shrine);
+                setTimeout(() => { if (shrine.parentElement) shrine.remove(); shrineActive = false; }, 6000);
             }
-        }, 10000);
+        }, 15000);
 
         function updateUI() {
             document.getElementById('crystalCount').innerText = formatNum(crystals) + " Crystals";
             document.getElementById('cpsCount').innerText = "per second: " + formatNum(getCps());
-            
-            const prestigeBtn = document.getElementById('prestigeBtn');
-            prestigeBtn.disabled = crystals < 1000000;
-            const nextMult = prestigeCount === 0 ? 1.5 : (1.5 + prestigeCount * 0.5);
-            const nextBonus = (prestigeCount + 1) * 100;
-            prestigeBtn.innerText = `Prestige (${nextMult}x, +${nextBonus} start)`;
+            document.getElementById('shardsCount').innerText = shards;
 
-            Object.keys(upgrades).forEach(key => {
-                document.getElementById(key + 'Cost').innerText = "Cost: " + formatNum(upgrades[key].cost);
-                document.getElementById(key + 'Qty').innerText = upgrades[key].qty;
-                const btn = document.getElementById('buy' + key.charAt(0).toUpperCase() + key.slice(1));
-                if (btn) btn.disabled = crystals < Number(upgrades[key].cost);
+            // Meters
+            document.getElementById('comboText').innerText = comboMeter + '%';
+            document.getElementById('comboFill').style.width = comboMeter + '%';
+            document.getElementById('feverText').innerText = isFeverActive ? `FEVER! (${Math.ceil(feverTimer)}s)` : feverMeter + '%';
+            document.getElementById('feverFill').style.width = feverMeter + '%';
+
+            // Stats tab update
+            if (document.getElementById('statLifetime')) {
+                document.getElementById('statLifetime').innerText = formatNum(lifetimeCrystals);
+                document.getElementById('statClicks').innerText = totalClicks;
+                document.getElementById('statTime').innerText = timePlayed + 's';
+                document.getElementById('statAscend').innerText = prestigeCount;
+            }
+
+            Object.keys(upgrades).forEach(k => {
+                document.getElementById(k + 'Cost').innerText = "Cost: " + formatNum(upgrades[k].cost);
+                document.getElementById(k + 'Qty').innerText = upgrades[k].qty;
+                document.getElementById('buy' + k).disabled = crystals < Number(upgrades[k].cost);
             });
 
-            // Update achievement cards visual statuses
-            Object.keys(achievements).forEach(key => {
-                const ach = achievements[key];
-                const card = document.getElementById(`card_${key}`);
-                if (card && ach.completed) {
-                    card.classList.add('completed');
+            Object.keys(clickUpgrades).forEach(k => {
+                const btn = document.getElementById('buyClick_' + k);
+                if (clickUpgrades[k].purchased) {
+                    btn.innerText = "Owned";
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = crystals < clickUpgrades[k].cost;
                 }
+            });
+
+            Object.keys(artifacts).forEach(k => {
+                document.getElementById(k + 'Lvl').innerText = artifacts[k].level;
+                document.getElementById(k + 'Cost').innerText = artifacts[k].cost;
             });
         }
 
+        // Main game loops
         setInterval(() => {
             crystals += getCps() / 10;
+            lifetimeCrystals += getCps() / 10;
+            timePlayed++;
+
+            if (comboMeter > 0) comboMeter = Math.max(0, comboMeter - 2);
+            if (isFeverActive) {
+                feverTimer -= 0.1;
+                if (feverTimer <= 0) { isFeverActive = false; feverMeter = 0; }
+            }
+
             checkAchievements();
             updateUI();
         }, 100);
 
+        // Auto Save
         setInterval(() => {
-            const rawUpgrades = {};
-            Object.keys(upgrades).forEach(k => {
-                rawUpgrades[k] = { qty: upgrades[k].qty, cost: upgrades[k].cost.toString() };
-            });
-            const rawAchievements = {};
-            Object.keys(achievements).forEach(k => {
-                rawAchievements[k] = achievements[k].completed;
-            });
-            const rawData = { crystals: crystals, prestigeCount: prestigeCount, upgrades: rawUpgrades, achievements: rawAchievements };
-            const dataString = JSON.stringify(rawData);
-            const secureEnvelope = {
-                data: rawData,
-                signature: generateSignature(dataString)
+            const saveObj = {
+                data: {
+                    crystals, lifetimeCrystals, shards, prestigeCount, totalClicks, timePlayed, currentSkin,
+                    upgrades: Object.fromEntries(Object.keys(upgrades).map(k => [k, { qty: upgrades[k].qty, cost: upgrades[k].cost.toString() }])),
+                    clickUpgrades: Object.fromEntries(Object.keys(clickUpgrades).map(k => [k, clickUpgrades[k].purchased])),
+                    artifacts: Object.fromEntries(Object.keys(artifacts).map(k => [k, artifacts[k].level])),
+                    lastTimestamp: Date.now()
+                }
             };
-            localStorage.setItem('crystalClickerSave', JSON.stringify(secureEnvelope));
+            saveObj.signature = generateSignature(JSON.stringify(saveObj.data));
+            localStorage.setItem('crystalClickerUltimateSave', JSON.stringify(saveObj));
         }, 10000);
 
         updateUI();
