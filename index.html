@@ -59,7 +59,13 @@
             font-size: 11px;
             cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 0, 119, 0.4);
-            display: none;
+            display: inline-block;
+        }
+        .prestige-btn:disabled {
+            background: #231e3d;
+            color: #5c5280;
+            cursor: not-allowed;
+            box-shadow: none;
         }
         .main-layout {
             flex: 1;
@@ -115,23 +121,33 @@
         .crystal:active {
             transform: scale(0.92) rotate(3deg);
         }
-        /* Floating Bonus Crystal */
+        /* Visible Black/Gray Floating Bonus Crystal */
         .bonus-crystal {
             position: absolute;
-            width: 50px;
-            height: 60px;
-            background: linear-gradient(135deg, #fff000 0%, #ff7700 100%);
+            width: 55px;
+            height: 70px;
+            background: linear-gradient(135deg, #777777 0%, #222222 50%, #000000 100%);
             clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
             cursor: pointer;
-            filter: drop-shadow(0 0 15px rgba(255, 240, 0, 0.9));
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.5));
             z-index: 5;
-            animation: driftAcross 6s linear forwards;
+            animation: driftAcross 8s linear forwards;
+        }
+        .bonus-crystal::after {
+            content: '';
+            position: absolute;
+            top: 5%; left: 5%;
+            width: 90%; height: 90%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.6) 100%);
+            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
+            pointer-events: none;
         }
         @keyframes driftAcross {
-            0% { transform: translate(-150px, 100px) scale(0.5); opacity: 0; }
-            15% { opacity: 1; transform: translate(0, -50px) scale(1); }
+            0% { transform: translate(-150px, 120px) scale(0.5); opacity: 0; }
+            15% { opacity: 1; transform: translate(0, -60px) scale(1.1); }
             85% { opacity: 1; }
-            100% { transform: translate(250px, 120px) scale(0.8); opacity: 0; }
+            100% { transform: translate(280px, 140px) scale(0.8); opacity: 0; }
         }
 
         .shop-panel {
@@ -227,7 +243,7 @@
         <h1 id="crystalCount">0 Crystals</h1>
         <div class="sub-header">
             <div class="cps" id="cpsCount">per second: 0</div>
-            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Resonance (0 pts)</button>
+            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Resonance (Req: 1M)</button>
         </div>
     </div>
     
@@ -243,7 +259,7 @@
 
     <script>
         let crystals = 0;
-        let prestigeTokens = 0;
+        let prestigeCount = 0;
         
         const upgrades = {
             pickaxe1:  { name: "Copper Pickaxe", qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
@@ -308,7 +324,7 @@
                 if (savedEnvelope.signature === expectedSignature) {
                     const data = savedEnvelope.data;
                     crystals = data.crystals || 0;
-                    prestigeTokens = data.prestigeTokens || 0;
+                    prestigeCount = data.prestigeCount || 0;
                     Object.keys(upgrades).forEach(key => {
                         if (data.upgrades && data.upgrades[key]) {
                             upgrades[key].qty = data.upgrades[key].qty;
@@ -327,13 +343,14 @@
         const crystalBtn = document.getElementById('crystalBtn');
         const crystalContainer = document.getElementById('crystalContainer');
 
-        // Manual Click Handler with Critical Hit chance (5%)
+        // Manual Click Handler with Reduced Critical Hit chance (1%)
         crystalBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            const isCrit = Math.random() < 0.05;
-            const clickPower = (isCrit ? 5 : 1) * (1 + prestigeTokens * 0.1);
+            const isCrit = Math.random() < 0.01;
+            const mult = prestigeCount > 0 ? (1.5 + (prestigeCount - 1) * 0.5) : 1;
+            const clickPower = (isCrit ? 5 : 1) * mult;
             crystals += clickPower;
-            createFloatingText(e.clientX, e.clientY, isCrit ? `+${clickPower} CRIT!` : `+1`, isCrit);
+            createFloatingText(e.clientX, e.clientY, isCrit ? `+${clickPower.toFixed(1)} CRIT!` : `+${mult.toFixed(1)}`, isCrit);
             updateUI();
         });
 
@@ -352,15 +369,14 @@
             Object.keys(upgrades).forEach(key => {
                 totalCps += upgrades[key].qty * upgrades[key].cps;
             });
-            // Apply prestige multiplier (+10% per token)
-            return totalCps * (1 + prestigeTokens * 0.1);
+            const mult = prestigeCount > 0 ? (1.5 + (prestigeCount - 1) * 0.5) : 1;
+            return totalCps * mult;
         }
 
         function triggerPrestige() {
             if (crystals < 1000000) return;
-            const earnedTokens = Math.floor(Math.sqrt(crystals / 1000000));
-            prestigeTokens += earnedTokens;
-            crystals = 0;
+            prestigeCount++;
+            crystals = prestigeCount * 100; // 100 on 1st prestige, 200 on 2nd, etc.
             Object.keys(upgrades).forEach(key => {
                 upgrades[key].qty = 0;
                 upgrades[key].cost = upgrades[key].baseCost;
@@ -379,7 +395,7 @@
             setTimeout(() => text.remove(), 800);
         }
 
-        // Spawn bonus drifting crystal randomly
+        // Spawn bonus drifting crystal randomly (Visible Black/Gray crystal style)
         function spawnBonusCrystal() {
             const bonus = document.createElement('div');
             bonus.className = 'bonus-crystal';
@@ -398,7 +414,7 @@
             crystalContainer.appendChild(bonus);
             setTimeout(() => {
                 if (bonus.parentElement) bonus.remove();
-            }, 6000);
+            }, 8000);
         }
 
         setInterval(() => {
@@ -412,11 +428,10 @@
             document.getElementById('cpsCount').innerText = "per second: " + getCps().toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
             
             const prestigeBtn = document.getElementById('prestigeBtn');
-            if (crystals >= 1000000 || prestigeTokens > 0) {
-                prestigeBtn.style.display = "inline-block";
-                const potentialTokens = Math.floor(Math.sqrt(crystals / 1000000));
-                prestigeBtn.innerText = `Resonance (+${Math.max(1, potentialTokens)} pts)`;
-            }
+            prestigeBtn.disabled = crystals < 1000000;
+            const nextMult = prestigeCount === 0 ? 1.5 : (1.5 + prestigeCount * 0.5);
+            const nextBonus = (prestigeCount + 1) * 100;
+            prestigeBtn.innerText = `Resonance (${nextMult}x, +${nextBonus} start)`;
 
             Object.keys(upgrades).forEach(key => {
                 document.getElementById(key + 'Cost').innerText = "Cost: " + upgrades[key].cost.toLocaleString();
@@ -432,7 +447,7 @@
         }, 100);
 
         setInterval(() => {
-            const rawData = { crystals: crystals, prestigeTokens: prestigeTokens, upgrades: upgrades };
+            const rawData = { crystals: crystals, prestigeCount: prestigeCount, upgrades: upgrades };
             const dataString = JSON.stringify(rawData);
             const secureEnvelope = {
                 data: rawData,
@@ -445,4 +460,3 @@
     </script>
 </body>
 </html>
-       
