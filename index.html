@@ -24,22 +24,42 @@
             width: 100%;
             background: #110d21;
             border-bottom: 2px solid #21193d;
-            padding: 15px 0;
+            padding: 12px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
         h1 {
-            font-size: 30px;
-            margin: 0 0 4px 0;
+            font-size: 28px;
+            margin: 0;
             color: #00f0ff;
             text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
             letter-spacing: 0.5px;
         }
-        .cps {
+        .sub-header {
+            display: flex;
+            gap: 15px;
+            align-items: center;
             font-size: 14px;
+        }
+        .cps {
             color: #9d8ec4;
-            letter-spacing: 0.5px;
+        }
+        .prestige-btn {
+            background: linear-gradient(135deg, #ff0077 0%, #7000ff 100%);
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 0, 119, 0.4);
+            display: none;
         }
         .main-layout {
             flex: 1;
@@ -60,6 +80,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            overflow: hidden;
         }
         .crystal {
             width: 130px;
@@ -70,6 +91,7 @@
             cursor: pointer;
             transition: transform 0.05s ease;
             position: relative;
+            z-index: 2;
         }
         .crystal::after {
             content: '';
@@ -93,6 +115,25 @@
         .crystal:active {
             transform: scale(0.92) rotate(3deg);
         }
+        /* Floating Bonus Crystal */
+        .bonus-crystal {
+            position: absolute;
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(135deg, #fff000 0%, #ff7700 100%);
+            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
+            cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(255, 240, 0, 0.9));
+            z-index: 5;
+            animation: driftAcross 6s linear forwards;
+        }
+        @keyframes driftAcross {
+            0% { transform: translate(-150px, 100px) scale(0.5); opacity: 0; }
+            15% { opacity: 1; transform: translate(0, -50px) scale(1); }
+            85% { opacity: 1; }
+            100% { transform: translate(250px, 120px) scale(0.8); opacity: 0; }
+        }
+
         .shop-panel {
             width: 360px;
             background: #0d0b18;
@@ -168,6 +209,12 @@
             pointer-events: none;
             text-shadow: 0 0 8px #ff00ff;
             animation: floatUp 0.8s ease-out forwards;
+            z-index: 10;
+        }
+        .floating-text.crit {
+            color: #ffea00;
+            font-size: 28px;
+            text-shadow: 0 0 12px #ff0000;
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
@@ -178,7 +225,10 @@
 <body>
     <div class="header-panel">
         <h1 id="crystalCount">0 Crystals</h1>
-        <div class="cps" id="cpsCount">per second: 0</div>
+        <div class="sub-header">
+            <div class="cps" id="cpsCount">per second: 0</div>
+            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Resonance (0 pts)</button>
+        </div>
     </div>
     
     <div class="main-layout">
@@ -187,12 +237,13 @@
         </div>
         
         <div class="shop-panel" id="shopPanel">
-            <!-- Dynamically populated shop items for 10 tiers -->
+            <!-- Dynamically populated shop items -->
         </div>
     </div>
 
     <script>
         let crystals = 0;
+        let prestigeTokens = 0;
         
         const upgrades = {
             pickaxe1:  { name: "Copper Pickaxe", qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
@@ -204,7 +255,22 @@
             pickaxe7:  { name: "Gold Pickaxe", qty: 0, cost: 1100000, baseCost: 1100000, cps: 7800 },
             pickaxe8:  { name: "Platinum Pickaxe", qty: 0, cost: 6500000, baseCost: 6500000, cps: 44000 },
             pickaxe9:  { name: "Titanium Pickaxe", qty: 0, cost: 38000000, baseCost: 38000000, cps: 260000 },
-            pickaxe10: { name: "Quantum Pickaxe", qty: 0, cost: 220000000, baseCost: 220000000, cps: 1500000 }
+            pickaxe10: { name: "Quantum Pickaxe", qty: 0, cost: 220000000, baseCost: 220000000, cps: 1500000 },
+            pickaxe11: { name: "Plasma Pickaxe", qty: 0, cost: 1300000000, baseCost: 1300000000, cps: 9000000 },
+            pickaxe12: { name: "Void Pickaxe", qty: 0, cost: 7500000000, baseCost: 7500000000, cps: 52000000 },
+            pickaxe13: { name: "Nebula Pickaxe", qty: 0, cost: 44000000000, baseCost: 44000000000, cps: 310000000 },
+            pickaxe14: { name: "Supernova Pickaxe", qty: 0, cost: 260000000000, baseCost: 260000000000, cps: 1800000000 },
+            pickaxe15: { name: "Singularity Pickaxe", qty: 0, cost: 1500000000000, baseCost: 1500000000000, cps: 11000000000 },
+            pickaxe16: { name: "Dark Matter Pickaxe", qty: 0, cost: 9000000000000, baseCost: 9000000000000, cps: 65000000000 },
+            pickaxe17: { name: "Antimatter Pickaxe", qty: 0, cost: 54000000000000, baseCost: 54000000000000, cps: 390000000000 },
+            pickaxe18: { name: "Aether Pickaxe", qty: 0, cost: 320000000000000, baseCost: 320000000000000, cps: 2300000000000 },
+            pickaxe19: { name: "Chronos Pickaxe", qty: 0, cost: 1900000000000000, baseCost: 1900000000000000, cps: 14000000000000 },
+            pickaxe20: { name: "Cosmic Pickaxe", qty: 0, cost: 11500000000000000, baseCost: 11500000000000000, cps: 85000000000000 },
+            pickaxe21: { name: "Dimension Pickaxe", qty: 0, cost: 70000000000000000, baseCost: 70000000000000000, cps: 520000000000000 },
+            pickaxe22: { name: "Infinity Pickaxe", qty: 0, cost: 420000000000000000, baseCost: 420000000000000000, cps: 3200000000000000 },
+            pickaxe23: { name: "Eternity Pickaxe", qty: 0, cost: 2600000000000000000, baseCost: 2600000000000000000, cps: 20000000000000000 },
+            pickaxe24: { name: "Godhood Pickaxe", qty: 0, cost: 16000000000000000000, baseCost: 16000000000000000000, cps: 125000000000000000 },
+            pickaxe25: { name: "Omni Pickaxe", qty: 0, cost: 100000000000000000000, baseCost: 100000000000000000000, cps: 800000000000000000 }
         };
 
         const SECRET_SALT = "MySuperSecretCrystalKey123!";
@@ -219,7 +285,7 @@
             return hash.toString(36);
         }
 
-        // Build shop UI dynamically for 10 items
+        // Build shop UI dynamically for all 25 tiers
         const shopPanel = document.getElementById('shopPanel');
         Object.keys(upgrades).forEach(key => {
             const item = upgrades[key];
@@ -242,6 +308,7 @@
                 if (savedEnvelope.signature === expectedSignature) {
                     const data = savedEnvelope.data;
                     crystals = data.crystals || 0;
+                    prestigeTokens = data.prestigeTokens || 0;
                     Object.keys(upgrades).forEach(key => {
                         if (data.upgrades && data.upgrades[key]) {
                             upgrades[key].qty = data.upgrades[key].qty;
@@ -260,10 +327,13 @@
         const crystalBtn = document.getElementById('crystalBtn');
         const crystalContainer = document.getElementById('crystalContainer');
 
+        // Manual Click Handler with Critical Hit chance (5%)
         crystalBtn.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            crystals += 1;
-            createFloatingText(e.clientX, e.clientY);
+            const isCrit = Math.random() < 0.05;
+            const clickPower = (isCrit ? 5 : 1) * (1 + prestigeTokens * 0.1);
+            crystals += clickPower;
+            createFloatingText(e.clientX, e.clientY, isCrit ? `+${clickPower} CRIT!` : `+1`, isCrit);
             updateUI();
         });
 
@@ -282,13 +352,26 @@
             Object.keys(upgrades).forEach(key => {
                 totalCps += upgrades[key].qty * upgrades[key].cps;
             });
-            return totalCps;
+            // Apply prestige multiplier (+10% per token)
+            return totalCps * (1 + prestigeTokens * 0.1);
         }
 
-        function createFloatingText(x, y) {
+        function triggerPrestige() {
+            if (crystals < 1000000) return;
+            const earnedTokens = Math.floor(Math.sqrt(crystals / 1000000));
+            prestigeTokens += earnedTokens;
+            crystals = 0;
+            Object.keys(upgrades).forEach(key => {
+                upgrades[key].qty = 0;
+                upgrades[key].cost = upgrades[key].baseCost;
+            });
+            updateUI();
+        }
+
+        function createFloatingText(x, y, textVal, isCrit = false) {
             const text = document.createElement('div');
-            text.className = 'floating-text';
-            text.innerText = '+1';
+            text.className = isCrit ? 'floating-text crit' : 'floating-text';
+            text.innerText = textVal;
             const rect = crystalContainer.getBoundingClientRect();
             text.style.left = (x ? x : rect.left + rect.width / 2) + 'px';
             text.style.top = (y ? y : rect.top + rect.height / 2) + 'px';
@@ -296,11 +379,47 @@
             setTimeout(() => text.remove(), 800);
         }
 
+        // Spawn bonus drifting crystal randomly
+        function spawnBonusCrystal() {
+            const bonus = document.createElement('div');
+            bonus.className = 'bonus-crystal';
+            bonus.style.top = Math.random() * 60 + 20 + '%';
+            bonus.style.left = Math.random() * 60 + 20 + '%';
+            
+            bonus.addEventListener('pointerdown', (e) => {
+                e.stopPropagation();
+                const reward = Math.max(50, Math.floor(getCps() * 15));
+                crystals += reward;
+                createFloatingText(e.clientX, e.clientY, `+${reward} BONUS!`, true);
+                bonus.remove();
+                updateUI();
+            });
+
+            crystalContainer.appendChild(bonus);
+            setTimeout(() => {
+                if (bonus.parentElement) bonus.remove();
+            }, 6000);
+        }
+
+        setInterval(() => {
+            if (Math.random() < 0.25) { // ~Every 20-40 sec average check
+                spawnBonusCrystal();
+            }
+        }, 10000);
+
         function updateUI() {
-            document.getElementById('crystalCount').innerText = Math.floor(crystals) + " Crystals";
-            document.getElementById('cpsCount').innerText = "per second: " + getCps().toFixed(1);
+            document.getElementById('crystalCount').innerText = Math.floor(crystals).toLocaleString() + " Crystals";
+            document.getElementById('cpsCount').innerText = "per second: " + getCps().toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
+            
+            const prestigeBtn = document.getElementById('prestigeBtn');
+            if (crystals >= 1000000 || prestigeTokens > 0) {
+                prestigeBtn.style.display = "inline-block";
+                const potentialTokens = Math.floor(Math.sqrt(crystals / 1000000));
+                prestigeBtn.innerText = `Resonance (+${Math.max(1, potentialTokens)} pts)`;
+            }
+
             Object.keys(upgrades).forEach(key => {
-                document.getElementById(key + 'Cost').innerText = "Cost: " + upgrades[key].cost;
+                document.getElementById(key + 'Cost').innerText = "Cost: " + upgrades[key].cost.toLocaleString();
                 document.getElementById(key + 'Qty').innerText = upgrades[key].qty;
                 const btn = document.getElementById('buy' + key.charAt(0).toUpperCase() + key.slice(1));
                 if (btn) btn.disabled = crystals < upgrades[key].cost;
@@ -313,7 +432,7 @@
         }, 100);
 
         setInterval(() => {
-            const rawData = { crystals: crystals, upgrades: upgrades };
+            const rawData = { crystals: crystals, prestigeTokens: prestigeTokens, upgrades: upgrades };
             const dataString = JSON.stringify(rawData);
             const secureEnvelope = {
                 data: rawData,
@@ -326,3 +445,4 @@
     </script>
 </body>
 </html>
+       
