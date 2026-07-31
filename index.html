@@ -243,7 +243,7 @@
         <h1 id="crystalCount">0 Crystals</h1>
         <div class="sub-header">
             <div class="cps" id="cpsCount">per second: 0</div>
-            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Resonance (Req: 1M)</button>
+            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Prestige (Req: 1M)</button>
         </div>
     </div>
     
@@ -431,7 +431,7 @@
             prestigeBtn.disabled = crystals < 1000000;
             const nextMult = prestigeCount === 0 ? 1.5 : (1.5 + prestigeCount * 0.5);
             const nextBonus = (prestigeCount + 1) * 100;
-            prestigeBtn.innerText = `Resonance (${nextMult}x, +${nextBonus} start)`;
+            prestigeBtn.innerText = `Prestige (${nextMult}x, +${nextBonus} start)`;
 
             Object.keys(upgrades).forEach(key => {
                 document.getElementById(key + 'Cost').innerText = "Cost: " + upgrades[key].cost.toLocaleString();
