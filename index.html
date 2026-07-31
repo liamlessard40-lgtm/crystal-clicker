@@ -7,13 +7,10 @@
     <style>
         :root {
             --bg-color: #06040c;
-            --bg-secondary: #0d0918;
             --panel-bg: rgba(18, 13, 30, 0.85);
             --panel-border: rgba(131, 56, 236, 0.25);
-            --panel-border-glow: rgba(131, 56, 236, 0.55);
             --text-main: #f3f0ff;
             --text-dim: #9d8ec7;
-            --text-muted: #62538c;
             --accent-blue: #3a86ff;
             --accent-purple: #8338ec;
             --accent-glow: #9b5de5;
@@ -140,9 +137,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 35px 0;
+            padding: 30px 0;
             cursor: pointer;
-            perspective: 1000px;
         }
 
         .click-zone:active {
@@ -151,8 +147,8 @@
         }
 
         .crystal-gem {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             background: linear-gradient(135deg, #8338ec 0%, #3a86ff 100%);
             clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
             box-shadow: 
@@ -162,35 +158,11 @@
                 0 0 80px rgba(58, 134, 255, 0.4);
             animation: pulseGlow 4s ease-in-out infinite alternate;
             position: relative;
-            transform-style: preserve-3d;
-        }
-
-        .crystal-gem::after {
-            content: '';
-            position: absolute;
-            inset: 8px;
-            background: linear-gradient(225deg, rgba(255, 255, 255, 0.35) 0%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
-            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-            pointer-events: none;
         }
 
         @keyframes pulseGlow {
-            0% {
-                filter: brightness(1) hue-rotate(0deg);
-                box-shadow: 
-                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
-                    inset 10px 10px 20px rgba(255, 255, 255, 0.25),
-                    0 0 30px rgba(131, 56, 236, 0.5),
-                    0 0 60px rgba(58, 134, 255, 0.3);
-            }
-            100% {
-                filter: brightness(1.18) hue-rotate(10deg);
-                box-shadow: 
-                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
-                    inset 14px 14px 28px rgba(255, 255, 255, 0.45),
-                    0 0 55px rgba(131, 56, 236, 0.85),
-                    0 0 100px rgba(58, 134, 255, 0.65);
-            }
+            0% { filter: brightness(1) hue-rotate(0deg); }
+            100% { filter: brightness(1.18) hue-rotate(10deg); }
         }
 
         .floating-popup {
@@ -216,41 +188,75 @@
             100% { opacity: 0; transform: translateY(-70px) scale(1); }
         }
 
-        .tab-bar {
-            display: flex;
-            gap: 4px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 4px;
-            border-radius: 12px;
-            border: 1px solid var(--panel-border);
+        /* Master Dropdown Menu Control Bar */
+        .menu-dropdown-container {
+            position: relative;
+            width: 100%;
         }
 
-        .tab-trigger {
-            flex: 1;
+        .dropdown-toggle-btn {
+            width: 100%;
+            background: rgba(131, 56, 236, 0.25);
+            border: 1px solid var(--accent-glow);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(131, 56, 236, 0.2);
+            transition: background 0.2s ease;
+        }
+
+        .dropdown-toggle-btn:hover {
+            background: rgba(131, 56, 236, 0.4);
+        }
+
+        .dropdown-menu-list {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 6px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 200;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dropdown-menu-list.open {
+            display: flex;
+        }
+
+        .menu-item-btn {
             background: transparent;
             border: none;
             color: var(--text-dim);
-            padding: 9px 2px;
+            padding: 10px 12px;
             border-radius: 8px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 700;
+            text-align: left;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            transition: all 0.2s ease;
         }
 
-        .tab-trigger:hover {
+        .menu-item-btn:hover, .menu-item-btn.active {
+            background: rgba(131, 56, 236, 0.3);
             color: var(--text-main);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .tab-trigger.active {
-            background: rgba(131, 56, 236, 0.35);
-            color: var(--text-main);
-            border: 1px solid var(--accent-glow);
-            box-shadow: 0 0 15px rgba(131, 56, 236, 0.2);
         }
 
         .content-section {
@@ -261,8 +267,8 @@
             border: 1px solid var(--panel-border);
             border-radius: 16px;
             padding: 14px;
-            min-height: 320px;
-            max-height: 420px;
+            min-height: 300px;
+            max-height: 400px;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
@@ -280,9 +286,6 @@
             font-weight: 700;
             padding-bottom: 6px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .list-container {
@@ -297,67 +300,9 @@
         .list-container::-webkit-scrollbar {
             width: 4px;
         }
-
-        .list-container::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-        }
-
         .list-container::-webkit-scrollbar-thumb {
             background: var(--panel-border);
             border-radius: 4px;
-        }
-
-        /* Collapsible accordion styling for categories */
-        .category-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            background: rgba(14, 10, 26, 0.4);
-            border: 1px solid rgba(131, 56, 236, 0.12);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            background: rgba(18, 13, 30, 0.6);
-            cursor: pointer;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            transition: background 0.2s ease, color 0.2s ease;
-        }
-
-        .category-header:hover {
-            background: rgba(131, 56, 236, 0.15);
-            color: var(--text-main);
-        }
-
-        .category-header .arrow {
-            transition: transform 0.2s ease;
-            font-size: 0.65rem;
-        }
-
-        .category-group.collapsed .arrow {
-            transform: rotate(-90deg);
-        }
-
-        .category-content {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 8px;
-            transition: max-height 0.3s ease;
-        }
-
-        .category-group.collapsed .category-content {
-            display: none;
         }
 
         .store-item {
@@ -368,12 +313,6 @@
             border: 1px solid rgba(131, 56, 236, 0.18);
             padding: 10px 12px;
             border-radius: 12px;
-            transition: border-color 0.2s ease, background 0.2s ease;
-        }
-
-        .store-item:hover {
-            border-color: rgba(131, 56, 236, 0.35);
-            background: rgba(22, 16, 38, 0.85);
         }
 
         .item-details .item-name {
@@ -386,7 +325,6 @@
             font-size: 0.7rem;
             color: var(--text-dim);
             margin-top: 2px;
-            line-height: 1.3;
         }
 
         .item-details .item-cost {
@@ -405,18 +343,8 @@
             font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            white-space: nowrap;
             box-shadow: 0 4px 15px rgba(58, 134, 255, 0.25);
-        }
-
-        .action-button:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(131, 56, 236, 0.4);
-        }
-
-        .action-button:active:not(:disabled) {
-            transform: scale(0.95);
+            white-space: nowrap;
         }
 
         .action-button:disabled {
@@ -442,7 +370,6 @@
             padding: 10px;
             border-radius: 10px;
             opacity: 0.45;
-            transition: opacity 0.3s ease, border-color 0.3s ease;
         }
 
         .ach-card.unlocked {
@@ -460,7 +387,6 @@
             justify-content: center;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .ach-info .ach-name {
@@ -491,21 +417,11 @@
             font-weight: 600;
             cursor: pointer;
             text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .util-btn:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: var(--accent-glow);
         }
 
         .util-btn.danger-btn {
             border-color: rgba(239, 83, 80, 0.3);
             color: var(--danger);
-        }
-
-        .util-btn.danger-btn:hover {
-            background: rgba(239, 83, 80, 0.1);
         }
 
         .stats-text-block {
@@ -517,7 +433,6 @@
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
-
         .stats-text-block span {
             color: var(--text-main);
             font-weight: 700;
@@ -542,32 +457,42 @@
             <div class="crystal-gem"></div>
         </div>
 
-        <div class="tab-bar">
-            <button class="tab-trigger active" onclick="switchTab('shopTab', this)">Shop</button>
-            <button class="tab-trigger" onclick="switchTab('buildingsTab', this)">Automation</button>
-            <button class="tab-trigger" onclick="switchTab('prestigeTab', this)">Prestige</button>
-            <button class="tab-trigger" onclick="switchTab('achievementsTab', this)">Feats</button>
-            <button class="tab-trigger" onclick="switchTab('optionsTab', this)">System</button>
+        <!-- Master Dropdown Menu Selector -->
+        <div class="menu-dropdown-container">
+            <button class="dropdown-toggle-btn" onclick="toggleMainMenu(event)">
+                <span id="currentMenuLabel">Shop & Upgrades</span>
+                <span>▼</span>
+            </button>
+            <div class="dropdown-menu-list" id="mainDropdownList">
+                <button class="menu-item-btn active" onclick="switchSection('shopTab', 'Shop & Upgrades', this)">Shop & Upgrades</button>
+                <button class="menu-item-btn" onclick="switchSection('masteryTab', 'Mastery & Critical', this)">Mastery & Critical</button>
+                <button class="menu-item-btn" onclick="switchSection('buildingsTab', 'Automation Harvesters', this)">Automation Harvesters</button>
+                <button class="menu-item-btn" onclick="switchSection('prestigeTab', 'Cosmic Prestige', this)">Cosmic Prestige</button>
+                <button class="menu-item-btn" onclick="switchSection('achievementsTab', 'Milestones & Relics', this)">Milestones & Relics</button>
+                <button class="menu-item-btn" onclick="switchSection('optionsTab', 'System & Save', this)">System & Save</button>
+            </div>
         </div>
 
+        <!-- Sections -->
         <div class="content-section active" id="shopTab">
-            <div class="section-header"><span>Crystal Enhancements</span></div>
-            <div class="list-container" id="shopListContainer">
-                <!-- Drop-down categories for shop upgrades will be populated dynamically -->
-            </div>
+            <div class="section-header">Manual Enhancements</div>
+            <div class="list-container" id="shopListContainer"></div>
+        </div>
+
+        <div class="content-section" id="masteryTab">
+            <div class="section-header">Crit & Mastery Upgrades</div>
+            <div class="list-container" id="masteryListContainer"></div>
         </div>
 
         <div class="content-section" id="buildingsTab">
-            <div class="section-header"><span>Autonomous Harvesters</span></div>
-            <div class="list-container" id="buildingsListContainer">
-                <!-- Drop-down categories will be populated dynamically -->
-            </div>
+            <div class="section-header">Autonomous Harvesters</div>
+            <div class="list-container" id="buildingsListContainer"></div>
         </div>
 
         <div class="content-section" id="prestigeTab">
-            <div class="section-header"><span>Cosmic Transcendence</span></div>
+            <div class="section-header">Cosmic Transcendence</div>
             <div class="stats-text-block">
-                Reset all active shard progression, click levels, and harvesters to harness raw <strong>Astral Essence</strong>. Each point of essence permanently multiplies all shard production metrics by +10%.
+                Reset shard progress to harness raw <strong>Astral Essence</strong>. Each point permanently multiplies all production by +10%.
             </div>
             <div class="store-item" style="margin-top: 4px;">
                 <div class="item-details">
@@ -580,13 +505,12 @@
         </div>
 
         <div class="content-section" id="achievementsTab">
-            <div class="section-header"><span>Milestones & Relics</span></div>
-            <div class="list-container ach-grid" id="achievementsListContainer">
-            </div>
+            <div class="section-header">Milestones & Relics</div>
+            <div class="list-container ach-grid" id="achievementsListContainer"></div>
         </div>
 
         <div class="content-section" id="optionsTab">
-            <div class="section-header"><span>Save Management & Statistics</span></div>
+            <div class="section-header">Save Management & Statistics</div>
             <div class="stats-text-block" id="statsSummaryBlock">
                 Total Shards Collected: <span>0</span><br>
                 Total Clicks Made: <span>0</span><br>
@@ -622,36 +546,44 @@
             resonanceCost: 1250,
             essence: 0,
             buildings: {
-                dustCollector: { count: 0, baseCost: 50, costMult: 1.15, cps: 0.5, name: "Dust Collector", desc: "Sifts residual space particles (+0.5/s)", category: "Basic" },
-                stellarExtractor: { count: 0, baseCost: 350, costMult: 1.18, cps: 4, name: "Stellar Extractor", desc: "Extracts concentrated light veins (+4/s)", category: "Basic" },
-                prismForge: { count: 0, baseCost: 2400, costMult: 1.20, cps: 25, name: "Prism Forge", desc: "Forges compressed cosmic plasma (+25/s)", category: "Advanced" },
-                voidMonolith: { count: 0, baseCost: 15000, costMult: 1.22, cps: 140, name: "Void Monolith", desc: "Channels dark dimensional resonance (+140/s)", category: "Advanced" },
-                quantumSingularity: { count: 0, baseCost: 95000, costMult: 1.25, cps: 850, name: "Quantum Singularity", desc: "Bends space-time for mass generation (+850/s)", category: "Master" },
-                dysonSwarm: { count: 0, baseCost: 650000, costMult: 1.28, cps: 4800, name: "Dyson Swarm", desc: "Harvests stellar energy output (+4.8k/s)", category: "Master" }
+                dustCollector: { count: 0, baseCost: 50, costMult: 1.15, cps: 0.5, name: "Dust Collector", desc: "Sifts residual space particles (+0.5/s)" },
+                stellarExtractor: { count: 0, baseCost: 350, costMult: 1.18, cps: 4, name: "Stellar Extractor", desc: "Extracts concentrated light veins (+4/s)" },
+                prismForge: { count: 0, baseCost: 2400, costMult: 1.20, cps: 25, name: "Prism Forge", desc: "Forges compressed cosmic plasma (+25/s)" },
+                voidMonolith: { count: 0, baseCost: 15000, costMult: 1.22, cps: 140, name: "Void Monolith", desc: "Channels dark dimensional resonance (+140/s)" },
+                quantumSingularity: { count: 0, baseCost: 95000, costMult: 1.25, cps: 850, name: "Quantum Singularity", desc: "Bends space-time for mass generation (+850/s)" },
+                dysonSwarm: { count: 0, baseCost: 650000, costMult: 1.28, cps: 4800, name: "Dyson Swarm", desc: "Harvests stellar energy output (+4.8k/s)" }
             },
             achievements: {
-                click_10: { name: "First Spark", desc: "Click the crystal gem 10 times", unlocked: false, check: () => game.totalClicks >= 10, icon: "✨" },
-                click_100: { name: "Dedicated Tap", desc: "Click the crystal gem 100 times", unlocked: false, check: () => game.totalClicks >= 100, icon: "⚡" },
-                shards_1k: { name: "Crystal Hoarder", desc: "Accumulate 1,000 total lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000, icon: "💎" },
-                shards_1m: { name: "Prism Tycoon", desc: "Accumulate 1,000,000 total lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000000, icon: "👑" },
-                building_10: { name: "Automated Core", desc: "Own a combined total of 10 harvesters", unlocked: false, check: () => getTotalBuildings() >= 10, icon: "⚙️" },
-                building_50: { name: "Industrial Horizon", desc: "Own a combined total of 50 harvesters", unlocked: false, check: () => getTotalBuildings() >= 50, icon: "🏭" },
-                prestige_1: { name: "Stellar Rebirth", desc: "Perform your first cosmic transcendence", unlocked: false, check: () => game.essence > 0, icon: "🌌" }
+                click_10: { name: "First Spark", desc: "Click crystal 10 times", unlocked: false, check: () => game.totalClicks >= 10, icon: "✨" },
+                click_100: { name: "Dedicated Tap", desc: "Click crystal 100 times", unlocked: false, check: () => game.totalClicks >= 100, icon: "⚡" },
+                shards_1k: { name: "Crystal Hoarder", desc: "Accumulate 1,000 lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000, icon: "💎" },
+                shards_1m: { name: "Prism Tycoon", desc: "Accumulate 1,000,000 lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000000, icon: "👑" },
+                building_10: { name: "Automated Core", desc: "Own 10 harvesters", unlocked: false, check: () => getTotalBuildings() >= 10, icon: "⚙️" },
+                prestige_1: { name: "Stellar Rebirth", desc: "Perform cosmic transcendence", unlocked: false, check: () => game.essence > 0, icon: "🌌" }
             }
         };
-
-        // Track accordion collapsed states for all drop-downs
-        let collapsedCategories = {};
 
         const scoreDisplay = document.getElementById('scoreDisplay');
         const rateDisplay = document.getElementById('rateDisplay');
         const crystalElement = document.getElementById('crystalElement');
 
-        function switchTab(tabId, btnElement) {
+        function toggleMainMenu(e) {
+            e.stopPropagation();
+            document.getElementById('mainDropdownList').classList.toggle('open');
+        }
+
+        window.addEventListener('click', () => {
+            document.getElementById('mainDropdownList').classList.remove('open');
+        });
+
+        function switchSection(sectionId, labelText, btnElement) {
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.tab-trigger').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.menu-item-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
             btnElement.classList.add('active');
+            document.getElementById('currentMenuLabel').textContent = labelText;
+            document.getElementById('mainDropdownList').classList.remove('open');
         }
 
         crystalElement.addEventListener('click', (e) => {
@@ -761,9 +693,7 @@
                 game.critMultCost = 500;
                 game.resonanceLevel = 0;
                 game.resonanceCost = 1250;
-                for (let key in game.buildings) {
-                    game.buildings[key].count = 0;
-                }
+                for (let key in game.buildings) game.buildings[key].count = 0;
                 refreshUI();
                 saveGame();
             }
@@ -776,9 +706,8 @@
         setInterval(() => {
             let cps = calculateCPS();
             if (cps > 0) {
-                let tickGain = cps * 0.1;
-                game.shards += tickGain;
-                game.totalShardsLifetime += tickGain;
+                game.shards += cps * 0.1;
+                game.totalShardsLifetime += cps * 0.1;
                 refreshUI();
             }
         }, 100);
@@ -787,8 +716,6 @@
             game.secondsPlayed++;
             checkAchievements();
         }, 1000);
-
-        setInterval(() => saveGame(), 30000);
 
         function checkAchievements() {
             for (let key in game.achievements) {
@@ -800,137 +727,67 @@
             }
         }
 
-        function toggleCategory(categoryName) {
-            collapsedCategories[categoryName] = !collapsedCategories[categoryName];
-            renderShopList();
-            renderBuildingsList();
-        }
-
         function renderShopList() {
             const container = document.getElementById('shopListContainer');
-            
-            // Define shop categories with dropdown groups
-            let shopCategories = {
-                "Manual Power": [
-                    {
-                        name: `<span id="clickUpgradeName">Prismatic Focus (Lvl ${game.clickLevel})</span>`,
-                        desc: "Increases raw shards earned per click",
-                        costText: `Cost: ${game.clickCost.toLocaleString()} Shards`,
-                        disabled: game.shards < game.clickCost,
-                        action: "buyClickUpgrade()",
-                        btnText: "Upgrade"
-                    }
-                ],
-                "Mastery & Critical": [
-                    {
-                        name: `<span id="critChanceName">Quantum Lens (Lvl ${game.critChanceLevel})</span>`,
-                        desc: "Increases critical click chance by +1%",
-                        costText: `Cost: ${game.critChanceCost.toLocaleString()} Shards`,
-                        disabled: game.shards < game.critChanceCost || game.critChance >= 0.50,
-                        action: "buyCritChanceUpgrade()",
-                        btnText: "Upgrade"
-                    },
-                    {
-                        name: `<span id="critMultName">Hyper Resonance (Lvl ${game.critMultLevel})</span>`,
-                        desc: "Increases critical click multiplier by +0.5x",
-                        costText: `Cost: ${game.critMultCost.toLocaleString()} Shards`,
-                        disabled: game.shards < game.critMultCost,
-                        action: "buyCritMultUpgrade()",
-                        btnText: "Upgrade"
-                    }
-                ],
-                "Global Synergy": [
-                    {
-                        name: "Global Harmonic Matrix",
-                        desc: "Multiplies total production and click power by +5%",
-                        costText: `<span id="resonanceCostLabel">Cost: ${game.resonanceCost.toLocaleString()} Shards</span>`,
-                        disabled: game.shards < game.resonanceCost,
-                        action: "buyResonanceUpgrade()",
-                        btnText: "Buy"
-                    }
-                ]
-            };
+            container.innerHTML = `
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name">Prismatic Focus (Lvl ${game.clickLevel})</div>
+                        <div class="item-desc">Increases raw shards earned per click</div>
+                        <div class="item-cost">Cost: ${game.clickCost.toLocaleString()} Shards</div>
+                    </div>
+                    <button class="action-button" ${game.shards < game.clickCost ? 'disabled' : ''} onclick="buyClickUpgrade()">Upgrade</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name">Global Harmonic Matrix (Lvl ${game.resonanceLevel})</div>
+                        <div class="item-desc">Multiplies total production & click power by +5%</div>
+                        <div class="item-cost">Cost: ${game.resonanceCost.toLocaleString()} Shards</div>
+                    </div>
+                    <button class="action-button" ${game.shards < game.resonanceCost ? 'disabled' : ''} onclick="buyResonanceUpgrade()">Buy</button>
+                </div>
+            `;
+        }
 
-            container.innerHTML = '';
-            for (let catName in shopCategories) {
-                let isCollapsed = !!collapsedCategories['shop_' + catName];
-                
-                let groupDiv = document.createElement('div');
-                groupDiv.className = `category-group ${isCollapsed ? 'collapsed' : ''}`;
-                
-                let headerDiv = document.createElement('div');
-                headerDiv.className = 'category-header';
-                headerDiv.onclick = () => toggleCategory('shop_' + catName);
-                headerDiv.innerHTML = `<span>${catName}</span><span class="arrow">▼</span>`;
-                groupDiv.appendChild(headerDiv);
-
-                let contentDiv = document.createElement('div');
-                contentDiv.className = 'category-content';
-
-                shopCategories[catName].forEach(itemData => {
-                    let item = document.createElement('div');
-                    item.className = 'store-item';
-                    item.innerHTML = `
-                        <div class="item-details">
-                            <div class="item-name">${itemData.name}</div>
-                            <div class="item-desc">${itemData.desc}</div>
-                            <div class="item-cost">${itemData.costText}</div>
-                        </div>
-                        <button class="action-button" ${itemData.disabled ? 'disabled' : ''} onclick="${itemData.action}">${itemData.btnText}</button>
-                    `;
-                    contentDiv.appendChild(item);
-                });
-
-                groupDiv.appendChild(contentDiv);
-                container.appendChild(groupDiv);
-            }
+        function renderMasteryList() {
+            const container = document.getElementById('masteryListContainer');
+            container.innerHTML = `
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name">Quantum Lens (Lvl ${game.critChanceLevel})</div>
+                        <div class="item-desc">Increases critical click chance by +1%</div>
+                        <div class="item-cost">Cost: ${game.critChanceCost.toLocaleString()} Shards</div>
+                    </div>
+                    <button class="action-button" ${game.shards < game.critChanceCost || game.critChance >= 0.50 ? 'disabled' : ''} onclick="buyCritChanceUpgrade()">Upgrade</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name">Hyper Resonance (Lvl ${game.critMultLevel})</div>
+                        <div class="item-desc">Increases critical click multiplier by +0.5x</div>
+                        <div class="item-cost">Cost: ${game.critMultCost.toLocaleString()} Shards</div>
+                    </div>
+                    <button class="action-button" ${game.shards < game.critMultCost ? 'disabled' : ''} onclick="buyCritMultUpgrade()">Upgrade</button>
+                </div>
+            `;
         }
 
         function renderBuildingsList() {
             const container = document.getElementById('buildingsListContainer');
-            
-            // Group buildings by category
-            let categories = {};
+            container.innerHTML = '';
             for (let key in game.buildings) {
                 let b = game.buildings[key];
-                let cat = b.category || "General";
-                if (!categories[cat]) categories[cat] = [];
-                categories[cat].push({ id: key, ...b });
-            }
-
-            container.innerHTML = '';
-            for (let catName in categories) {
-                let isCollapsed = !!collapsedCategories['build_' + catName];
-                
-                let groupDiv = document.createElement('div');
-                groupDiv.className = `category-group ${isCollapsed ? 'collapsed' : ''}`;
-                
-                let headerDiv = document.createElement('div');
-                headerDiv.className = 'category-header';
-                headerDiv.onclick = () => toggleCategory('build_' + catName);
-                headerDiv.innerHTML = `<span>${catName} Harvesters</span><span class="arrow">▼</span>`;
-                groupDiv.appendChild(headerDiv);
-
-                let contentDiv = document.createElement('div');
-                contentDiv.className = 'category-content';
-
-                categories[catName].forEach(b => {
-                    let cost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
-                    let item = document.createElement('div');
-                    item.className = 'store-item';
-                    item.innerHTML = `
-                        <div class="item-details">
-                            <div class="item-name">${b.name} <span style="color:var(--text-dim); font-weight:normal;">(${b.count})</span></div>
-                            <div class="item-desc">${b.desc}</div>
-                            <div class="item-cost">Cost: ${cost.toLocaleString()} Shards</div>
-                        </div>
-                        <button class="action-button" ${game.shards < cost ? 'disabled' : ''} onclick="buyBuilding('${b.id}')">Buy</button>
-                    `;
-                    contentDiv.appendChild(item);
-                });
-
-                groupDiv.appendChild(contentDiv);
-                container.appendChild(groupDiv);
+                let cost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
+                let item = document.createElement('div');
+                item.className = 'store-item';
+                item.innerHTML = `
+                    <div class="item-details">
+                        <div class="item-name">${b.name} <span style="color:var(--text-dim); font-weight:normal;">(${b.count})</span></div>
+                        <div class="item-desc">${b.desc}</div>
+                        <div class="item-cost">Cost: ${cost.toLocaleString()} Shards</div>
+                    </div>
+                    <button class="action-button" ${game.shards < cost ? 'disabled' : ''} onclick="buyBuilding('${key}')">Buy</button>
+                `;
+                container.appendChild(item);
             }
         }
 
@@ -954,8 +811,7 @@
 
         function refreshUI() {
             scoreDisplay.textContent = Math.floor(game.shards).toLocaleString();
-            let currentCPS = calculateCPS();
-            rateDisplay.textContent = `${currentCPS.toFixed(1)} shards / sec`;
+            rateDisplay.textContent = `${calculateCPS().toFixed(1)} shards / sec`;
 
             document.getElementById('clickPowerBadge').textContent = `Click: +${game.clickPower}`;
             document.getElementById('critBadge').textContent = `Crit: ${(game.critChance * 100).toFixed(0)}% (x${game.critMultiplier.toFixed(1)})`;
@@ -976,6 +832,7 @@
             `;
 
             renderShopList();
+            renderMasteryList();
             renderBuildingsList();
         }
 
@@ -991,46 +848,41 @@
                     game = { ...game, ...parsed };
                     if (parsed.buildings) {
                         for (let k in parsed.buildings) {
-                            if (game.buildings[k]) {
-                                game.buildings[k].count = parsed.buildings[k].count;
-                            }
+                            if (game.buildings[k]) game.buildings[k].count = parsed.buildings[k].count;
                         }
                     }
                     if (parsed.achievements) {
                         for (let k in parsed.achievements) {
-                            if (game.achievements[k]) {
-                                game.achievements[k].unlocked = parsed.achievements[k].unlocked;
-                            }
+                            if (game.achievements[k]) game.achievements[k].unlocked = parsed.achievements[k].unlocked;
                         }
                     }
                 } catch (e) {
-                    console.error("Critical error loading save file:", e);
+                    console.error(e);
                 }
             }
         }
 
         function exportSaveCode() {
             let encoded = btoa(JSON.stringify(game));
-            prompt("Copy your export save string below:", encoded);
+            prompt("Copy save code:", encoded);
         }
 
         function importSaveCode() {
-            let encoded = prompt("Paste your save string below:");
+            let encoded = prompt("Paste save code:");
             if (encoded) {
                 try {
-                    let decoded = JSON.parse(atob(encoded));
-                    game = { ...game, ...decoded };
+                    game = { ...game, ...JSON.parse(atob(encoded)) };
                     saveGame();
                     refreshUI();
-                    alert("Save imported successfully!");
+                    alert("Import successful!");
                 } catch (e) {
-                    alert("Invalid save code string provided.");
+                    alert("Invalid code.");
                 }
             }
         }
 
         function hardResetGame() {
-            if (confirm("Are you sure you want to completely wipe all your progress and achievements?")) {
+            if (confirm("Wipe all progress?")) {
                 localStorage.removeItem('crystalClickerSave');
                 location.reload();
             }
