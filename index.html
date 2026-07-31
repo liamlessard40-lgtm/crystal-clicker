@@ -27,7 +27,7 @@
             padding: 10px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            z-index: 10;
+            z-index: 20;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -78,42 +78,74 @@
             transform: none;
         }
         
-        /* Clean, non-cramped compact navigation tab grid */
-        .nav-tabs {
+        /* Dropdown Navigation Menu System */
+        .nav-container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 4px;
-            padding: 6px 10px;
             background: #0d0b18;
             width: 100%;
             max-width: 950px;
             border-bottom: 2px solid #21193d;
+            position: relative;
+            z-index: 15;
+            justify-content: center;
         }
-        .tab-btn {
+        .dropdown {
+            position: relative;
+            flex: 1;
+            text-align: center;
+        }
+        .drop-btn {
+            width: 100%;
             background: #17122e;
             color: #9d8ec4;
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            padding: 6px 10px;
-            border-radius: 5px;
+            border: none;
+            border-right: 1px solid #21193d;
+            padding: 10px 6px;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 12px;
             cursor: pointer;
-            text-align: center;
             transition: all 0.2s ease;
             white-space: nowrap;
         }
-        .tab-btn:hover {
+        .drop-btn:hover, .drop-btn.active {
             background: #21193d;
             color: #00f0ff;
-            border-color: rgba(0, 240, 255, 0.4);
         }
-        .tab-btn.active {
-            background: linear-gradient(135deg, #00f0ff 0%, #0088ff 100%);
-            color: #0d0b18;
-            border-color: #00f0ff;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #110d21;
+            min-width: 160px;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.7);
+            border: 1px solid #21193d;
+            border-radius: 0 0 6px 6px;
+            z-index: 25;
+            flex-direction: column;
+            text-align: left;
+        }
+        .dropdown-content.show {
+            display: flex;
+        }
+        .sub-tab-btn {
+            background: transparent;
+            color: #9d8ec4;
+            border: none;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.15s ease, color 0.15s ease;
+            border-bottom: 1px solid rgba(33, 25, 61, 0.4);
+        }
+        .sub-tab-btn:last-child {
+            border-bottom: none;
+        }
+        .sub-tab-btn:hover, .sub-tab-btn.active {
+            background: #21193d;
+            color: #00f0ff;
         }
 
         .main-layout {
@@ -127,6 +159,10 @@
         @media (max-width: 768px) {
             .main-layout {
                 flex-direction: column;
+            }
+            .drop-btn {
+                font-size: 10px;
+                padding: 8px 2px;
             }
         }
         
@@ -148,23 +184,38 @@
         .crystal-container.env-space { background: radial-gradient(circle at center, #0a113d 0%, #080612 80%); }
         .crystal-container.env-forest { background: radial-gradient(circle at center, #0e331b 0%, #080612 80%); }
 
-        /* Solid SVG Crystal Vector Fix - Perfectly proportioned and sharp */
+        /* Restored Original Classic CSS Diamond Crystal (Not squished/distorted) */
         .crystal-wrapper {
-            width: 160px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             cursor: pointer;
-            transition: transform 0.05s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
             z-index: 2;
+            transition: transform 0.05s ease;
             filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.5));
         }
-        .crystal-wrapper svg {
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
         .crystal-wrapper:active {
-            transform: scale(0.93) rotate(2deg);
+            transform: scale(0.92);
+        }
+        .classic-crystal {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #ff0077 100%);
+            transform: rotate(45deg);
+            border-radius: 16px;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(0, 240, 255, 0.4);
+            position: relative;
+            transition: background 0.3s ease;
+        }
+        .classic-crystal::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
         }
         
         .meters-container {
@@ -414,63 +465,47 @@
         </div>
     </div>
     
-    <!-- Clean, non-cramped navigation tab grid -->
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('shop')">Pickaxes</button>
-        <button class="tab-btn" onclick="switchTab('clicks')">Click Upgrades</button>
-        <button class="tab-btn" onclick="switchTab('profile')">Profile</button>
-        <button class="tab-btn" onclick="switchTab('achievements')">Achievements</button>
-        <button class="tab-btn" onclick="switchTab('quests')">Quests</button>
-        <button class="tab-btn" onclick="switchTab('artifacts')">Artifacts</button>
-        <button class="tab-btn" onclick="switchTab('pets')">Pets</button>
-        <button class="tab-btn" onclick="switchTab('ascendTree')">Skill Tree</button>
-        <button class="tab-btn" onclick="switchTab('skins')">Skins</button>
-        <button class="tab-btn" onclick="switchTab('environments')">Environments</button>
-        <button class="tab-btn" onclick="switchTab('stats')">Stats</button>
+    <!-- Dropdown Menu System -->
+    <div class="nav-container">
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'shopDrop')">Shop ▼</button>
+            <div id="shopDrop" class="dropdown-content">
+                <button class="sub-tab-btn active" onclick="switchTab('shop')">Pickaxes</button>
+                <button class="sub-tab-btn" onclick="switchTab('clicks')">Click Upgrades</button>
+                <button class="sub-tab-btn" onclick="switchTab('skins')">Skins</button>
+                <button class="sub-tab-btn" onclick="switchTab('environments')">Environments</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'masteryDrop')">Mastery ▼</button>
+            <div id="masteryDrop" class="dropdown-content">
+                <button class="sub-tab-btn" onclick="switchTab('artifacts')">Artifacts</button>
+                <button class="sub-tab-btn" onclick="switchTab('pets')">Pets</button>
+                <button class="sub-tab-btn" onclick="switchTab('ascendTree')">Skill Tree</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'prestigeDrop')">Prestige ▼</button>
+            <div id="prestigeDrop" class="dropdown-content">
+                <button class="sub-tab-btn" onclick="triggerPrestige()">Ascend Portal</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'profileDrop')">Profile ▼</button>
+            <div id="profileDrop" class="dropdown-content">
+                <button class="sub-tab-btn" onclick="switchTab('profile')">Overview</button>
+                <button class="sub-tab-btn" onclick="switchTab('achievements')">Achievements</button>
+                <button class="sub-tab-btn" onclick="switchTab('quests')">Quests</button>
+                <button class="sub-tab-btn" onclick="switchTab('stats')">Statistics</button>
+            </div>
+        </div>
     </div>
 
     <div class="main-layout">
         <div class="crystal-container" id="crystalContainer">
-            <!-- Flawless Vector SVG Crystal with dynamic theme support -->
+            <!-- Restored Classic Diamond Crystal design -->
             <div class="crystal-wrapper" id="crystalBtn">
-                <svg viewBox="0 0 100 130" id="crystalSvg">
-                    <defs>
-                        <linearGradient id="grad-default" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#00ffff" />
-                            <stop offset="50%" stop-color="#7000ff" />
-                            <stop offset="100%" stop-color="#ff0077" />
-                        </linearGradient>
-                        <linearGradient id="grad-ruby" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ff3333" />
-                            <stop offset="50%" stop-color="#990000" />
-                            <stop offset="100%" stop-color="#550000" />
-                        </linearGradient>
-                        <linearGradient id="grad-sapphire" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#3366ff" />
-                            <stop offset="50%" stop-color="#000099" />
-                            <stop offset="100%" stop-color="#000044" />
-                        </linearGradient>
-                        <linearGradient id="grad-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#33ff66" />
-                            <stop offset="50%" stop-color="#009933" />
-                            <stop offset="100%" stop-color="#004411" />
-                        </linearGradient>
-                        <linearGradient id="grad-gold-theme" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ffcc00" />
-                            <stop offset="50%" stop-color="#cc6600" />
-                            <stop offset="100%" stop-color="#663300" />
-                        </linearGradient>
-                    </defs>
-                    <!-- Crystal Faces -->
-                    <polygon points="50,2 25,35 50,25" fill="url(#crystalGrad)" opacity="0.9" />
-                    <polygon points="50,2 75,35 50,25" fill="url(#crystalGrad)" opacity="0.6" />
-                    <polygon points="25,35 50,25 50,105 10,65" fill="url(#crystalGrad)" opacity="0.7" />
-                    <polygon points="75,35 50,25 50,105 90,65" fill="url(#crystalGrad)" opacity="0.5" />
-                    <polygon points="10,65 50,105 50,128" fill="url(#crystalGrad)" opacity="0.8" />
-                    <polygon points="90,65 50,105 50,128" fill="url(#crystalGrad)" opacity="0.4" />
-                    <!-- Highlight reflection overlay -->
-                    <polygon points="50,8 35,35 50,30" fill="#ffffff" opacity="0.4" />
-                </svg>
+                <div class="classic-crystal" id="classicCrystalDiv"></div>
             </div>
             
             <div class="meters-container">
@@ -507,6 +542,26 @@
                 event.preventDefault();
             }
         });
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.matches('.drop-btn')) {
+                document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.drop-btn').forEach(b => b.classList.remove('active'));
+            }
+        });
+
+        function toggleDropdown(event, dropId) {
+            event.stopPropagation();
+            const content = document.getElementById(dropId);
+            const isOpen = content.classList.contains('show');
+            document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.drop-btn').forEach(b => b.classList.remove('active'));
+            if (!isOpen) {
+                content.classList.add('show');
+                event.target.classList.add('active');
+            }
+        }
 
         let soundEnabled = true;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -629,11 +684,11 @@
         };
 
         const skinsShop = {
-            'default': { name: "Default Skin", cost: 0, owned: true },
-            'ruby': { name: "Ruby Skin", cost: 500000, owned: false },
-            'sapphire': { name: "Sapphire Skin", cost: 5000000, owned: false },
-            'emerald': { name: "Emerald Skin", cost: 50000000, owned: false },
-            'gold-theme': { name: "Gold Theme Skin", cost: 500000000, owned: false }
+            'default': { name: "Default Skin", cost: 0, owned: true, color: "linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #ff0077 100%)" },
+            'ruby': { name: "Ruby Skin", cost: 500000, owned: false, color: "linear-gradient(135deg, #ff3333 0%, #990000 50%, #550000 100%)" },
+            'sapphire': { name: "Sapphire Skin", cost: 5000000, owned: false, color: "linear-gradient(135deg, #3366ff 0%, #000099 50%, #000044 100%)" },
+            'emerald': { name: "Emerald Skin", cost: 50000000, owned: false, color: "linear-gradient(135deg, #33ff66 0%, #009933 50%, #004411 100%)" },
+            'gold-theme': { name: "Gold Theme Skin", cost: 500000000, owned: false, color: "linear-gradient(135deg, #ffcc00 0%, #cc6600 50%, #663300 100%)" }
         };
 
         const environmentsShop = {
@@ -724,7 +779,7 @@
                 const div = document.createElement('div');
                 div.className = 'card-item';
                 div.id = `card_${key}`;
-                div.innerHTML = `<div class="card-icon">${ach.icon}</div><div class="card-details"><div class="card-title">${ach.title}</div><div class="card-desc">${ach.desc}</div><div class="card-reward">Reward: ${ach.reward}</div></div><button class="tab-btn" id="claim_${key}" onclick="claimAchievement('${key}')" style="display:none;">Claim</button>`;
+                div.innerHTML = `<div class="card-icon">${ach.icon}</div><div class="card-details"><div class="card-title">${ach.title}</div><div class="card-desc">${ach.desc}</div><div class="card-reward">Reward: ${ach.reward}</div></div><button class="sub-tab-btn" id="claim_${key}" onclick="claimAchievement('${key}')" style="display:none; width:auto; padding:4px 8px; border-radius:4px;">Claim</button>`;
                 achPanel.appendChild(div);
             });
 
@@ -735,7 +790,7 @@
                 const div = document.createElement('div');
                 div.className = 'card-item';
                 div.id = `quest_${key}`;
-                div.innerHTML = `<div class="card-icon">🎯</div><div class="card-details"><div class="card-title">${q.title}</div><div class="card-desc">${q.desc}</div><div class="card-reward">Reward: ${q.reward}</div></div><button class="tab-btn" id="claim_q_${key}" onclick="claimQuest('${key}')" style="display:none;">Claim</button>`;
+                div.innerHTML = `<div class="card-icon">🎯</div><div class="card-details"><div class="card-title">${q.title}</div><div class="card-desc">${q.desc}</div><div class="card-reward">Reward: ${q.reward}</div></div><button class="sub-tab-btn" id="claim_q_${key}" onclick="claimQuest('${key}')" style="display:none; width:auto; padding:4px 8px; border-radius:4px;">Claim</button>`;
                 questPanel.appendChild(div);
             });
 
@@ -841,7 +896,7 @@
 
         const crystalBtn = document.getElementById('crystalBtn');
         const crystalContainer = document.getElementById('crystalContainer');
-        const crystalSvg = document.getElementById('crystalSvg');
+        const classicCrystalDiv = document.getElementById('classicCrystalDiv');
 
         function triggerClick(clientX, clientY) {
             totalClicks++;
@@ -951,10 +1006,9 @@
 
         function setSkin(skin, playSnd = true) {
             currentSkin = skin;
-            const gradId = skin === 'default' ? 'grad-default' : `grad-${skin}`;
-            crystalSvg.querySelectorAll('polygon[fill*="crystalGrad"]').forEach(poly => {
-                poly.setAttribute('fill', `url(#${gradId})`);
-            });
+            if (skinsShop[skin]) {
+                classicCrystalDiv.style.background = skinsShop[skin].color;
+            }
             if (playSnd) playSound('click');
         }
 
@@ -1020,8 +1074,8 @@
             ['shopContent', 'clicksContent', 'profileContent', 'achievementsContent', 'questsContent', 'artifactsContent', 'petsContent', 'ascendTreeContent', 'skinsContent', 'environmentsContent', 'statsContent'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
-            document.querySelectorAll('.nav-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.drop-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tab + 'Content').classList.remove('hidden');
         }
 
@@ -1159,12 +1213,12 @@
                 if (ach.status === 1) {
                     card.classList.add('ready');
                     claimBtn.style.display = 'block';
-                    claimBtn.className = 'tab-btn claim-btn';
+                    claimBtn.className = 'sub-tab-btn claim-btn';
                     claimBtn.innerText = 'Claim';
                 } else if (ach.status === 2) {
                     card.classList.add('completed');
                     claimBtn.style.display = 'block';
-                    claimBtn.className = 'tab-btn';
+                    claimBtn.className = 'sub-tab-btn';
                     claimBtn.innerText = 'Claimed';
                     claimBtn.disabled = true;
                 } else {
@@ -1180,12 +1234,12 @@
                 if (q.status === 1) {
                     card.classList.add('ready');
                     claimBtn.style.display = 'block';
-                    claimBtn.className = 'tab-btn claim-btn';
+                    claimBtn.className = 'sub-tab-btn claim-btn';
                     claimBtn.innerText = 'Claim';
                 } else if (q.status === 2) {
                     card.classList.add('completed');
                     claimBtn.style.display = 'block';
-                    claimBtn.className = 'tab-btn';
+                    claimBtn.className = 'sub-tab-btn';
                     claimBtn.innerText = 'Claimed';
                     claimBtn.disabled = true;
                 } else {
@@ -1279,7 +1333,6 @@
             localStorage.setItem('crystalClickerUltimateSave', JSON.stringify(saveObj));
         }, 10000);
 
-        // Initial application of default skin to vector fill
         setSkin('default', false);
         updateUI();
     </script>
