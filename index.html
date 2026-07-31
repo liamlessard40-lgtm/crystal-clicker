@@ -2,895 +2,1339 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crystal Clicker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crystal Clicker Ultimate</title>
     <style>
-        :root {
-            --bg-color: #06040c;
-            --panel-bg: rgba(18, 13, 30, 0.85);
-            --panel-border: rgba(131, 56, 236, 0.25);
-            --text-main: #f3f0ff;
-            --text-dim: #9d8ec7;
-            --accent-blue: #3a86ff;
-            --accent-purple: #8338ec;
-            --accent-glow: #9b5de5;
-            --accent-pink: #ff007f;
-            --success: #66bb6a;
-            --warning: #ffb74d;
-            --danger: #ef5350;
-            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        *, *::before, *::after {
+        * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
-
         body {
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 15% 20%, rgba(58, 134, 255, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(131, 56, 236, 0.1) 0%, transparent 40%);
-            color: var(--text-main);
-            min-height: 100vh;
+            margin: 0;
+            background: #080612;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 12px;
-            overflow-x: hidden;
-        }
-
-        .game-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            max-width: 480px;
-            padding-bottom: 50px;
-        }
-
-        .dashboard {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 16px;
-            text-align: center;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            position: relative;
+            height: 100vh;
             overflow: hidden;
+            user-select: none;
         }
-
-        .dashboard::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
-        }
-
-        .shards-title {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: var(--text-dim);
-            font-weight: 700;
-        }
-
-        .shards-count {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #64b5f6 0%, #ba68c8 50%, #ff80ab 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 4px 0;
-            line-height: 1.1;
-            letter-spacing: -0.5px;
-        }
-
-        .shards-rate {
-            font-size: 0.85rem;
-            color: #b39ddb;
-            font-weight: 500;
-        }
-
-        .meta-badges {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            padding: 3px 9px;
-            background: rgba(131, 56, 236, 0.15);
-            border: 1px solid rgba(131, 56, 236, 0.35);
-            border-radius: 6px;
-            font-size: 0.72rem;
-            color: #d1c4e9;
-            font-weight: 600;
-        }
-
-        .badge.prestige {
-            background: rgba(255, 183, 77, 0.15);
-            border-color: rgba(255, 183, 77, 0.35);
-            color: var(--warning);
-        }
-
-        .badge.critical {
-            background: rgba(255, 0, 127, 0.15);
-            border-color: rgba(255, 0, 127, 0.35);
-            color: #ff80bf;
-        }
-
-        .click-zone {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px 0;
-            cursor: pointer;
-        }
-
-        .click-zone:active {
-            transform: scale(0.94);
-            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .crystal-gem {
-            width: 150px;
-            height: 150px;
-            background: linear-gradient(135deg, #8338ec 0%, #3a86ff 100%);
-            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-            box-shadow: 
-                inset -12px -12px 24px rgba(0, 0, 0, 0.55),
-                inset 12px 12px 24px rgba(255, 255, 255, 0.3),
-                0 0 40px rgba(131, 56, 236, 0.6),
-                0 0 80px rgba(58, 134, 255, 0.4);
-            animation: pulseGlow 4s ease-in-out infinite alternate;
-            position: relative;
-        }
-
-        @keyframes pulseGlow {
-            0% { filter: brightness(1) hue-rotate(0deg); }
-            100% { filter: brightness(1.18) hue-rotate(10deg); }
-        }
-
-        .floating-popup {
-            position: absolute;
-            font-weight: 800;
-            font-size: 1.25rem;
-            color: #d1c4e9;
-            pointer-events: none;
-            animation: floatUp 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-            text-shadow: 0 0 12px rgba(131, 56, 236, 0.9);
-            z-index: 100;
-        }
-
-        .floating-popup.crit {
-            color: #ff80bf;
-            font-size: 1.5rem;
-            text-shadow: 0 0 15px rgba(255, 0, 127, 0.9);
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.85); }
-            50% { opacity: 1; transform: translateY(-30px) scale(1.15); }
-            100% { opacity: 0; transform: translateY(-70px) scale(1); }
-        }
-
-        /* Master Dropdown Menu Control Bar */
-        .menu-dropdown-container {
-            position: relative;
+        .header-panel {
             width: 100%;
-        }
-
-        .dropdown-toggle-btn {
-            width: 100%;
-            background: rgba(131, 56, 236, 0.25);
-            border: 1px solid var(--accent-glow);
-            color: var(--text-main);
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
+            background: #110d21;
+            border-bottom: 2px solid #21193d;
+            padding: 10px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            z-index: 20;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(131, 56, 236, 0.2);
-            transition: background 0.2s ease;
-        }
-
-        .dropdown-toggle-btn:hover {
-            background: rgba(131, 56, 236, 0.4);
-        }
-
-        .dropdown-menu-list {
-            display: none;
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            right: 0;
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 6px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            z-index: 200;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
             flex-direction: column;
+            align-items: center;
             gap: 4px;
         }
-
-        .dropdown-menu-list.open {
-            display: flex;
-        }
-
-        .menu-item-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-align: left;
-            cursor: pointer;
-            text-transform: uppercase;
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #00f0ff;
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
             letter-spacing: 0.5px;
+        }
+        .sub-header {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            font-size: 13px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .cps {
+            color: #9d8ec4;
+        }
+        .shards-display {
+            color: #ff00aa;
+            font-weight: bold;
+        }
+        .prestige-btn {
+            background: linear-gradient(135deg, #ff0077 0%, #7000ff 100%);
+            color: #fff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 0, 119, 0.4);
+            transition: transform 0.1s ease;
+        }
+        .prestige-btn:hover {
+            transform: scale(1.05);
+        }
+        .prestige-btn:disabled {
+            background: #231e3d;
+            color: #5c5280;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        /* Dropdown Navigation Menu System */
+        .nav-container {
+            display: flex;
+            background: #0d0b18;
+            width: 100%;
+            max-width: 950px;
+            border-bottom: 2px solid #21193d;
+            position: relative;
+            z-index: 15;
+            justify-content: center;
+        }
+        .dropdown {
+            position: relative;
+            flex: 1;
+            text-align: center;
+        }
+        .drop-btn {
+            width: 100%;
+            background: #17122e;
+            color: #9d8ec4;
+            border: none;
+            border-right: 1px solid #21193d;
+            padding: 10px 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
-
-        .menu-item-btn:hover, .menu-item-btn.active {
-            background: rgba(131, 56, 236, 0.3);
-            color: var(--text-main);
+        .drop-btn:hover, .drop-btn.active {
+            background: #21193d;
+            color: #00f0ff;
         }
-
-        .content-section {
+        .dropdown-content {
             display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #110d21;
+            min-width: 160px;
+            box-shadow: 0px 8px 20px rgba(0,0,0,0.7);
+            border: 1px solid #21193d;
+            border-radius: 0 0 6px 6px;
+            z-index: 25;
             flex-direction: column;
-            gap: 10px;
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 14px;
-            min-height: 300px;
-            max-height: 400px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            text-align: left;
         }
-
-        .content-section.active {
+        .dropdown-content.show {
             display: flex;
         }
-
-        .section-header {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-dim);
-            font-weight: 700;
-            padding-bottom: 6px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        .sub-tab-btn {
+            background: transparent;
+            color: #9d8ec4;
+            border: none;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.15s ease, color 0.15s ease;
+            border-bottom: 1px solid rgba(33, 25, 61, 0.4);
+        }
+        .sub-tab-btn:last-child {
+            border-bottom: none;
+        }
+        .sub-tab-btn:hover, .sub-tab-btn.active {
+            background: #21193d;
+            color: #00f0ff;
         }
 
-        .list-container {
+        .main-layout {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            max-width: 950px;
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            .drop-btn {
+                font-size: 10px;
+                padding: 8px 2px;
+            }
+        }
+        
+        .crystal-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            gap: 20px;
+            background: radial-gradient(circle at center, #151128 0%, #080612 80%);
+            transition: background 0.5s ease;
+        }
+        
+        /* Dynamic Environment Background Styles */
+        .crystal-container.env-volcanic { background: radial-gradient(circle at center, #3d120c 0%, #080612 80%); }
+        .crystal-container.env-space { background: radial-gradient(circle at center, #0a113d 0%, #080612 80%); }
+        .crystal-container.env-forest { background: radial-gradient(circle at center, #0e331b 0%, #080612 80%); }
+
+        /* Restored Original Classic CSS Diamond Crystal (Not squished/distorted) */
+        .crystal-wrapper {
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.05s ease;
+            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.5));
+        }
+        .crystal-wrapper:active {
+            transform: scale(0.92);
+        }
+        .classic-crystal {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #ff0077 100%);
+            transform: rotate(45deg);
+            border-radius: 16px;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(0, 240, 255, 0.4);
+            position: relative;
+            transition: background 0.3s ease;
+        }
+        .classic-crystal::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        
+        .meters-container {
+            width: 80%;
+            max-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 5;
+        }
+        .meter-label {
+            font-size: 11px;
+            color: #9d8ec4;
+            display: flex;
+            justify-content: space-between;
+        }
+        .meter-bar {
+            width: 100%;
+            height: 7px;
+            background: #151128;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            overflow: hidden;
+        }
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f0ff, #ff0077);
+            transition: width 0.1s linear;
+        }
+        .meter-fill.fever {
+            background: linear-gradient(90deg, #ffea00, #ff0000);
+        }
+
+        .shrine-obj {
+            position: absolute;
+            width: 45px;
+            height: 55px;
+            background: linear-gradient(135deg, #ffea00 0%, #ff6600 100%);
+            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            filter: drop-shadow(0 0 15px rgba(255, 234, 0, 0.8));
+            z-index: 6;
+            animation: driftAcross 8s linear forwards;
+        }
+        @keyframes driftAcross {
+            0% { transform: translate(-120px, 100px) scale(0.5); opacity: 0; }
+            15% { opacity: 1; transform: translate(0, -50px) scale(1.1); }
+            85% { opacity: 1; }
+            100% { transform: translate(250px, 120px) scale(0.8); opacity: 0; }
+        }
+
+        .side-panel {
+            width: 360px;
+            background: #0d0b18;
+            border-left: 2px solid #21193d;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             overflow-y: auto;
-            padding-right: 2px;
-            flex: 1;
         }
-
-        .list-container::-webkit-scrollbar {
-            width: 4px;
+        @media (max-width: 768px) {
+            .side-panel {
+                width: 100%;
+                max-height: 42vh;
+                border-left: none;
+                border-top: 2px solid #21193d;
+            }
         }
-        .list-container::-webkit-scrollbar-thumb {
-            background: var(--panel-border);
-            border-radius: 4px;
+        .panel-tab-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-
-        .store-item {
+        .hidden {
+            display: none !important;
+        }
+        .shop-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(14, 10, 26, 0.75);
-            border: 1px solid rgba(131, 56, 236, 0.18);
-            padding: 10px 12px;
-            border-radius: 12px;
+            background: #151128;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
         }
-
-        .item-details .item-name {
-            font-weight: 700;
-            font-size: 0.88rem;
-            color: var(--text-main);
+        .shop-item button {
+            background: #00f0ff;
+            color: #0d0b18;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 11px;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+            transition: transform 0.1s ease;
+            white-space: nowrap;
         }
-
-        .item-details .item-desc {
-            font-size: 0.7rem;
-            color: var(--text-dim);
+        .shop-item button:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .shop-item button:disabled {
+            background: #231e3d;
+            color: #5c5280;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .item-info div:first-child {
+            font-weight: bold;
+            font-size: 12px;
+            color: #ff88dc;
+        }
+        .item-info div:last-child {
+            font-size: 10px;
+            color: #9d8ec4;
             margin-top: 2px;
         }
 
-        .item-details .item-cost {
-            font-size: 0.75rem;
-            color: #b39ddb;
-            margin-top: 4px;
-            font-weight: 600;
-        }
-
-        .action-button {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            border: none;
-            color: white;
-            padding: 8px 14px;
+        /* Profile & Card Layouts */
+        .profile-card {
+            background: linear-gradient(135deg, #181330 0%, #110d21 100%);
+            border: 1px solid rgba(0, 240, 255, 0.3);
             border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.25);
-            white-space: nowrap;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-
-        .action-button:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-dim);
-            box-shadow: none;
-        }
-
-        .ach-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-        }
-
-        .ach-card {
+        .profile-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: rgba(14, 10, 26, 0.5);
-            border: 1px solid rgba(131, 56, 236, 0.12);
-            padding: 10px;
-            border-radius: 10px;
-            opacity: 0.45;
+            gap: 10px;
         }
-
-        .ach-card.unlocked {
-            opacity: 1;
-            border-color: var(--success);
-            background: rgba(102, 187, 106, 0.08);
-        }
-
-        .ach-icon {
-            font-size: 1.3rem;
-            width: 36px;
-            height: 36px;
+        .profile-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            font-size: 20px;
+            border: 2px solid #00f0ff;
+        }
+        .profile-titles {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-name { font-size: 15px; font-weight: bold; color: #fff; }
+        .profile-rank { font-size: 10px; color: #ff00aa; font-weight: bold; }
+
+        .card-item {
+            display: flex;
+            align-items: center;
+            background: #151128;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 0, 119, 0.2);
+            gap: 10px;
+        }
+        .card-item.ready {
+            border-color: rgba(255, 234, 0, 0.8);
+            background: #1d1b11;
+        }
+        .card-item.completed {
+            border-color: rgba(0, 255, 100, 0.5);
+            background: #111a18;
+            opacity: 0.8;
+        }
+        .card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #7000ff 0%, #00f0ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .card-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .card-title { font-weight: bold; font-size: 12px; color: #ffffff; }
+        .card-desc { font-size: 10px; color: #9d8ec4; }
+        .card-reward { font-size: 9px; color: #ffea00; font-weight: bold; }
+        
+        .claim-btn {
+            background: #ffea00 !important;
+            color: #0d0b18 !important;
+            animation: pulseBtn 1s infinite alternate;
+        }
+        @keyframes pulseBtn {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
         }
 
-        .ach-info .ach-name {
-            font-weight: 700;
-            font-size: 0.82rem;
-            color: var(--text-main);
-        }
-
-        .ach-info .ach-desc {
-            font-size: 0.68rem;
-            color: var(--text-dim);
-            margin-top: 1px;
-        }
-
-        .util-grid {
+        .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
         }
-
-        .util-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--panel-border);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
+        .stat-box {
+            background: #151128;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.1);
             text-align: center;
         }
+        .stat-val { font-size: 15px; font-weight: bold; color: #00f0ff; margin-top: 2px; }
+        .stat-lbl { font-size: 10px; color: #9d8ec4; }
 
-        .util-btn.danger-btn {
-            border-color: rgba(239, 83, 80, 0.3);
-            color: var(--danger);
+        .floating-text {
+            position: absolute;
+            color: #00f0ff;
+            font-weight: bold;
+            font-size: 18px;
+            pointer-events: none;
+            text-shadow: 0 0 8px #ff00ff;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 10;
         }
-
-        .stats-text-block {
-            font-size: 0.8rem;
-            line-height: 1.6;
-            color: var(--text-dim);
-            background: rgba(0, 0, 0, 0.3);
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+        .floating-text.crit {
+            color: #ffea00;
+            font-size: 24px;
+            text-shadow: 0 0 12px #ff0000;
         }
-        .stats-text-block span {
-            color: var(--text-main);
-            font-weight: 700;
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-90px) scale(0.8); }
         }
     </style>
 </head>
 <body>
-
-    <div class="game-wrapper">
-        <div class="dashboard">
-            <div class="shards-title">Energy Shards</div>
-            <div class="shards-count" id="scoreDisplay">0</div>
-            <div class="shards-rate" id="rateDisplay">0 shards / sec</div>
-            <div class="meta-badges">
-                <div class="badge" id="clickPowerBadge">Click: +1</div>
-                <div class="badge critical" id="critBadge">Crit: 5% (x3)</div>
-                <div class="badge prestige" id="prestigeBadge" style="display: none;">Essence: 0 (+0%)</div>
+    <div class="header-panel">
+        <h1 id="crystalCount">0 Crystals</h1>
+        <div class="sub-header">
+            <div class="cps" id="cpsCount">per second: 0</div>
+            <div>Shards: <span class="shards-display" id="shardsCount">0</span></div>
+            <button class="prestige-btn" id="prestigeBtn" onclick="triggerPrestige()">Ascend (Req: 1M)</button>
+        </div>
+    </div>
+    
+    <!-- Dropdown Menu System -->
+    <div class="nav-container">
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'shopDrop')">Shop ▼</button>
+            <div id="shopDrop" class="dropdown-content">
+                <button class="sub-tab-btn active" onclick="switchTab('shop')">Pickaxes</button>
+                <button class="sub-tab-btn" onclick="switchTab('clicks')">Click Upgrades</button>
+                <button class="sub-tab-btn" onclick="switchTab('skins')">Skins</button>
+                <button class="sub-tab-btn" onclick="switchTab('environments')">Environments</button>
             </div>
         </div>
-
-        <div class="click-zone" id="crystalElement">
-            <div class="crystal-gem"></div>
-        </div>
-
-        <!-- Master Dropdown Menu Selector -->
-        <div class="menu-dropdown-container">
-            <button class="dropdown-toggle-btn" onclick="toggleMainMenu(event)">
-                <span id="currentMenuLabel">Shop & Upgrades</span>
-                <span>▼</span>
-            </button>
-            <div class="dropdown-menu-list" id="mainDropdownList">
-                <button class="menu-item-btn active" onclick="switchSection('shopTab', 'Shop & Upgrades', this)">Shop & Upgrades</button>
-                <button class="menu-item-btn" onclick="switchSection('masteryTab', 'Mastery & Critical', this)">Mastery & Critical</button>
-                <button class="menu-item-btn" onclick="switchSection('buildingsTab', 'Automation Harvesters', this)">Automation Harvesters</button>
-                <button class="menu-item-btn" onclick="switchSection('prestigeTab', 'Cosmic Prestige', this)">Cosmic Prestige</button>
-                <button class="menu-item-btn" onclick="switchSection('achievementsTab', 'Milestones & Relics', this)">Milestones & Relics</button>
-                <button class="menu-item-btn" onclick="switchSection('optionsTab', 'System & Save', this)">System & Save</button>
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'masteryDrop')">Mastery ▼</button>
+            <div id="masteryDrop" class="dropdown-content">
+                <button class="sub-tab-btn" onclick="switchTab('artifacts')">Artifacts</button>
+                <button class="sub-tab-btn" onclick="switchTab('pets')">Pets</button>
+                <button class="sub-tab-btn" onclick="switchTab('ascendTree')">Skill Tree</button>
             </div>
         </div>
-
-        <!-- Sections -->
-        <div class="content-section active" id="shopTab">
-            <div class="section-header">Manual Enhancements</div>
-            <div class="list-container" id="shopListContainer"></div>
-        </div>
-
-        <div class="content-section" id="masteryTab">
-            <div class="section-header">Crit & Mastery Upgrades</div>
-            <div class="list-container" id="masteryListContainer"></div>
-        </div>
-
-        <div class="content-section" id="buildingsTab">
-            <div class="section-header">Autonomous Harvesters</div>
-            <div class="list-container" id="buildingsListContainer"></div>
-        </div>
-
-        <div class="content-section" id="prestigeTab">
-            <div class="section-header">Cosmic Transcendence</div>
-            <div class="stats-text-block">
-                Reset shard progress to harness raw <strong>Astral Essence</strong>. Each point permanently multiplies all production by +10%.
-            </div>
-            <div class="store-item" style="margin-top: 4px;">
-                <div class="item-details">
-                    <div class="item-name">Astral Harvest</div>
-                    <div class="item-desc">Absorb cosmic power from lifetime collection</div>
-                    <div class="item-cost" id="pendingEssenceDisplay">Available: 0 Essence</div>
-                </div>
-                <button class="action-button" id="prestigeTriggerBtn" onclick="executePrestige()" disabled>Transcend</button>
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'prestigeDrop')">Prestige ▼</button>
+            <div id="prestigeDrop" class="dropdown-content">
+                <button class="sub-tab-btn" onclick="triggerPrestige()">Ascend Portal</button>
             </div>
         </div>
-
-        <div class="content-section" id="achievementsTab">
-            <div class="section-header">Milestones & Relics</div>
-            <div class="list-container ach-grid" id="achievementsListContainer"></div>
-        </div>
-
-        <div class="content-section" id="optionsTab">
-            <div class="section-header">Save Management & Statistics</div>
-            <div class="stats-text-block" id="statsSummaryBlock">
-                Total Shards Collected: <span>0</span><br>
-                Total Clicks Made: <span>0</span><br>
-                Critical Hits Landed: <span>0</span><br>
-                Time Elapsed: <span>0s</span>
-            </div>
-            <div class="util-grid" style="margin-top: 4px;">
-                <button class="util-btn" onclick="saveGame(); alert('Game Saved Successfully!');">Save Progress</button>
-                <button class="util-btn" onclick="exportSaveCode()">Export Save</button>
-                <button class="util-btn" onclick="importSaveCode()">Import Save</button>
-                <button class="util-btn danger-btn" onclick="hardResetGame()">Wipe Save</button>
+        <div class="dropdown">
+            <button class="drop-btn" onclick="toggleDropdown(event, 'profileDrop')">Profile ▼</button>
+            <div id="profileDrop" class="dropdown-content">
+                <button class="sub-tab-btn" onclick="switchTab('profile')">Overview</button>
+                <button class="sub-tab-btn" onclick="switchTab('achievements')">Achievements</button>
+                <button class="sub-tab-btn" onclick="switchTab('quests')">Quests</button>
+                <button class="sub-tab-btn" onclick="switchTab('stats')">Statistics</button>
             </div>
         </div>
     </div>
 
+    <div class="main-layout">
+        <div class="crystal-container" id="crystalContainer">
+            <!-- Restored Classic Diamond Crystal design -->
+            <div class="crystal-wrapper" id="crystalBtn">
+                <div class="classic-crystal" id="classicCrystalDiv"></div>
+            </div>
+            
+            <div class="meters-container">
+                <div>
+                    <div class="meter-label"><span>Fever Meter</span><span id="feverText">0%</span></div>
+                    <div class="meter-bar"><div class="meter-fill fever" id="feverFill"></div></div>
+                </div>
+                <div>
+                    <div class="meter-label"><span>Combo Bar</span><span id="comboText">0x</span></div>
+                    <div class="meter-bar"><div class="meter-fill" id="comboFill"></div></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="side-panel">
+            <div id="shopContent" class="panel-tab-content"></div>
+            <div id="clicksContent" class="panel-tab-content hidden"></div>
+            <div id="profileContent" class="panel-tab-content hidden"></div>
+            <div id="achievementsContent" class="panel-tab-content hidden"></div>
+            <div id="questsContent" class="panel-tab-content hidden"></div>
+            <div id="artifactsContent" class="panel-tab-content hidden"></div>
+            <div id="petsContent" class="panel-tab-content hidden"></div>
+            <div id="ascendTreeContent" class="panel-tab-content hidden"></div>
+            <div id="skinsContent" class="panel-tab-content hidden"></div>
+            <div id="environmentsContent" class="panel-tab-content hidden"></div>
+            <div id="statsContent" class="panel-tab-content hidden"></div>
+        </div>
+    </div>
+
     <script>
-        let game = {
-            shards: 0,
-            totalShardsLifetime: 0,
-            totalClicks: 0,
-            totalCrits: 0,
-            secondsPlayed: 0,
-            clickPower: 1,
-            clickLevel: 1,
-            clickCost: 15,
-            critChance: 0.05,
-            critChanceLevel: 1,
-            critChanceCost: 100,
-            critMultiplier: 3.0,
-            critMultLevel: 1,
-            critMultCost: 500,
-            resonanceLevel: 0,
-            resonanceCost: 1250,
-            essence: 0,
-            buildings: {
-                dustCollector: { count: 0, baseCost: 50, costMult: 1.15, cps: 0.5, name: "Dust Collector", desc: "Sifts residual space particles (+0.5/s)" },
-                stellarExtractor: { count: 0, baseCost: 350, costMult: 1.18, cps: 4, name: "Stellar Extractor", desc: "Extracts concentrated light veins (+4/s)" },
-                prismForge: { count: 0, baseCost: 2400, costMult: 1.20, cps: 25, name: "Prism Forge", desc: "Forges compressed cosmic plasma (+25/s)" },
-                voidMonolith: { count: 0, baseCost: 15000, costMult: 1.22, cps: 140, name: "Void Monolith", desc: "Channels dark dimensional resonance (+140/s)" },
-                quantumSingularity: { count: 0, baseCost: 95000, costMult: 1.25, cps: 850, name: "Quantum Singularity", desc: "Bends space-time for mass generation (+850/s)" },
-                dysonSwarm: { count: 0, baseCost: 650000, costMult: 1.28, cps: 4800, name: "Dyson Swarm", desc: "Harvests stellar energy output (+4.8k/s)" }
-            },
-            achievements: {
-                click_10: { name: "First Spark", desc: "Click crystal 10 times", unlocked: false, check: () => game.totalClicks >= 10, icon: "✨" },
-                click_100: { name: "Dedicated Tap", desc: "Click crystal 100 times", unlocked: false, check: () => game.totalClicks >= 100, icon: "⚡" },
-                shards_1k: { name: "Crystal Hoarder", desc: "Accumulate 1,000 lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000, icon: "💎" },
-                shards_1m: { name: "Prism Tycoon", desc: "Accumulate 1,000,000 lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000000, icon: "👑" },
-                building_10: { name: "Automated Core", desc: "Own 10 harvesters", unlocked: false, check: () => getTotalBuildings() >= 10, icon: "⚙️" },
-                prestige_1: { name: "Stellar Rebirth", desc: "Perform cosmic transcendence", unlocked: false, check: () => game.essence > 0, icon: "🌌" }
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', event => {
+            if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && ['I','J','C'].includes(event.key)) || (event.ctrlKey && event.key === 'U')) {
+                event.preventDefault();
             }
+        });
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.matches('.drop-btn')) {
+                document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.drop-btn').forEach(b => b.classList.remove('active'));
+            }
+        });
+
+        function toggleDropdown(event, dropId) {
+            event.stopPropagation();
+            const content = document.getElementById(dropId);
+            const isOpen = content.classList.contains('show');
+            document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.drop-btn').forEach(b => b.classList.remove('active'));
+            if (!isOpen) {
+                content.classList.add('show');
+                event.target.classList.add('active');
+            }
+        }
+
+        let soundEnabled = true;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (!soundEnabled || !audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'click') {
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'buy') {
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'unlock') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            }
+        }
+
+        let crystals = 0;
+        let lifetimeCrystals = 0;
+        let shards = 0;
+        let prestigeCount = 0;
+        let totalClicks = 0;
+        let timePlayed = 0;
+        let currentSkin = 'default';
+        let currentEnvironment = 'default';
+        
+        let comboMeter = 0;
+        let feverMeter = 0;
+        let isFeverActive = false;
+        let feverTimer = 0;
+        let shrineActive = false;
+        let shrineMultiplier = 1;
+
+        const upgrades = {
+            pickaxe1:  { name: "Copper Pickaxe", qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
+            pickaxe2:  { name: "Tin Pickaxe", qty: 0, cost: 100, baseCost: 100, cps: 1.2 },
+            pickaxe3:  { name: "Bronze Pickaxe", qty: 0, cost: 850, baseCost: 850, cps: 8 },
+            pickaxe4:  { name: "Iron Pickaxe", qty: 0, cost: 5200, baseCost: 5200, cps: 45 },
+            pickaxe5:  { name: "Steel Pickaxe", qty: 0, cost: 32000, baseCost: 32000, cps: 260 },
+            pickaxe6:  { name: "Silver Pickaxe", qty: 0, cost: 190000, baseCost: 190000, cps: 1400 },
+            pickaxe7:  { name: "Gold Pickaxe", qty: 0, cost: 1100000, baseCost: 1100000, cps: 7800 },
+            pickaxe8:  { name: "Platinum Pickaxe", qty: 0, cost: 6500000, baseCost: 6500000, cps: 44000 },
+            pickaxe9:  { name: "Titanium Pickaxe", qty: 0, cost: 38000000, baseCost: 38000000, cps: 260000 },
+            pickaxe10: { name: "Quantum Pickaxe", qty: 0, cost: 220000000, baseCost: 220000000, cps: 1500000 },
+            pickaxe11: { name: "Plasma Pickaxe", qty: 0, cost: 1300000000, baseCost: 1300000000, cps: 9000000 },
+            pickaxe12: { name: "Void Pickaxe", qty: 0, cost: 7500000000, baseCost: 7500000000, cps: 52000000 },
+            pickaxe13: { name: "Nebula Pickaxe", qty: 0, cost: 44000000000, baseCost: 44000000000, cps: 310000000 },
+            pickaxe14: { name: "Supernova Pickaxe", qty: 0, cost: 260000000000, baseCost: 260000000000, cps: 1800000000 },
+            pickaxe15: { name: "Singularity Pickaxe", qty: 0, cost: 1500000000000, baseCost: 1500000000000, cps: 11000000000 },
+            pickaxe16: { name: "Dark Matter Pickaxe", qty: 0, cost: 9000000000000, baseCost: 9000000000000, cps: 65000000000 },
+            pickaxe17: { name: "Antimatter Pickaxe", qty: 0, cost: 54000000000000, baseCost: 54000000000000, cps: 390000000000 },
+            pickaxe18: { name: "Aether Pickaxe", qty: 0, cost: 320000000000000, baseCost: 320000000000000, cps: 2300000000000 },
+            pickaxe19: { name: "Chronos Pickaxe", qty: 0, cost: 1900000000000000, baseCost: 1900000000000000, cps: 14000000000000 },
+            pickaxe20: { name: "Cosmic Pickaxe", qty: 0, cost: 11500000000000000, baseCost: 11500000000000000, cps: 85000000000000 },
+            pickaxe21: { name: "Dimension Pickaxe", qty: 0, cost: 70000000000000000, baseCost: 70000000000000000, cps: 520000000000000 },
+            pickaxe22: { name: "Infinity Pickaxe", qty: 0, cost: 420000000000000000, baseCost: 420000000000000000, cps: 3200000000000000 },
+            pickaxe23: { name: "Eternity Pickaxe", qty: 0, cost: 2600000000000000000, baseCost: 2600000000000000000, cps: 20000000000000000 },
+            pickaxe24: { name: "Godhood Pickaxe", qty: 0, cost: 16000000000000000000, baseCost: 16000000000000000000, cps: 125000000000000000 },
+            pickaxe25: { name: "Omni Pickaxe", qty: 0, cost: 100000000000000000000, baseCost: 100000000000000000000, cps: 800000000000000000 },
+            pickaxe26: { name: "Nexus Pickaxe", qty: 0, cost: 650000000000000000000n, baseCost: 650000000000000000000n, cps: 5000000000000000000n },
+            pickaxe27: { name: "Stellar Pickaxe", qty: 0, cost: 4000000000000000000000n, baseCost: 4000000000000000000000n, cps: 32000000000000000000n },
+            pickaxe28: { name: "Pulsar Pickaxe", qty: 0, cost: 25000000000000000000000n, baseCost: 25000000000000000000000n, cps: 200000000000000000000n },
+            pickaxe29: { name: "Quasar Pickaxe", qty: 0, cost: 160000000000000000000000n, baseCost: 160000000000000000000000n, cps: 1300000000000000000000n },
+            pickaxe30: { name: "Event Horizon Pickaxe", qty: 0, cost: 1000000000000000000000000n, baseCost: 1000000000000000000000000n, cps: 8500000000000000000000n },
+            pickaxe31: { name: "Abyssal Pickaxe", qty: 0, cost: 7000000000000000000000000n, baseCost: 7000000000000000000000000n, cps: 55000000000000000000000n },
+            pickaxe32: { name: "Genesis Pickaxe", qty: 0, cost: 45000000000000000000000000n, baseCost: 45000000000000000000000000n, cps: 360000000000000000000000n },
+            pickaxe33: { name: "Elysian Pickaxe", qty: 0, cost: 300000000000000000000000000n, baseCost: 300000000000000000000000000n, cps: 2400000000000000000000000n },
+            pickaxe34: { name: "Zenith Pickaxe", qty: 0, cost: 2000000000000000000000000000n, baseCost: 2000000000000000000000000000n, cps: 16000000000000000000000000n },
+            pickaxe35: { name: "Apex Pickaxe", qty: 0, cost: 14000000000000000000000000000n, baseCost: 14000000000000000000000000000n, cps: 110000000000000000000000000n },
+            pickaxe36: { name: "Nirvana Pickaxe", qty: 0, cost: 95000000000000000000000000000n, baseCost: 95000000000000000000000000000n, cps: 750000000000000000000000000n },
+            pickaxe37: { name: "Multiverse Pickaxe", qty: 0, cost: 650000000000000000000000000000n, baseCost: 650000000000000000000000000000n, cps: 5000000000000000000000000000n },
+            pickaxe38: { name: "Hyperverse Pickaxe", qty: 0, cost: 4500000000000000000000000000000n, baseCost: 4500000000000000000000000000000n, cps: 35000000000000000000000000000n },
+            pickaxe39: { name: "Alpha & Omega Pickaxe", qty: 0, cost: 32000000000000000000000000000000n, baseCost: 32000000000000000000000000000000n, cps: 250000000000000000000000000000n },
+            pickaxe40: { name: "Absolute Pickaxe", qty: 0, cost: 250000000000000000000000000000000n, baseCost: 250000000000000000000000000000000n, cps: 2000000000000000000000000000000n }
         };
 
-        const scoreDisplay = document.getElementById('scoreDisplay');
-        const rateDisplay = document.getElementById('rateDisplay');
-        const crystalElement = document.getElementById('crystalElement');
+        const clickUpgrades = {
+            click1: { name: "Sharpened Edge", cost: 75000, mult: 2, purchased: false },
+            click2: { name: "Diamond Tip", cost: 850000, mult: 3, purchased: false },
+            click3: { name: "Hydraulic Striker", cost: 12000000, mult: 4, purchased: false },
+            click4: { name: "Laser Focus", cost: 180000000, mult: 5, purchased: false },
+            click5: { name: "Antimatter Edge", cost: 2500000000, mult: 6, purchased: false },
+            click6: { name: "Quantum Breaker", cost: 35000000000, mult: 8, purchased: false },
+            click7: { name: "Singularity Striker", cost: 500000000000, mult: 10, purchased: false },
+            click8: { name: "Cosmic Hammer", cost: 8000000000000, mult: 15, purchased: false }
+        };
 
-        function toggleMainMenu(e) {
-            e.stopPropagation();
-            document.getElementById('mainDropdownList').classList.toggle('open');
+        const artifacts = {
+            art1: { name: "Shard Resonance", desc: "+10% Shard gain per Ascension", cost: 5, level: 0, max: 10 },
+            art2: { name: "Crystalline Core", desc: "+15% Global Production Multiplier", cost: 10, level: 0, max: 10 },
+            art3: { name: "Fever Generator", desc: "Fever meter builds 20% faster", cost: 15, level: 0, max: 5 }
+        };
+
+        const pets = {
+            pet1: { name: "Ruby Sprite", desc: "Auto-clicks once every 3 seconds", cost: 50, owned: false },
+            pet2: { name: "Astral Wisp", desc: "+10% Shard gain multiplier", cost: 200, owned: false },
+            pet3: { name: "Void Guardian", desc: "+25% Global Production Multiplier", cost: 1000, owned: false }
+        };
+
+        const ascendTree = {
+            node1: { name: "Hyper Strike", desc: "+10% Click power per level", cost: 2, level: 0, max: 5 },
+            node2: { name: "Deep Earth", desc: "+15% Pickaxe production per level", cost: 3, level: 0, max: 5 },
+            node3: { name: "Fever Mastery", desc: "+2 seconds duration on Fever mode", cost: 5, level: 0, max: 3 }
+        };
+
+        const skinsShop = {
+            'default': { name: "Default Skin", cost: 0, owned: true, color: "linear-gradient(135deg, #00f0ff 0%, #7000ff 50%, #ff0077 100%)" },
+            'ruby': { name: "Ruby Skin", cost: 500000, owned: false, color: "linear-gradient(135deg, #ff3333 0%, #990000 50%, #550000 100%)" },
+            'sapphire': { name: "Sapphire Skin", cost: 5000000, owned: false, color: "linear-gradient(135deg, #3366ff 0%, #000099 50%, #000044 100%)" },
+            'emerald': { name: "Emerald Skin", cost: 50000000, owned: false, color: "linear-gradient(135deg, #33ff66 0%, #009933 50%, #004411 100%)" },
+            'gold-theme': { name: "Gold Theme Skin", cost: 500000000, owned: false, color: "linear-gradient(135deg, #ffcc00 0%, #cc6600 50%, #663300 100%)" }
+        };
+
+        const environmentsShop = {
+            'default': { name: "Standard Cavern", desc: "The classic crystal excavation site.", cost: 0, owned: true, perk: "None" },
+            'volcanic': { name: "Volcanic Core", desc: "+5% Critical Hit Chance boost.", cost: 1000000, owned: false, perk: "+5% Crit Chance" },
+            'space': { name: "Deep-Space Asteroid", desc: "+10% Global Idle CPS boost.", cost: 10000000, owned: false, perk: "+10% Idle CPS" },
+            'forest': { name: "Mystical Forest", desc: "+10% Shard gain on Ascend.", cost: 50000000, owned: false, perk: "+10% Shards" }
+        };
+
+        const achievements = {
+            ach1: { title: "First Spark", desc: "Reach 50 crystals", reward: "+10 Crystals", icon: "💎", status: 0, check: () => crystals >= 50, rewardGiven: () => crystals += 10 },
+            ach2: { title: "Steady Pounding", desc: "Reach 500 crystals", reward: "+50 Crystals", icon: "⛏️", status: 0, check: () => crystals >= 500, rewardGiven: () => crystals += 50 },
+            ach3: { title: "Crystal Hoarder", desc: "Reach 5,000 crystals", reward: "+200 Crystals", icon: "✨", status: 0, check: () => crystals >= 5000, rewardGiven: () => crystals += 200 },
+            ach4: { title: "Crystal Millionaire", desc: "Reach 1,000,000 crystals", reward: "+10,000 Crystals", icon: "🌟", status: 0, check: () => crystals >= 1000000, rewardGiven: () => crystals += 10000 },
+            ach5: { title: "Billionaire Miner", desc: "Reach 1,000,000,000 crystals", reward: "+500,000 Crystals", icon: "💰", status: 0, check: () => crystals >= 1000000000, rewardGiven: () => crystals += 500000 },
+            ach6: { title: "Trillionaire Tycoon", desc: "Reach 1,000,000,000,000 crystals", reward: "+50M Crystals", icon: "👑", status: 0, check: () => crystals >= 1000000000000, rewardGiven: () => crystals += 50000000 },
+            ach7: { title: "Tool Up", desc: "Buy 10 total pickaxes", reward: "+50 Crystals", icon: "🛠️", status: 0, check: () => getTotalPickaxes() >= 10, rewardGiven: () => crystals += 50 },
+            ach8: { title: "Industrial Mining", desc: "Buy 50 total pickaxes", reward: "+1,000 Crystals", icon: "🏭", status: 0, check: () => getTotalPickaxes() >= 50, rewardGiven: () => crystals += 1000 },
+            ach9: { title: "Pickaxe Master", desc: "Buy 150 total pickaxes", reward: "+50,000 Crystals", icon: "🏗️", status: 0, check: () => getTotalPickaxes() >= 150, rewardGiven: () => crystals += 50000 },
+            ach10: { title: "Pickaxe Army", desc: "Buy 300 total pickaxes", reward: "+2,000,000 Crystals", icon: "🏰", status: 0, check: () => getTotalPickaxes() >= 300, rewardGiven: () => crystals += 2000000 },
+            ach11: { title: "Click Beginner", desc: "Click 100 times total", reward: "+100 Crystals", icon: "👆", status: 0, check: () => totalClicks >= 100, rewardGiven: () => crystals += 100 },
+            ach12: { title: "Click Enthusiast", desc: "Click 1,000 times total", reward: "+5,000 Crystals", icon: "🖱️", status: 0, check: () => totalClicks >= 1000, rewardGiven: () => crystals += 5000 },
+            ach13: { title: "Carpal Tunnel", desc: "Click 10,000 times total", reward: "+250,000 Crystals", icon: "⚡", status: 0, check: () => totalClicks >= 10000, rewardGiven: () => crystals += 250000 },
+            ach14: { title: "First Ascension", desc: "Perform your first Ascend", reward: "+500 Crystals", icon: "🌌", status: 0, check: () => prestigeCount >= 1, rewardGiven: () => crystals += 500 },
+            ach15: { title: "Reborn Veteran", desc: "Perform 5 Ascensions", reward: "+25,000 Crystals", icon: "🌀", status: 0, check: () => prestigeCount >= 5, rewardGiven: () => crystals += 25000 },
+            ach16: { title: "Transcendent", desc: "Perform 20 Ascensions", reward: "+1,000,000 Crystals", icon: "🪐", status: 0, check: () => prestigeCount >= 20, rewardGiven: () => crystals += 1000000 }
+        };
+
+        const quests = {
+            q1: { title: "Quick Hands", desc: "Click 50 times in a session", reward: "+100 Crystals", status: 0, check: () => totalClicks >= (window.sessionClicks || 0) + 50, rewardGiven: () => crystals += 100 }
+        };
+
+        const SECRET_SALT = "CrystalClickerUltimate2026!";
+        function generateSignature(text) {
+            let hash = 0;
+            const combined = text + SECRET_SALT;
+            for (let i = 0; i < combined.length; i++) {
+                hash = (hash << 5) - hash + combined.charCodeAt(i);
+                hash |= 0;
+            }
+            return hash.toString(36);
         }
 
-        window.addEventListener('click', () => {
-            document.getElementById('mainDropdownList').classList.remove('open');
+        function buildUI() {
+            // Shop
+            const shop = document.getElementById('shopContent');
+            Object.keys(upgrades).forEach(key => {
+                const item = upgrades[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${item.name}</div><div id="${key}Cost">Cost: ${formatNum(item.cost)}</div></div><button id="buy${key}" onclick="buyUpgrade('${key}')">Buy (<span id="${key}Qty">0</span>)</button>`;
+                shop.appendChild(div);
+            });
+
+            // Clicks
+            const clickPanel = document.getElementById('clicksContent');
+            Object.keys(clickUpgrades).forEach(key => {
+                const item = clickUpgrades[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${item.name} (${item.mult}x)</div><div>Cost: ${formatNum(item.cost)}</div></div><button id="buyClick_${key}" onclick="buyClickUpgrade('${key}')">Unlock</button>`;
+                clickPanel.appendChild(div);
+            });
+
+            // Profile
+            const profilePanel = document.getElementById('profileContent');
+            profilePanel.innerHTML = `
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">⛏️</div>
+                        <div class="profile-titles">
+                            <div class="profile-name">Master Miner</div>
+                            <div class="profile-rank" id="profileRankTitle">Novice Breaker</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 11px; color: #9d8ec4; border-top: 1px solid rgba(0,240,255,0.1); padding-top: 6px;">
+                        <div>Prestige Level: <span id="profileAscend">0</span></div>
+                        <div>Total Shards Collected: <span id="profileShards">0</span></div>
+                        <div>Active Environment: <span id="profileEnv" style="color:#00f0ff;">Standard Cavern</span></div>
+                    </div>
+                </div>
+            `;
+
+            // Achievements
+            const achPanel = document.getElementById('achievementsContent');
+            Object.keys(achievements).forEach(key => {
+                const ach = achievements[key];
+                const div = document.createElement('div');
+                div.className = 'card-item';
+                div.id = `card_${key}`;
+                div.innerHTML = `<div class="card-icon">${ach.icon}</div><div class="card-details"><div class="card-title">${ach.title}</div><div class="card-desc">${ach.desc}</div><div class="card-reward">Reward: ${ach.reward}</div></div><button class="sub-tab-btn" id="claim_${key}" onclick="claimAchievement('${key}')" style="display:none; width:auto; padding:4px 8px; border-radius:4px;">Claim</button>`;
+                achPanel.appendChild(div);
+            });
+
+            // Quests
+            const questPanel = document.getElementById('questsContent');
+            Object.keys(quests).forEach(key => {
+                const q = quests[key];
+                const div = document.createElement('div');
+                div.className = 'card-item';
+                div.id = `quest_${key}`;
+                div.innerHTML = `<div class="card-icon">🎯</div><div class="card-details"><div class="card-title">${q.title}</div><div class="card-desc">${q.desc}</div><div class="card-reward">Reward: ${q.reward}</div></div><button class="sub-tab-btn" id="claim_q_${key}" onclick="claimQuest('${key}')" style="display:none; width:auto; padding:4px 8px; border-radius:4px;">Claim</button>`;
+                questPanel.appendChild(div);
+            });
+
+            // Artifacts
+            const artPanel = document.getElementById('artifactsContent');
+            Object.keys(artifacts).forEach(key => {
+                const art = artifacts[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${art.name} (Lvl <span id="${key}Lvl">0</span>/${art.max})</div><div>${art.desc}</div><div>Cost: <span id="${key}Cost">${art.cost}</span> Shards</div></div><button onclick="buyArtifact('${key}')">Upgrade</button>`;
+                artPanel.appendChild(div);
+            });
+
+            // Pets
+            const petPanel = document.getElementById('petsContent');
+            Object.keys(pets).forEach(key => {
+                const pet = pets[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${pet.name}</div><div>${pet.desc}</div><div>Cost: ${pet.cost} Shards</div></div><button id="petBtn_${key}" onclick="buyPet('${key}')">Buy</button>`;
+                petPanel.appendChild(div);
+            });
+
+            // Skill Tree
+            const treePanel = document.getElementById('ascendTreeContent');
+            Object.keys(ascendTree).forEach(key => {
+                const node = ascendTree[key];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${node.name} (Lvl <span id="${key}Lvl">0</span>/${node.max})</div><div>${node.desc}</div><div>Cost: <span id="${key}Cost">${node.cost}</span> Shards</div></div><button onclick="buySkillNode('${key}')">Unlock</button>`;
+                treePanel.appendChild(div);
+            });
+
+            // Skins
+            const skinPanel = document.getElementById('skinsContent');
+            Object.keys(skinsShop).forEach(skinKey => {
+                const skin = skinsShop[skinKey];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${skin.name}</div><div>Cost: ${formatNum(skin.cost)} Crystals</div></div><button id="skinBtn_${skinKey}" onclick="buyOrSelectSkin('${skinKey}')">Select</button>`;
+                skinPanel.appendChild(div);
+            });
+
+            // Environments
+            const envPanel = document.getElementById('environmentsContent');
+            Object.keys(environmentsShop).forEach(envKey => {
+                const env = environmentsShop[envKey];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${env.name}</div><div>${env.desc}</div><div>Cost: ${formatNum(env.cost)} Crystals</div></div><button id="envBtn_${envKey}" onclick="buyOrSelectEnvironment('${envKey}')">Select</button>`;
+                envPanel.appendChild(div);
+            });
+
+            // Stats
+            const statsPanel = document.getElementById('statsContent');
+            statsPanel.innerHTML = `<div class="stats-grid">
+                <div class="stat-box"><div class="stat-lbl">Lifetime Mined</div><div class="stat-val" id="statLifetime">0</div></div>
+                <div class="stat-box"><div class="stat-lbl">Total Clicks</div><div class="stat-val" id="statClicks">0</div></div>
+                <div class="stat-box"><div class="stat-lbl">Time Played</div><div class="stat-val" id="statTime">0s</div></div>
+                <div class="stat-box"><div class="stat-lbl">Ascensions</div><div class="stat-val" id="statAscend">0</div></div>
+            </div>`;
+        }
+        buildUI();
+
+        if (localStorage.getItem('crystalClickerUltimateSave')) {
+            try {
+                const save = JSON.parse(localStorage.getItem('crystalClickerUltimateSave'));
+                if (save.signature === generateSignature(JSON.stringify(save.data))) {
+                    const d = save.data;
+                    crystals = d.crystals || 0;
+                    lifetimeCrystals = d.lifetimeCrystals || 0;
+                    shards = d.shards || 0;
+                    prestigeCount = d.prestigeCount || 0;
+                    totalClicks = d.totalClicks || 0;
+                    timePlayed = d.timePlayed || 0;
+                    currentSkin = d.currentSkin || 'default';
+                    setSkin(currentSkin, false);
+                    currentEnvironment = d.currentEnvironment || 'default';
+                    setEnvironment(currentEnvironment, false);
+
+                    if (d.upgrades) Object.keys(d.upgrades).forEach(k => { upgrades[k].qty = d.upgrades[k].qty; upgrades[k].cost = BigInt(d.upgrades[k].cost); });
+                    if (d.clickUpgrades) Object.keys(d.clickUpgrades).forEach(k => { clickUpgrades[k].purchased = d.clickUpgrades[k]; });
+                    if (d.artifacts) Object.keys(d.artifacts).forEach(k => { artifacts[k].level = d.artifacts[k]; });
+                    if (d.pets) Object.keys(d.pets).forEach(k => { pets[k].owned = d.pets[k]; });
+                    if (d.ascendTree) Object.keys(d.ascendTree).forEach(k => { ascendTree[k].level = d.ascendTree[k]; });
+                    if (d.skinsShop) Object.keys(d.skinsShop).forEach(k => { skinsShop[k].owned = d.skinsShop[k]; });
+                    if (d.environmentsShop) Object.keys(d.environmentsShop).forEach(k => { environmentsShop[k].owned = d.environmentsShop[k]; });
+                    if (d.achievements) Object.keys(d.achievements).forEach(k => { if(achievements[k]) achievements[k].status = d.achievements[k]; });
+                    if (d.quests) Object.keys(d.quests).forEach(k => { if(quests[k]) quests[k].status = d.quests[k]; });
+
+                    if (d.lastTimestamp) {
+                        const offlineSeconds = (Date.now() - d.lastTimestamp) / 1000;
+                        if (offlineSeconds > 10) {
+                            const earned = getCps() * offlineSeconds * 0.5;
+                            crystals += earned;
+                            lifetimeCrystals += earned;
+                            setTimeout(() => alert(`Welcome back! While you were away, your pickaxes mined ${formatNum(earned)} crystals.`), 500);
+                        }
+                    }
+                }
+            } catch (e) { console.error("Save load error"); }
+        }
+
+        const crystalBtn = document.getElementById('crystalBtn');
+        const crystalContainer = document.getElementById('crystalContainer');
+        const classicCrystalDiv = document.getElementById('classicCrystalDiv');
+
+        function triggerClick(clientX, clientY) {
+            totalClicks++;
+            playSound('click');
+
+            let clickMultiplier = 1;
+            Object.keys(clickUpgrades).forEach(k => { if (clickUpgrades[k].purchased) clickMultiplier *= clickUpgrades[k].mult; });
+            clickMultiplier *= (1 + ascendTree.node1.level * 0.1);
+            
+            let critChance = 0.05;
+            if (currentEnvironment === 'volcanic') critChance = 0.10;
+
+            const isCrit = Math.random() < critChance;
+            let gain = (isCrit ? 5 : 1) * clickMultiplier * (shrineActive ? shrineMultiplier : 1);
+            if (isFeverActive) gain *= 3;
+
+            crystals += gain;
+            lifetimeCrystals += gain;
+
+            comboMeter = Math.min(100, comboMeter + 10);
+            let feverSpeed = 2;
+            if (artifacts.art3.level > 0) feverSpeed = 2.4;
+            feverMeter = Math.min(100, feverMeter + feverSpeed);
+            if (feverMeter >= 100 && !isFeverActive) {
+                isFeverActive = true;
+                feverTimer = 10 + (ascendTree.node3.level * 2);
+            }
+
+            createFloatingText(clientX, clientY, isCrit ? `+${formatNum(gain)} CRIT!` : `+${formatNum(gain)}`, isCrit);
+            checkAchievements();
+            updateUI();
+        }
+
+        crystalBtn.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            triggerClick(e.clientX, e.clientY);
         });
 
-        function switchSection(sectionId, labelText, btnElement) {
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.menu-item-btn').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(sectionId).classList.add('active');
-            btnElement.classList.add('active');
-            document.getElementById('currentMenuLabel').textContent = labelText;
-            document.getElementById('mainDropdownList').classList.remove('open');
-        }
-
-        crystalElement.addEventListener('click', (e) => {
-            let isCrit = Math.random() < game.critChance;
-            let mult = 1 + (game.essence * 0.1) + (game.resonanceLevel * 0.05);
-            let baseGain = game.clickPower * mult;
-            let finalGain = isCrit ? baseGain * game.critMultiplier : baseGain;
-
-            game.shards += finalGain;
-            game.totalShardsLifetime += finalGain;
-            game.totalClicks++;
-            if (isCrit) game.totalCrits++;
-
-            refreshUI();
-            spawnPopup(e, `+${Math.floor(finalGain)}`, isCrit);
-        });
-
-        function spawnPopup(e, text, isCrit) {
-            const popup = document.createElement('div');
-            popup.className = `floating-popup ${isCrit ? 'crit' : ''}`;
-            popup.textContent = isCrit ? `${text} CRIT!` : text;
-            
-            const rect = crystalElement.getBoundingClientRect();
-            popup.style.left = `${e.clientX - rect.left - 15}px`;
-            popup.style.top = `${e.clientY - rect.top - 15}px`;
-            
-            crystalElement.appendChild(popup);
-            setTimeout(() => popup.remove(), 700);
-        }
-
-        function buyClickUpgrade() {
-            if (game.shards >= game.clickCost) {
-                game.shards -= game.clickCost;
-                game.clickLevel++;
-                game.clickPower++;
-                game.clickCost = Math.floor(game.clickCost * 1.58);
-                refreshUI();
+        function buyUpgrade(type) {
+            const item = upgrades[type];
+            if (crystals >= Number(item.cost)) {
+                crystals -= Number(item.cost);
+                item.qty++;
+                let nextCost = item.baseCost;
+                for (let i = 0; i < item.qty; i++) nextCost = (nextCost * 115n) / 100n;
+                item.cost = nextCost;
+                playSound('buy');
+                checkAchievements();
+                updateUI();
             }
         }
 
-        function buyCritChanceUpgrade() {
-            if (game.shards >= game.critChanceCost && game.critChance < 0.50) {
-                game.shards -= game.critChanceCost;
-                game.critChanceLevel++;
-                game.critChance += 0.01;
-                game.critChanceCost = Math.floor(game.critChanceCost * 1.75);
-                refreshUI();
+        function buyClickUpgrade(type) {
+            const item = clickUpgrades[type];
+            if (!item.purchased && crystals >= item.cost) {
+                crystals -= item.cost;
+                item.purchased = true;
+                playSound('unlock');
+                updateUI();
             }
         }
 
-        function buyCritMultUpgrade() {
-            if (game.shards >= game.critMultCost) {
-                game.shards -= game.critMultCost;
-                game.critMultLevel++;
-                game.critMultiplier += 0.5;
-                game.critMultCost = Math.floor(game.critMultCost * 2.0);
-                refreshUI();
+        function buyArtifact(type) {
+            const art = artifacts[type];
+            if (shards >= art.cost && art.level < art.max) {
+                shards -= art.cost;
+                art.level++;
+                art.cost = Math.floor(art.cost * 1.5);
+                playSound('unlock');
+                updateUI();
             }
         }
 
-        function buyResonanceUpgrade() {
-            if (game.shards >= game.resonanceCost) {
-                game.shards -= game.resonanceCost;
-                game.resonanceLevel++;
-                game.resonanceCost = Math.floor(game.resonanceCost * 2.25);
-                refreshUI();
+        function buyPet(type) {
+            const pet = pets[type];
+            if (!pet.owned && shards >= pet.cost) {
+                shards -= pet.cost;
+                pet.owned = true;
+                playSound('unlock');
+                updateUI();
             }
         }
 
-        function buyBuilding(id) {
-            let b = game.buildings[id];
-            let currentCost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
-            if (game.shards >= currentCost) {
-                game.shards -= currentCost;
-                b.count++;
-                refreshUI();
+        function buySkillNode(type) {
+            const node = ascendTree[type];
+            if (shards >= node.cost && node.level < node.max) {
+                shards -= node.cost;
+                node.level++;
+                node.cost = Math.floor(node.cost * 1.8);
+                playSound('unlock');
+                updateUI();
             }
         }
 
-        function getTotalBuildings() {
-            return Object.values(game.buildings).reduce((acc, curr) => acc + curr.count, 0);
-        }
-
-        function calculateCPS() {
-            let rawCPS = 0;
-            for (let key in game.buildings) {
-                rawCPS += game.buildings[key].count * game.buildings[key].cps;
-            }
-            let mult = 1 + (game.essence * 0.1) + (game.resonanceLevel * 0.05);
-            return rawCPS * mult;
-        }
-
-        function executePrestige() {
-            let pending = calculatePendingEssence();
-            if (pending > 0) {
-                game.essence += pending;
-                game.shards = 0;
-                game.totalShardsLifetime = 0;
-                game.clickPower = 1;
-                game.clickLevel = 1;
-                game.clickCost = 15;
-                game.critChance = 0.05;
-                game.critChanceLevel = 1;
-                game.critChanceCost = 100;
-                game.critMultiplier = 3.0;
-                game.critMultLevel = 1;
-                game.critMultCost = 500;
-                game.resonanceLevel = 0;
-                game.resonanceCost = 1250;
-                for (let key in game.buildings) game.buildings[key].count = 0;
-                refreshUI();
-                saveGame();
+        function buyOrSelectSkin(skinKey) {
+            const skin = skinsShop[skinKey];
+            if (skin.owned) {
+                setSkin(skinKey);
+            } else if (crystals >= skin.cost) {
+                crystals -= skin.cost;
+                skin.owned = true;
+                setSkin(skinKey);
+                playSound('unlock');
+                updateUI();
             }
         }
 
-        function calculatePendingEssence() {
-            return Math.floor(Math.sqrt(game.totalShardsLifetime / 1000));
+        function setSkin(skin, playSnd = true) {
+            currentSkin = skin;
+            if (skinsShop[skin]) {
+                classicCrystalDiv.style.background = skinsShop[skin].color;
+            }
+            if (playSnd) playSound('click');
         }
 
+        function buyOrSelectEnvironment(envKey) {
+            const env = environmentsShop[envKey];
+            if (env.owned) {
+                setEnvironment(envKey);
+            } else if (crystals >= env.cost) {
+                crystals -= env.cost;
+                env.owned = true;
+                setEnvironment(envKey);
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function setEnvironment(envKey, playSnd = true) {
+            currentEnvironment = envKey;
+            crystalContainer.className = 'crystal-container ' + (envKey === 'default' ? '' : 'env-' + envKey);
+            if (playSnd) playSound('click');
+        }
+
+        function getTotalPickaxes() {
+            let total = 0;
+            Object.keys(upgrades).forEach(k => total += upgrades[k].qty);
+            return total;
+        }
+
+        function getCps() {
+            let total = 0;
+            Object.keys(upgrades).forEach(k => {
+                let qty = upgrades[k].qty;
+                let mult = 1;
+                if (qty >= 100) mult = 4;
+                else if (qty >= 50) mult = 2.5;
+                else if (qty >= 25) mult = 1.5;
+                total += qty * Number(upgrades[k].cps) * mult;
+            });
+            total *= (1 + artifacts.art2.level * 0.15);
+            total *= (1 + ascendTree.node2.level * 0.15);
+            if (currentEnvironment === 'space') total *= 1.10;
+            if (pets.pet3.owned) total *= 1.25;
+            if (shrineActive) total *= shrineMultiplier;
+            return total;
+        }
+
+        function triggerPrestige() {
+            if (crystals < 1000000) return;
+            let shardMultiplier = 1 + artifacts.art1.level * 0.1;
+            if (currentEnvironment === 'forest') shardMultiplier += 0.10;
+            if (pets.pet2.owned) shardMultiplier += 0.1;
+            const earnedShards = Math.floor(Math.sqrt(crystals / 1000000) * shardMultiplier);
+            shards += earnedShards;
+            prestigeCount++;
+            crystals = 0;
+            Object.keys(upgrades).forEach(k => { upgrades[k].qty = 0; upgrades[k].cost = upgrades[k].baseCost; });
+            playSound('unlock');
+            checkAchievements();
+            updateUI();
+        }
+
+        function switchTab(tab) {
+            ['shopContent', 'clicksContent', 'profileContent', 'achievementsContent', 'questsContent', 'artifactsContent', 'petsContent', 'ascendTreeContent', 'skinsContent', 'environmentsContent', 'statsContent'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+            document.querySelectorAll('.drop-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab + 'Content').classList.remove('hidden');
+        }
+
+        function checkAchievements() {
+            Object.keys(achievements).forEach(key => {
+                const ach = achievements[key];
+                if (ach.status === 0 && ach.check()) {
+                    ach.status = 1;
+                }
+            });
+            Object.keys(quests).forEach(key => {
+                const q = quests[key];
+                if (q.status === 0 && q.check()) {
+                    q.status = 1;
+                }
+            });
+        }
+
+        function claimAchievement(key) {
+            const ach = achievements[key];
+            if (ach.status === 1) {
+                ach.status = 2;
+                ach.rewardGiven();
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function claimQuest(key) {
+            const q = quests[key];
+            if (q.status === 1) {
+                q.status = 2;
+                q.rewardGiven();
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function formatNum(num) {
+            let n = Number(num);
+            if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T';
+            if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+            if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(2) + 'k';
+            return Math.floor(n).toLocaleString();
+        }
+
+        function createFloatingText(x, y, textVal, isCrit = false) {
+            const text = document.createElement('div');
+            text.className = isCrit ? 'floating-text crit' : 'floating-text';
+            text.innerText = textVal;
+            const rect = crystalContainer.getBoundingClientRect();
+            text.style.left = (x ? x : rect.left + rect.width / 2) + 'px';
+            text.style.top = (y ? y : rect.top + rect.height / 2) + 'px';
+            document.body.appendChild(text);
+            setTimeout(() => text.remove(), 800);
+        }
+
+        let petTimer = 0;
         setInterval(() => {
-            let cps = calculateCPS();
-            if (cps > 0) {
-                game.shards += cps * 0.1;
-                game.totalShardsLifetime += cps * 0.1;
-                refreshUI();
+            if (pets.pet1.owned) {
+                petTimer++;
+                if (petTimer >= 30) {
+                    petTimer = 0;
+                    const rect = crystalContainer.getBoundingClientRect();
+                    triggerClick(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                }
+            }
+
+            if (!shrineActive && Math.random() < 0.2) {
+                shrineActive = true;
+                shrineMultiplier = 2;
+                const shrine = document.createElement('div');
+                shrine.className = 'shrine-obj';
+                shrine.style.top = Math.random() * 50 + 20 + '%';
+                shrine.style.left = Math.random() * 50 + 20 + '%';
+                shrine.onclick = () => {
+                    crystals += getCps() * 30;
+                    shrine.remove();
+                };
+                crystalContainer.appendChild(shrine);
+                setTimeout(() => { if (shrine.parentElement) shrine.remove(); shrineActive = false; }, 6000);
             }
         }, 100);
 
+        function updateUI() {
+            document.getElementById('crystalCount').innerText = formatNum(crystals) + " Crystals";
+            document.getElementById('cpsCount').innerText = "per second: " + formatNum(getCps());
+            document.getElementById('shardsCount').innerText = shards;
+
+            document.getElementById('comboText').innerText = comboMeter + '%';
+            document.getElementById('comboFill').style.width = comboMeter + '%';
+            document.getElementById('feverText').innerText = isFeverActive ? `FEVER! (${Math.ceil(feverTimer)}s)` : feverMeter + '%';
+            document.getElementById('feverFill').style.width = feverMeter + '%';
+
+            if (document.getElementById('statLifetime')) {
+                document.getElementById('statLifetime').innerText = formatNum(lifetimeCrystals);
+                document.getElementById('statClicks').innerText = totalClicks;
+                document.getElementById('statTime').innerText = timePlayed + 's';
+                document.getElementById('statAscend').innerText = prestigeCount;
+            }
+
+            if (document.getElementById('profileAscend')) {
+                document.getElementById('profileAscend').innerText = prestigeCount;
+                document.getElementById('profileShards').innerText = shards;
+                document.getElementById('profileEnv').innerText = environmentsShop[currentEnvironment].name;
+                let rankTitle = "Novice Breaker";
+                if (prestigeCount >= 5) rankTitle = "Veteran Excavator";
+                if (prestigeCount >= 15) rankTitle = "Master Geologist";
+                if (prestigeCount >= 30) rankTitle = "Transcendent Overlord";
+                document.getElementById('profileRankTitle').innerText = rankTitle;
+            }
+
+            Object.keys(upgrades).forEach(k => {
+                document.getElementById(k + 'Cost').innerText = "Cost: " + formatNum(upgrades[k].cost);
+                document.getElementById(k + 'Qty').innerText = upgrades[k].qty;
+                document.getElementById('buy' + k).disabled = crystals < Number(upgrades[k].cost);
+            });
+
+            Object.keys(clickUpgrades).forEach(k => {
+                const btn = document.getElementById('buyClick_' + k);
+                if (clickUpgrades[k].purchased) {
+                    btn.innerText = "Owned";
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = crystals < clickUpgrades[k].cost;
+                }
+            });
+
+            Object.keys(achievements).forEach(k => {
+                const ach = achievements[k];
+                const card = document.getElementById(`card_${k}`);
+                const claimBtn = document.getElementById(`claim_${k}`);
+                card.className = 'card-item';
+                if (ach.status === 1) {
+                    card.classList.add('ready');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'sub-tab-btn claim-btn';
+                    claimBtn.innerText = 'Claim';
+                } else if (ach.status === 2) {
+                    card.classList.add('completed');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'sub-tab-btn';
+                    claimBtn.innerText = 'Claimed';
+                    claimBtn.disabled = true;
+                } else {
+                    claimBtn.style.display = 'none';
+                }
+            });
+
+            Object.keys(quests).forEach(k => {
+                const q = quests[k];
+                const card = document.getElementById(`quest_${k}`);
+                const claimBtn = document.getElementById(`claim_q_${k}`);
+                card.className = 'card-item';
+                if (q.status === 1) {
+                    card.classList.add('ready');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'sub-tab-btn claim-btn';
+                    claimBtn.innerText = 'Claim';
+                } else if (q.status === 2) {
+                    card.classList.add('completed');
+                    claimBtn.style.display = 'block';
+                    claimBtn.className = 'sub-tab-btn';
+                    claimBtn.innerText = 'Claimed';
+                    claimBtn.disabled = true;
+                } else {
+                    claimBtn.style.display = 'none';
+                }
+            });
+
+            Object.keys(artifacts).forEach(k => {
+                document.getElementById(k + 'Lvl').innerText = artifacts[k].level;
+                document.getElementById(k + 'Cost').innerText = artifacts[k].cost;
+            });
+
+            Object.keys(pets).forEach(k => {
+                const btn = document.getElementById(`petBtn_${k}`);
+                if (pets[k].owned) {
+                    btn.innerText = "Owned";
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = shards < pets[k].cost;
+                }
+            });
+
+            Object.keys(ascendTree).forEach(k => {
+                document.getElementById(k + 'Lvl').innerText = ascendTree[k].level;
+                document.getElementById(k + 'Cost').innerText = ascendTree[k].cost;
+            });
+
+            Object.keys(skinsShop).forEach(skinKey => {
+                const skin = skinsShop[skinKey];
+                const btn = document.getElementById(`skinBtn_${skinKey}`);
+                if (currentSkin === skinKey) {
+                    btn.innerText = "Active";
+                    btn.disabled = true;
+                } else if (skin.owned) {
+                    btn.innerText = "Select";
+                    btn.disabled = false;
+                } else {
+                    btn.innerText = "Buy";
+                    btn.disabled = crystals < skin.cost;
+                }
+            });
+
+            Object.keys(environmentsShop).forEach(envKey => {
+                const env = environmentsShop[envKey];
+                const btn = document.getElementById(`envBtn_${envKey}`);
+                if (currentEnvironment === envKey) {
+                    btn.innerText = "Active";
+                    btn.disabled = true;
+                } else if (env.owned) {
+                    btn.innerText = "Select";
+                    btn.disabled = false;
+                } else {
+                    btn.innerText = "Buy";
+                    btn.disabled = crystals < env.cost;
+                }
+            });
+        }
+
         setInterval(() => {
-            game.secondsPlayed++;
+            crystals += getCps() / 10;
+            lifetimeCrystals += getCps() / 10;
+            timePlayed++;
+
+            if (comboMeter > 0) comboMeter = Math.max(0, comboMeter - 2);
+            if (isFeverActive) {
+                feverTimer -= 0.1;
+                if (feverTimer <= 0) { isFeverActive = false; feverMeter = 0; }
+            }
+
             checkAchievements();
-        }, 1000);
+            updateUI();
+        }, 100);
 
-        function checkAchievements() {
-            for (let key in game.achievements) {
-                let ach = game.achievements[key];
-                if (!ach.unlocked && ach.check()) {
-                    ach.unlocked = true;
-                    renderAchievements();
+        setInterval(() => {
+            const saveObj = {
+                data: {
+                    crystals, lifetimeCrystals, shards, prestigeCount, totalClicks, timePlayed, currentSkin, currentEnvironment,
+                    upgrades: Object.fromEntries(Object.keys(upgrades).map(k => [k, { qty: upgrades[k].qty, cost: upgrades[k].cost.toString() }])),
+                    clickUpgrades: Object.fromEntries(Object.keys(clickUpgrades).map(k => [k, clickUpgrades[k].purchased])),
+                    artifacts: Object.fromEntries(Object.keys(artifacts).map(k => [k, artifacts[k].level])),
+                    pets: Object.fromEntries(Object.keys(pets).map(k => [k, pets[k].owned])),
+                    ascendTree: Object.fromEntries(Object.keys(ascendTree).map(k => [k, ascendTree[k].level])),
+                    skinsShop: Object.fromEntries(Object.keys(skinsShop).map(k => [k, skinsShop[k].owned])),
+                    environmentsShop: Object.fromEntries(Object.keys(environmentsShop).map(k => [k, environmentsShop[k].owned])),
+                    achievements: Object.fromEntries(Object.keys(achievements).map(k => [k, achievements[k].status])),
+                    quests: Object.fromEntries(Object.keys(quests).map(k => [k, quests[k].status])),
+                    lastTimestamp: Date.now()
                 }
-            }
-        }
+            };
+            saveObj.signature = generateSignature(JSON.stringify(saveObj.data));
+            localStorage.setItem('crystalClickerUltimateSave', JSON.stringify(saveObj));
+        }, 10000);
 
-        function renderShopList() {
-            const container = document.getElementById('shopListContainer');
-            container.innerHTML = `
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name">Prismatic Focus (Lvl ${game.clickLevel})</div>
-                        <div class="item-desc">Increases raw shards earned per click</div>
-                        <div class="item-cost">Cost: ${game.clickCost.toLocaleString()} Shards</div>
-                    </div>
-                    <button class="action-button" ${game.shards < game.clickCost ? 'disabled' : ''} onclick="buyClickUpgrade()">Upgrade</button>
-                </div>
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name">Global Harmonic Matrix (Lvl ${game.resonanceLevel})</div>
-                        <div class="item-desc">Multiplies total production & click power by +5%</div>
-                        <div class="item-cost">Cost: ${game.resonanceCost.toLocaleString()} Shards</div>
-                    </div>
-                    <button class="action-button" ${game.shards < game.resonanceCost ? 'disabled' : ''} onclick="buyResonanceUpgrade()">Buy</button>
-                </div>
-            `;
-        }
-
-        function renderMasteryList() {
-            const container = document.getElementById('masteryListContainer');
-            container.innerHTML = `
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name">Quantum Lens (Lvl ${game.critChanceLevel})</div>
-                        <div class="item-desc">Increases critical click chance by +1%</div>
-                        <div class="item-cost">Cost: ${game.critChanceCost.toLocaleString()} Shards</div>
-                    </div>
-                    <button class="action-button" ${game.shards < game.critChanceCost || game.critChance >= 0.50 ? 'disabled' : ''} onclick="buyCritChanceUpgrade()">Upgrade</button>
-                </div>
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name">Hyper Resonance (Lvl ${game.critMultLevel})</div>
-                        <div class="item-desc">Increases critical click multiplier by +0.5x</div>
-                        <div class="item-cost">Cost: ${game.critMultCost.toLocaleString()} Shards</div>
-                    </div>
-                    <button class="action-button" ${game.shards < game.critMultCost ? 'disabled' : ''} onclick="buyCritMultUpgrade()">Upgrade</button>
-                </div>
-            `;
-        }
-
-        function renderBuildingsList() {
-            const container = document.getElementById('buildingsListContainer');
-            container.innerHTML = '';
-            for (let key in game.buildings) {
-                let b = game.buildings[key];
-                let cost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
-                let item = document.createElement('div');
-                item.className = 'store-item';
-                item.innerHTML = `
-                    <div class="item-details">
-                        <div class="item-name">${b.name} <span style="color:var(--text-dim); font-weight:normal;">(${b.count})</span></div>
-                        <div class="item-desc">${b.desc}</div>
-                        <div class="item-cost">Cost: ${cost.toLocaleString()} Shards</div>
-                    </div>
-                    <button class="action-button" ${game.shards < cost ? 'disabled' : ''} onclick="buyBuilding('${key}')">Buy</button>
-                `;
-                container.appendChild(item);
-            }
-        }
-
-        function renderAchievements() {
-            const container = document.getElementById('achievementsListContainer');
-            container.innerHTML = '';
-            for (let key in game.achievements) {
-                let ach = game.achievements[key];
-                let card = document.createElement('div');
-                card.className = `ach-card ${ach.unlocked ? 'unlocked' : ''}`;
-                card.innerHTML = `
-                    <div class="ach-icon">${ach.icon}</div>
-                    <div class="ach-info">
-                        <div class="ach-name">${ach.name}</div>
-                        <div class="ach-desc">${ach.desc}</div>
-                    </div>
-                `;
-                container.appendChild(card);
-            }
-        }
-
-        function refreshUI() {
-            scoreDisplay.textContent = Math.floor(game.shards).toLocaleString();
-            rateDisplay.textContent = `${calculateCPS().toFixed(1)} shards / sec`;
-
-            document.getElementById('clickPowerBadge').textContent = `Click: +${game.clickPower}`;
-            document.getElementById('critBadge').textContent = `Crit: ${(game.critChance * 100).toFixed(0)}% (x${game.critMultiplier.toFixed(1)})`;
-            if (game.essence > 0) {
-                document.getElementById('prestigeBadge').style.display = 'block';
-                document.getElementById('prestigeBadge').textContent = `Essence: ${game.essence} (+${game.essence * 10}%)`;
-            }
-
-            let pending = calculatePendingEssence();
-            document.getElementById('pendingEssenceDisplay').textContent = `Available: ${pending} Essence`;
-            document.getElementById('prestigeTriggerBtn').disabled = pending <= 0;
-
-            document.getElementById('statsSummaryBlock').innerHTML = `
-                Total Shards Collected: <span>${Math.floor(game.totalShardsLifetime).toLocaleString()}</span><br>
-                Total Clicks Made: <span>${game.totalClicks.toLocaleString()}</span><br>
-                Critical Hits Landed: <span>${game.totalCrits.toLocaleString()}</span><br>
-                Time Elapsed: <span>${game.secondsPlayed}s</span>
-            `;
-
-            renderShopList();
-            renderMasteryList();
-            renderBuildingsList();
-        }
-
-        function saveGame() {
-            localStorage.setItem('crystalClickerSave', JSON.stringify(game));
-        }
-
-        function loadGame() {
-            let saved = localStorage.getItem('crystalClickerSave');
-            if (saved) {
-                try {
-                    let parsed = JSON.parse(saved);
-                    game = { ...game, ...parsed };
-                    if (parsed.buildings) {
-                        for (let k in parsed.buildings) {
-                            if (game.buildings[k]) game.buildings[k].count = parsed.buildings[k].count;
-                        }
-                    }
-                    if (parsed.achievements) {
-                        for (let k in parsed.achievements) {
-                            if (game.achievements[k]) game.achievements[k].unlocked = parsed.achievements[k].unlocked;
-                        }
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-        }
-
-        function exportSaveCode() {
-            let encoded = btoa(JSON.stringify(game));
-            prompt("Copy save code:", encoded);
-        }
-
-        function importSaveCode() {
-            let encoded = prompt("Paste save code:");
-            if (encoded) {
-                try {
-                    game = { ...game, ...JSON.parse(atob(encoded)) };
-                    saveGame();
-                    refreshUI();
-                    alert("Import successful!");
-                } catch (e) {
-                    alert("Invalid code.");
-                }
-            }
-        }
-
-        function hardResetGame() {
-            if (confirm("Wipe all progress?")) {
-                localStorage.removeItem('crystalClickerSave');
-                location.reload();
-            }
-        }
-
-        loadGame();
-        renderAchievements();
-        refreshUI();
+        setSkin('default', false);
+        updateUI();
     </script>
 </body>
 </html>
