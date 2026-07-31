@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crystal Clicker</title>
+    <style>
+        :root {
+            --bg-color: #06040c;
+            --bg-secondary: #0d0918;
+            --panel-bg: rgba(18, 13, 30, 0.85);
+            --panel-border: rgba(131, 56, 236, 0.25);
+            --panel-border-glow: rgba(131, 56, 236, 0.55);
+            --text-main: #f3f0ff;
+            --text-dim: #9d8ec7;
+            --text-muted: #62538c;
+            --accent-blue: #3a86ff;
+            --accent-purple: #8338ec;
+            --accent-glow: #9b5de5;
+            --accent-pink: #ff007f;
+            --success: #66bb6a;
+            --warning: #ffb74d;
+            --danger: #ef5350;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(58, 134, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(131, 56, 236, 0.1) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            overflow-x: hidden;
+        }
+
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 480px;
+            padding-bottom: 50px;
+        }
+
+        .dashboard {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+        }
+
+        .shards-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--text-dim);
+            font-weight: 700;
+        }
+
+        .shards-count {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #64b5f6 0%, #ba68c8 50%, #ff80ab 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 4px 0;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+
+        .shards-rate {
+            font-size: 0.85rem;
+            color: #b39ddb;
+            font-weight: 500;
+        }
+
+        .meta-badges {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 3px 9px;
+            background: rgba(131, 56, 236, 0.15);
+            border: 1px solid rgba(131, 56, 236, 0.35);
+            border-radius: 6px;
+            font-size: 0.72rem;
+            color: #d1c4e9;
+            font-weight: 600;
+        }
+
+        .badge.prestige {
+            background: rgba(255, 183, 77, 0.15);
+            border-color: rgba(255, 183, 77, 0.35);
+            color: var(--warning);
+        }
+
+        .badge.critical {
+            background: rgba(255, 0, 127, 0.15);
+            border-color: rgba(255, 0, 127, 0.35);
+            color: #ff80bf;
+        }
+
+        .click-zone {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 35px 0;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .click-zone:active {
+            transform: scale(0.94);
+            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .crystal-gem {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, #8338ec 0%, #3a86ff 100%);
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            box-shadow: 
+                inset -12px -12px 24px rgba(0, 0, 0, 0.55),
+                inset 12px 12px 24px rgba(255, 255, 255, 0.3),
+                0 0 40px rgba(131, 56, 236, 0.6),
+                0 0 80px rgba(58, 134, 255, 0.4);
+            animation: pulseGlow 4s ease-in-out infinite alternate;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .crystal-gem::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            background: linear-gradient(225deg, rgba(255, 255, 255, 0.35) 0%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            pointer-events: none;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                filter: brightness(1) hue-rotate(0deg);
+                box-shadow: 
+                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
+                    inset 10px 10px 20px rgba(255, 255, 255, 0.25),
+                    0 0 30px rgba(131, 56, 236, 0.5),
+                    0 0 60px rgba(58, 134, 255, 0.3);
+            }
+            100% {
+                filter: brightness(1.18) hue-rotate(10deg);
+                box-shadow: 
+                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
+                    inset 14px 14px 28px rgba(255, 255, 255, 0.45),
+                    0 0 55px rgba(131, 56, 236, 0.85),
+                    0 0 100px rgba(58, 134, 255, 0.65);
+            }
+        }
+
+        .floating-popup {
+            position: absolute;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: #d1c4e9;
+            pointer-events: none;
+            animation: floatUp 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+            text-shadow: 0 0 12px rgba(131, 56, 236, 0.9);
+            z-index: 100;
+        }
+
+        .floating-popup.crit {
+            color: #ff80bf;
+            font-size: 1.5rem;
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.9);
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.85); }
+            50% { opacity: 1; transform: translateY(-30px) scale(1.15); }
+            100% { opacity: 0; transform: translateY(-70px) scale(1); }
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--panel-border);
+        }
+
+        .tab-trigger {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            padding: 9px 2px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-trigger:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-trigger.active {
+            background: rgba(131, 56, 236, 0.35);
+            color: var(--text-main);
+            border: 1px solid var(--accent-glow);
+            box-shadow: 0 0 15px rgba(131, 56, 236, 0.2);
+        }
+
+        .content-section {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 14px;
+            min-height: 320px;
+            max-height: 420px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .content-section.active {
+            display: flex;
+        }
+
+        .section-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            font-weight: 700;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            padding-right: 2px;
+            flex: 1;
+        }
+
+        .list-container::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .list-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: var(--panel-border);
+            border-radius: 4px;
+        }
+
+        .store-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(14, 10, 26, 0.75);
+            border: 1px solid rgba(131, 56, 236, 0.18);
+            padding: 10px 12px;
+            border-radius: 12px;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .store-item:hover {
+            border-color: rgba(131, 56, 236, 0.35);
+            background: rgba(22, 16, 38, 0.85);
+        }
+
+        .item-details .item-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-main);
+        }
+
+        .item-details .item-desc {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+
+        .item-details .item-cost {
+            font-size: 0.75rem;
+            color: #b39ddb;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.25);
+        }
+
+        .action-button:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(131, 56, 236, 0.4);
+        }
+
+        .action-button:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .action-button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-dim);
+            box-shadow: none;
+        }
+
+        .ach-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .ach-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(14, 10, 26, 0.5);
+            border: 1px solid rgba(131, 56, 236, 0.12);
+            padding: 10px;
+            border-radius: 10px;
+            opacity: 0.45;
+            transition: opacity 0.3s ease, border-color 0.3s ease;
+        }
+
+        .ach-card.unlocked {
+            opacity: 1;
+            border-color: var(--success);
+            background: rgba(102, 187, 106, 0.08);
+        }
+
+        .ach-icon {
+            font-size: 1.3rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ach-info .ach-name {
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: var(--text-main);
+        }
+
+        .ach-info .ach-desc {
+            font-size: 0.68rem;
+            color: var(--text-dim);
+            margin-top: 1px;
+        }
+
+        .util-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .util-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--panel-border);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .util-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--accent-glow);
+        }
+
+        .util-btn.danger-btn {
+            border-color: rgba(239, 83, 80, 0.3);
+            color: var(--danger);
+        }
+
+        .util-btn.danger-btn:hover {
+            background: rgba(239, 83, 80, 0.1);
+        }
+
+        .stats-text-block {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: var(--text-dim);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .stats-text-block span {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <div class="dashboard">
+            <div class="shards-title">Energy Shards</div>
+            <div class="shards-count" id="scoreDisplay">0</div>
+            <div class="shards-rate" id="rateDisplay">0 shards / sec</div>
+            <div class="meta-badges">
+                <div class="badge" id="clickPowerBadge">Click: +1</div>
+                <div class="badge critical" id="critBadge">Crit: 5% (x3)</div>
+                <div class="badge prestige" id="prestigeBadge" style="display: none;">Essence: 0 (+0%)</div>
+            </div>
+        </div>
+
+        <div class="click-zone" id="crystalElement">
+            <div class="crystal-gem"></div>
+        </div>
+
+        <div class="tab-bar">
+            <button class="tab-trigger active" onclick="switchTab('shopTab', this)">Shop</button>
+            <button class="tab-trigger" onclick="switchTab('buildingsTab', this)">Automation</button>
+            <button class="tab-trigger" onclick="switchTab('prestigeTab', this)">Prestige</button>
+            <button class="tab-trigger" onclick="switchTab('achievementsTab', this)">Feats</button>
+            <button class="tab-trigger" onclick="switchTab('optionsTab', this)">System</button>
+        </div>
+
+        <div class="content-section active" id="shopTab">
+            <div class="section-header"><span>Crystal Enhancements</span></div>
+            <div class="list-container">
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name" id="clickUpgradeName">Prismatic Focus</div>
+                        <div class="item-desc">Increases raw shards earned per click</div>
+                        <div class="item-cost" id="clickCostLabel">Cost: 15 Shards</div>
+                    </div>
+                    <button class="action-button" id="buyClickBtn" onclick="buyClickUpgrade()">Upgrade</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name" id="critChanceName">Quantum Lens</div>
+                        <div class="item-desc">Increases critical click chance by +1%</div>
+                        <div class="item-cost" id="critChanceCostLabel">Cost: 100 Shards</div>
+                    </div>
+                    <button class="action-button" id="buyCritChanceBtn" onclick="buyCritChanceUpgrade()">Upgrade</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name" id="critMultName">Hyper Resonance</div>
+                        <div class="item-desc">Increases critical click multiplier by +0.5x</div>
+                        <div class="item-cost" id="critMultCostLabel">Cost: 500 Shards</div>
+                    </div>
+                    <button class="action-button" id="buyCritMultBtn" onclick="buyCritMultUpgrade()">Upgrade</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-details">
+                        <div class="item-name">Global Harmonic Matrix</div>
+                        <div class="item-desc">Multiplies total production and click power by +5%</div>
+                        <div class="item-cost" id="resonanceCostLabel">Cost: 1,250 Shards</div>
+                    </div>
+                    <button class="action-button" id="buyResonanceBtn" onclick="buyResonanceUpgrade()">Buy</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="buildingsTab">
+            <div class="section-header"><span>Autonomous Harvesters</span></div>
+            <div class="list-container" id="buildingsListContainer">
+            </div>
+        </div>
+
+        <div class="content-section" id="prestigeTab">
+            <div class="section-header"><span>Cosmic Transcendence</span></div>
+            <div class="stats-text-block">
+                Reset all active shard progression, click levels, and harvesters to harness raw <strong>Astral Essence</strong>. Each point of essence permanently multiplies all shard production metrics by +10%.
+            </div>
+            <div class="store-item" style="margin-top: 4px;">
+                <div class="item-details">
+                    <div class="item-name">Astral Harvest</div>
+                    <div class="item-desc">Absorb cosmic power from lifetime collection</div>
+                    <div class="item-cost" id="pendingEssenceDisplay">Available: 0 Essence</div>
+                </div>
+                <button class="action-button" id="prestigeTriggerBtn" onclick="executePrestige()" disabled>Transcend</button>
+            </div>
+        </div>
+
+        <div class="content-section" id="achievementsTab">
+            <div class="section-header"><span>Milestones & Relics</span></div>
+            <div class="list-container ach-grid" id="achievementsListContainer">
+            </div>
+        </div>
+
+        <div class="content-section" id="optionsTab">
+            <div class="section-header"><span>Save Management & Statistics</span></div>
+            <div class="stats-text-block" id="statsSummaryBlock">
+                Total Shards Collected: <span>0</span><br>
+                Total Clicks Made: <span>0</span><br>
+                Critical Hits Landed: <span>0</span><br>
+                Time Elapsed: <span>0s</span>
+            </div>
+            <div class="util-grid" style="margin-top: 4px;">
+                <button class="util-btn" onclick="saveGame(); alert('Game Saved Successfully!');">Save Progress</button>
+                <button class="util-btn" onclick="exportSaveCode()">Export Save</button>
+                <button class="util-btn" onclick="importSaveCode()">Import Save</button>
+                <button class="util-btn danger-btn" onclick="hardResetGame()">Wipe Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let game = {
+            shards: 0,
+            totalShardsLifetime: 0,
+            totalClicks: 0,
+            totalCrits: 0,
+            secondsPlayed: 0,
+            clickPower: 1,
+            clickLevel: 1,
+            clickCost: 15,
+            critChance: 0.05,
+            critChanceLevel: 1,
+            critChanceCost: 100,
+            critMultiplier: 3.0,
+            critMultLevel: 1,
+            critMultCost: 500,
+            resonanceLevel: 0,
+            resonanceCost: 1250,
+            essence: 0,
+            buildings: {
+                dustCollector: { count: 0, baseCost: 50, costMult: 1.15, cps: 0.5, name: "Dust Collector", desc: "Sifts residual space particles (+0.5/s)" },
+                stellarExtractor: { count: 0, baseCost: 350, costMult: 1.18, cps: 4, name: "Stellar Extractor", desc: "Extracts concentrated light veins (+4/s)" },
+                prismForge: { count: 0, baseCost: 2400, costMult: 1.20, cps: 25, name: "Prism Forge", desc: "Forges compressed cosmic plasma (+25/s)" },
+                voidMonolith: { count: 0, baseCost: 15000, costMult: 1.22, cps: 140, name: "Void Monolith", desc: "Channels dark dimensional resonance (+140/s)" },
+                quantumSingularity: { count: 0, baseCost: 95000, costMult: 1.25, cps: 850, name: "Quantum Singularity", desc: "Bends space-time for mass generation (+850/s)" },
+                dysonSwarm: { count: 0, baseCost: 650000, costMult: 1.28, cps: 4800, name: "Dyson Swarm", desc: "Harvests stellar energy output (+4.8k/s)" }
+            },
+            achievements: {
+                click_10: { name: "First Spark", desc: "Click the crystal gem 10 times", unlocked: false, check: () => game.totalClicks >= 10, icon: "✨" },
+                click_100: { name: "Dedicated Tap", desc: "Click the crystal gem 100 times", unlocked: false, check: () => game.totalClicks >= 100, icon: "⚡" },
+                shards_1k: { name: "Crystal Hoarder", desc: "Accumulate 1,000 total lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000, icon: "💎" },
+                shards_1m: { name: "Prism Tycoon", desc: "Accumulate 1,000,000 total lifetime shards", unlocked: false, check: () => game.totalShardsLifetime >= 1000000, icon: "👑" },
+                building_10: { name: "Automated Core", desc: "Own a combined total of 10 harvesters", unlocked: false, check: () => getTotalBuildings() >= 10, icon: "⚙️" },
+                building_50: { name: "Industrial Horizon", desc: "Own a combined total of 50 harvesters", unlocked: false, check: () => getTotalBuildings() >= 50, icon: "🏭" },
+                prestige_1: { name: "Stellar Rebirth", desc: "Perform your first cosmic transcendence", unlocked: false, check: () => game.essence > 0, icon: "🌌" }
+            }
+        };
+
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const rateDisplay = document.getElementById('rateDisplay');
+        const crystalElement = document.getElementById('crystalElement');
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-trigger').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        crystalElement.addEventListener('click', (e) => {
+            let isCrit = Math.random() < game.critChance;
+            let mult = 1 + (game.essence * 0.1) + (game.resonanceLevel * 0.05);
+            let baseGain = game.clickPower * mult;
+            let finalGain = isCrit ? baseGain * game.critMultiplier : baseGain;
+
+            game.shards += finalGain;
+            game.totalShardsLifetime += finalGain;
+            game.totalClicks++;
+            if (isCrit) game.totalCrits++;
+
+            refreshUI();
+            spawnPopup(e, `+${Math.floor(finalGain)}`, isCrit);
+        });
+
+        function spawnPopup(e, text, isCrit) {
+            const popup = document.createElement('div');
+            popup.className = `floating-popup ${isCrit ? 'crit' : ''}`;
+            popup.textContent = isCrit ? `${text} CRIT!` : text;
+            
+            const rect = crystalElement.getBoundingClientRect();
+            popup.style.left = `${e.clientX - rect.left - 15}px`;
+            popup.style.top = `${e.clientY - rect.top - 15}px`;
+            
+            crystalElement.appendChild(popup);
+            setTimeout(() => popup.remove(), 700);
+        }
+
+        function buyClickUpgrade() {
+            if (game.shards >= game.clickCost) {
+                game.shards -= game.clickCost;
+                game.clickLevel++;
+                game.clickPower++;
+                game.clickCost = Math.floor(game.clickCost * 1.58);
+                refreshUI();
+            }
+        }
+
+        function buyCritChanceUpgrade() {
+            if (game.shards >= game.critChanceCost && game.critChance < 0.50) {
+                game.shards -= game.critChanceCost;
+                game.critChanceLevel++;
+                game.critChance += 0.01;
+                game.critChanceCost = Math.floor(game.critChanceCost * 1.75);
+                refreshUI();
+            }
+        }
+
+        function buyCritMultUpgrade() {
+            if (game.shards >= game.critMultCost) {
+                game.shards -= game.critMultCost;
+                game.critMultLevel++;
+                game.critMultiplier += 0.5;
+                game.critMultCost = Math.floor(game.critMultCost * 2.0);
+                refreshUI();
+            }
+        }
+
+        function buyResonanceUpgrade() {
+            if (game.shards >= game.resonanceCost) {
+                game.shards -= game.resonanceCost;
+                game.resonanceLevel++;
+                game.resonanceCost = Math.floor(game.resonanceCost * 2.25);
+                refreshUI();
+            }
+        }
+
+        function buyBuilding(id) {
+            let b = game.buildings[id];
+            let currentCost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
+            if (game.shards >= currentCost) {
+                game.shards -= currentCost;
+                b.count++;
+                refreshUI();
+            }
+        }
+
+        function getTotalBuildings() {
+            return Object.values(game.buildings).reduce((acc, curr) => acc + curr.count, 0);
+        }
+
+        function calculateCPS() {
+            let rawCPS = 0;
+            for (let key in game.buildings) {
+                rawCPS += game.buildings[key].count * game.buildings[key].cps;
+            }
+            let mult = 1 + (game.essence * 0.1) + (game.resonanceLevel * 0.05);
+            return rawCPS * mult;
+        }
+
+        function executePrestige() {
+            let pending = calculatePendingEssence();
+            if (pending > 0) {
+                game.essence += pending;
+                game.shards = 0;
+                game.totalShardsLifetime = 0;
+                game.clickPower = 1;
+                game.clickLevel = 1;
+                game.clickCost = 15;
+                game.critChance = 0.05;
+                game.critChanceLevel = 1;
+                game.critChanceCost = 100;
+                game.critMultiplier = 3.0;
+                game.critMultLevel = 1;
+                game.critMultCost = 500;
+                game.resonanceLevel = 0;
+                game.resonanceCost = 1250;
+                for (let key in game.buildings) {
+                    game.buildings[key].count = 0;
+                }
+                refreshUI();
+                saveGame();
+            }
+        }
+
+        function calculatePendingEssence() {
+            return Math.floor(Math.sqrt(game.totalShardsLifetime / 1000));
+        }
+
+        setInterval(() => {
+            let cps = calculateCPS();
+            if (cps > 0) {
+                let tickGain = cps * 0.1;
+                game.shards += tickGain;
+                game.totalShardsLifetime += tickGain;
+                refreshUI();
+            }
+        }, 100);
+
+        setInterval(() => {
+            game.secondsPlayed++;
+            checkAchievements();
+        }, 1000);
+
+        setInterval(() => saveGame(), 30000);
+
+        function checkAchievements() {
+            for (let key in game.achievements) {
+                let ach = game.achievements[key];
+                if (!ach.unlocked && ach.check()) {
+                    ach.unlocked = true;
+                    renderAchievements();
+                }
+            }
+        }
+
+        function renderBuildingsList() {
+            const container = document.getElementById('buildingsListContainer');
+            container.innerHTML = '';
+            for (let key in game.buildings) {
+                let b = game.buildings[key];
+                let cost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
+                
+                let item = document.createElement('div');
+                item.className = 'store-item';
+                item.innerHTML = `
+                    <div class="item-details">
+                        <div class="item-name">${b.name} <span style="color:var(--text-dim); font-weight:normal;">(${b.count})</span></div>
+                        <div class="item-desc">${b.desc}</div>
+                        <div class="item-cost">Cost: ${cost.toLocaleString()} Shards</div>
+                    </div>
+                    <button class="action-button" ${game.shards < cost ? 'disabled' : ''} onclick="buyBuilding('${key}')">Buy</button>
+                `;
+                container.appendChild(item);
+            }
+        }
+
+        function renderAchievements() {
+            const container = document.getElementById('achievementsListContainer');
+            container.innerHTML = '';
+            for (let key in game.achievements) {
+                let ach = game.achievements[key];
+                let card = document.createElement('div');
+                card.className = `ach-card ${ach.unlocked ? 'unlocked' : ''}`;
+                card.innerHTML = `
+                    <div class="ach-icon">${ach.icon}</div>
+                    <div class="ach-info">
+                        <div class="ach-name">${ach.name}</div>
+                        <div class="ach-desc">${ach.desc}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function refreshUI() {
+            scoreDisplay.textContent = Math.floor(game.shards).toLocaleString();
+            let currentCPS = calculateCPS();
+            rateDisplay.textContent = `${currentCPS.toFixed(1)} shards / sec`;
+
+            document.getElementById('clickPowerBadge').textContent = `Click: +${game.clickPower}`;
+            document.getElementById('critBadge').textContent = `Crit: ${(game.critChance * 100).toFixed(0)}% (x${game.critMultiplier.toFixed(1)})`;
+            if (game.essence > 0) {
+                document.getElementById('prestigeBadge').style.display = 'block';
+                document.getElementById('prestigeBadge').textContent = `Essence: ${game.essence} (+${game.essence * 10}%)`;
+            }
+
+            document.getElementById('clickUpgradeName').textContent = `Prismatic Focus (Lvl ${game.clickLevel})`;
+            document.getElementById('clickCostLabel').textContent = `Cost: ${game.clickCost.toLocaleString()} Shards`;
+            document.getElementById('buyClickBtn').disabled = game.shards < game.clickCost;
+
+            document.getElementById('critChanceName').textContent = `Quantum Lens (Lvl ${game.critChanceLevel})`;
+            document.getElementById('critChanceCostLabel').textContent = `Cost: ${game.critChanceCost.toLocaleString()} Shards`;
+            document.getElementById('buyCritChanceBtn').disabled = game.shards < game.critChanceCost || game.critChance >= 0.50;
+
+            document.getElementById('critMultName').textContent = `Hyper Resonance (Lvl ${game.critMultLevel})`;
+            document.getElementById('critMultCostLabel').textContent = `Cost: ${game.critMultCost.toLocaleString()} Shards`;
+            document.getElementById('buyCritMultBtn').disabled = game.shards < game.critMultCost;
+
+            document.getElementById('resonanceCostLabel').textContent = `Cost: ${game.resonanceCost.toLocaleString()} Shards`;
+            document.getElementById('buyResonanceBtn').disabled = game.shards < game.resonanceCost;
+
+            let pending = calculatePendingEssence();
+            document.getElementById('pendingEssenceDisplay').textContent = `Available: ${pending} Essence`;
+            document.getElementById('prestigeTriggerBtn').disabled = pending <= 0;
+
+            document.getElementById('statsSummaryBlock').innerHTML = `
+                Total Shards Collected: <span>${Math.floor(game.totalShardsLifetime).toLocaleString()}</span><br>
+                Total Clicks Made: <span>${game.totalClicks.toLocaleString()}</span><br>
+                Critical Hits Landed: <span>${game.totalCrits.toLocaleString()}</span><br>
+                Time Elapsed: <span>${game.secondsPlayed}s</span>
+            `;
+
+            renderBuildingsList();
+        }
+
+        function saveGame() {
+            localStorage.setItem('crystalClickerSave', JSON.stringify(game));
+        }
+
+        function loadGame() {
+            let saved = localStorage.getItem('crystalClickerSave');
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    game = { ...game, ...parsed };
+                    if (parsed.buildings) {
+                        for (let k in parsed.buildings) {
+                            if (game.buildings[k]) {
+                                game.buildings[k].count = parsed.buildings[k].count;
+                            }
+                        }
+                    }
+                    if (parsed.achievements) {
+                        for (let k in parsed.achievements) {
+                            if (game.achievements[k]) {
+                                game.achievements[k].unlocked = parsed.achievements[k].unlocked;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Critical error loading save file:", e);
+                }
+            }
+        }
+
+        function exportSaveCode() {
+            let encoded = btoa(JSON.stringify(game));
+            prompt("Copy your export save string below:", encoded);
+        }
+
+        function importSaveCode() {
+            let encoded = prompt("Paste your save string below:");
+            if (encoded) {
+                try {
+                    let decoded = JSON.parse(atob(encoded));
+                    game = { ...game, ...decoded };
+                    saveGame();
+                    refreshUI();
+                    alert("Save imported successfully!");
+                } catch (e) {
+                    alert("Invalid save code string provided.");
+                }
+            }
+        }
+
+        function hardResetGame() {
+            if (confirm("Are you sure you want to completely wipe all your progress and achievements?")) {
+                localStorage.removeItem('crystalClickerSave');
+                location.reload();
+            }
+        }
+
+        loadGame();
+        renderAchievements();
+        refreshUI();
+    </script>
+</body>
+</html>
