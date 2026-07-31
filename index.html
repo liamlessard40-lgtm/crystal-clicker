@@ -145,52 +145,100 @@
             perspective: 1000px;
         }
 
-        .click-zone:active {
-            transform: scale(0.94);
-            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .click-zone:active .crystal-gem {
+            transform: scale(0.92);
         }
 
+        /* Original faceted crystal gem design */
         .crystal-gem {
             width: 160px;
-            height: 160px;
-            background: linear-gradient(135deg, #8338ec 0%, #3a86ff 100%);
-            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-            box-shadow: 
-                inset -12px -12px 24px rgba(0, 0, 0, 0.55),
-                inset 12px 12px 24px rgba(255, 255, 255, 0.3),
-                0 0 40px rgba(131, 56, 236, 0.6),
-                0 0 80px rgba(58, 134, 255, 0.4);
-            animation: pulseGlow 4s ease-in-out infinite alternate;
+            height: 180px;
             position: relative;
-            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 25px rgba(131, 56, 236, 0.5));
+            animation: floatCrystal 4s ease-in-out infinite alternate;
         }
 
-        .crystal-gem::after {
-            content: '';
+        @keyframes floatCrystal {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .gem-facet {
             position: absolute;
-            inset: 8px;
-            background: linear-gradient(225deg, rgba(255, 255, 255, 0.35) 0%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
-            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-            pointer-events: none;
+            mix-blend-mode: overlay;
         }
 
-        @keyframes pulseGlow {
-            0% {
-                filter: brightness(1) hue-rotate(0deg);
-                box-shadow: 
-                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
-                    inset 10px 10px 20px rgba(255, 255, 255, 0.25),
-                    0 0 30px rgba(131, 56, 236, 0.5),
-                    0 0 60px rgba(58, 134, 255, 0.3);
-            }
-            100% {
-                filter: brightness(1.18) hue-rotate(10deg);
-                box-shadow: 
-                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
-                    inset 14px 14px 28px rgba(255, 255, 255, 0.45),
-                    0 0 55px rgba(131, 56, 236, 0.85),
-                    0 0 100px rgba(58, 134, 255, 0.65);
-            }
+        /* Top Crown Facets */
+        .facet-top-left {
+            top: 0;
+            left: 40px;
+            width: 40px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff80bf, #8338ec);
+            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+        }
+
+        .facet-top-right {
+            top: 0;
+            right: 40px;
+            width: 40px;
+            height: 45px;
+            background: linear-gradient(225deg, #64b5f6, #3a86ff);
+            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+        }
+
+        /* Upper Body Main Facets */
+        .facet-upper-left {
+            top: 42px;
+            left: 10px;
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(135deg, #9b5de5, #3a86ff);
+            clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%);
+        }
+
+        .facet-upper-right {
+            top: 42px;
+            right: 10px;
+            width: 70px;
+            height: 60px;
+            background: linear-gradient(225deg, #ff007f, #8338ec);
+            clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%);
+        }
+
+        /* Lower Pavilion Facets (Tapering Down) */
+        .facet-lower-left {
+            top: 98px;
+            left: 20px;
+            width: 60px;
+            height: 75px;
+            background: linear-gradient(180deg, #3a86ff, #06040c);
+            clip-path: polygon(20% 0%, 80% 0%, 50% 100%);
+        }
+
+        .facet-lower-right {
+            top: 98px;
+            right: 20px;
+            width: 60px;
+            height: 75px;
+            background: linear-gradient(180deg, #8338ec, #120d1e);
+            clip-path: polygon(20% 0%, 80% 0%, 50% 100%);
+        }
+
+        /* Central core shine layer */
+        .gem-core {
+            position: absolute;
+            inset: 30px 25px;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.85) 0%, rgba(155, 93, 229, 0.4) 50%, transparent 80%);
+            clip-path: polygon(50% 0%, 100% 25%, 85% 100%, 15% 100%, 0% 25%);
+            animation: pulseCore 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseCore {
+            0% { opacity: 0.6; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); }
         }
 
         .floating-popup {
@@ -306,6 +354,58 @@
         .list-container::-webkit-scrollbar-thumb {
             background: var(--panel-border);
             border-radius: 4px;
+        }
+
+        /* Collapsible accordion styling for categories */
+        .category-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(14, 10, 26, 0.4);
+            border: 1px solid rgba(131, 56, 236, 0.12);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(18, 13, 30, 0.6);
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .category-header:hover {
+            background: rgba(131, 56, 236, 0.15);
+            color: var(--text-main);
+        }
+
+        .category-header .arrow {
+            transition: transform 0.2s ease;
+            font-size: 0.65rem;
+        }
+
+        .category-group.collapsed .arrow {
+            transform: rotate(-90deg);
+        }
+
+        .category-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 8px;
+            transition: max-height 0.3s ease;
+        }
+
+        .category-group.collapsed .category-content {
+            display: none;
         }
 
         .store-item {
@@ -487,7 +587,15 @@
         </div>
 
         <div class="click-zone" id="crystalElement">
-            <div class="crystal-gem"></div>
+            <div class="crystal-gem">
+                <div class="gem-facet facet-top-left"></div>
+                <div class="gem-facet facet-top-right"></div>
+                <div class="gem-facet facet-upper-left"></div>
+                <div class="gem-facet facet-upper-right"></div>
+                <div class="gem-facet facet-lower-left"></div>
+                <div class="gem-facet facet-lower-right"></div>
+                <div class="gem-core"></div>
+            </div>
         </div>
 
         <div class="tab-bar">
@@ -539,6 +647,7 @@
         <div class="content-section" id="buildingsTab">
             <div class="section-header"><span>Autonomous Harvesters</span></div>
             <div class="list-container" id="buildingsListContainer">
+                <!-- Drop-down categories will be populated dynamically -->
             </div>
         </div>
 
@@ -600,12 +709,12 @@
             resonanceCost: 1250,
             essence: 0,
             buildings: {
-                dustCollector: { count: 0, baseCost: 50, costMult: 1.15, cps: 0.5, name: "Dust Collector", desc: "Sifts residual space particles (+0.5/s)" },
-                stellarExtractor: { count: 0, baseCost: 350, costMult: 1.18, cps: 4, name: "Stellar Extractor", desc: "Extracts concentrated light veins (+4/s)" },
-                prismForge: { count: 0, baseCost: 2400, costMult: 1.20, cps: 25, name: "Prism Forge", desc: "Forges compressed cosmic plasma (+25/s)" },
-                voidMonolith: { count: 0, baseCost: 15000, costMult: 1.22, cps: 140, name: "Void Monolith", desc: "Channels dark dimensional resonance (+140/s)" },
-                quantumSingularity: { count: 0, baseCost: 95000, costMult: 1.25, cps: 850, name: "Quantum Singularity", desc: "Bends space-time for mass generation (+850/s)" },
-                dysonSwarm: { count: 0, baseCost: 650000, costMult: 1.28, cps: 4800, name: "Dyson Swarm", desc: "Harvests stellar energy output (+4.8k/s)" }
+                dustCollector: { count: 0, baseCost: 50, costMult: 1.15, cps: 0.5, name: "Dust Collector", desc: "Sifts residual space particles (+0.5/s)", category: "Basic" },
+                stellarExtractor: { count: 0, baseCost: 350, costMult: 1.18, cps: 4, name: "Stellar Extractor", desc: "Extracts concentrated light veins (+4/s)", category: "Basic" },
+                prismForge: { count: 0, baseCost: 2400, costMult: 1.20, cps: 25, name: "Prism Forge", desc: "Forges compressed cosmic plasma (+25/s)", category: "Advanced" },
+                voidMonolith: { count: 0, baseCost: 15000, costMult: 1.22, cps: 140, name: "Void Monolith", desc: "Channels dark dimensional resonance (+140/s)", category: "Advanced" },
+                quantumSingularity: { count: 0, baseCost: 95000, costMult: 1.25, cps: 850, name: "Quantum Singularity", desc: "Bends space-time for mass generation (+850/s)", category: "Master" },
+                dysonSwarm: { count: 0, baseCost: 650000, costMult: 1.28, cps: 4800, name: "Dyson Swarm", desc: "Harvests stellar energy output (+4.8k/s)", category: "Master" }
             },
             achievements: {
                 click_10: { name: "First Spark", desc: "Click the crystal gem 10 times", unlocked: false, check: () => game.totalClicks >= 10, icon: "✨" },
@@ -617,6 +726,9 @@
                 prestige_1: { name: "Stellar Rebirth", desc: "Perform your first cosmic transcendence", unlocked: false, check: () => game.essence > 0, icon: "🌌" }
             }
         };
+
+        // Track accordion collapsed states
+        let collapsedCategories = {};
 
         const scoreDisplay = document.getElementById('scoreDisplay');
         const rateDisplay = document.getElementById('rateDisplay');
@@ -775,24 +887,56 @@
             }
         }
 
+        function toggleCategory(categoryName) {
+            collapsedCategories[categoryName] = !collapsedCategories[categoryName];
+            renderBuildingsList();
+        }
+
         function renderBuildingsList() {
             const container = document.getElementById('buildingsListContainer');
-            container.innerHTML = '';
+            
+            // Group buildings by category
+            let categories = {};
             for (let key in game.buildings) {
                 let b = game.buildings[key];
-                let cost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
+                let cat = b.category || "General";
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push({ id: key, ...b });
+            }
+
+            container.innerHTML = '';
+            for (let catName in categories) {
+                let isCollapsed = !!collapsedCategories[catName];
                 
-                let item = document.createElement('div');
-                item.className = 'store-item';
-                item.innerHTML = `
-                    <div class="item-details">
-                        <div class="item-name">${b.name} <span style="color:var(--text-dim); font-weight:normal;">(${b.count})</span></div>
-                        <div class="item-desc">${b.desc}</div>
-                        <div class="item-cost">Cost: ${cost.toLocaleString()} Shards</div>
-                    </div>
-                    <button class="action-button" ${game.shards < cost ? 'disabled' : ''} onclick="buyBuilding('${key}')">Buy</button>
-                `;
-                container.appendChild(item);
+                let groupDiv = document.createElement('div');
+                groupDiv.className = `category-group ${isCollapsed ? 'collapsed' : ''}`;
+                
+                let headerDiv = document.createElement('div');
+                headerDiv.className = 'category-header';
+                headerDiv.onclick = () => toggleCategory(catName);
+                headerDiv.innerHTML = `<span>${catName} Harvesters</span><span class="arrow">▼</span>`;
+                groupDiv.appendChild(headerDiv);
+
+                let contentDiv = document.createElement('div');
+                contentDiv.className = 'category-content';
+
+                categories[catName].forEach(b => {
+                    let cost = Math.floor(b.baseCost * Math.pow(b.costMult, b.count));
+                    let item = document.createElement('div');
+                    item.className = 'store-item';
+                    item.innerHTML = `
+                        <div class="item-details">
+                            <div class="item-name">${b.name} <span style="color:var(--text-dim); font-weight:normal;">(${b.count})</span></div>
+                            <div class="item-desc">${b.desc}</div>
+                            <div class="item-cost">Cost: ${cost.toLocaleString()} Shards</div>
+                        </div>
+                        <button class="action-button" ${game.shards < cost ? 'disabled' : ''} onclick="buyBuilding('${b.id}')">Buy</button>
+                    `;
+                    contentDiv.appendChild(item);
+                });
+
+                groupDiv.appendChild(contentDiv);
+                container.appendChild(groupDiv);
             }
         }
 
