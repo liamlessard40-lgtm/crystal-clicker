@@ -145,100 +145,52 @@
             perspective: 1000px;
         }
 
-        .click-zone:active .crystal-gem {
-            transform: scale(0.92);
+        .click-zone:active {
+            transform: scale(0.94);
+            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Original faceted crystal gem design */
         .crystal-gem {
             width: 160px;
-            height: 180px;
+            height: 160px;
+            background: linear-gradient(135deg, #8338ec 0%, #3a86ff 100%);
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            box-shadow: 
+                inset -12px -12px 24px rgba(0, 0, 0, 0.55),
+                inset 12px 12px 24px rgba(255, 255, 255, 0.3),
+                0 0 40px rgba(131, 56, 236, 0.6),
+                0 0 80px rgba(58, 134, 255, 0.4);
+            animation: pulseGlow 4s ease-in-out infinite alternate;
             position: relative;
-            cursor: pointer;
-            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 0 25px rgba(131, 56, 236, 0.5));
-            animation: floatCrystal 4s ease-in-out infinite alternate;
+            transform-style: preserve-3d;
         }
 
-        @keyframes floatCrystal {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-8px); }
-        }
-
-        .gem-facet {
+        .crystal-gem::after {
+            content: '';
             position: absolute;
-            mix-blend-mode: overlay;
+            inset: 8px;
+            background: linear-gradient(225deg, rgba(255, 255, 255, 0.35) 0%, transparent 50%, rgba(0, 0, 0, 0.45) 100%);
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            pointer-events: none;
         }
 
-        /* Top Crown Facets */
-        .facet-top-left {
-            top: 0;
-            left: 40px;
-            width: 40px;
-            height: 45px;
-            background: linear-gradient(135deg, #ff80bf, #8338ec);
-            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-        }
-
-        .facet-top-right {
-            top: 0;
-            right: 40px;
-            width: 40px;
-            height: 45px;
-            background: linear-gradient(225deg, #64b5f6, #3a86ff);
-            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-        }
-
-        /* Upper Body Main Facets */
-        .facet-upper-left {
-            top: 42px;
-            left: 10px;
-            width: 70px;
-            height: 60px;
-            background: linear-gradient(135deg, #9b5de5, #3a86ff);
-            clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%);
-        }
-
-        .facet-upper-right {
-            top: 42px;
-            right: 10px;
-            width: 70px;
-            height: 60px;
-            background: linear-gradient(225deg, #ff007f, #8338ec);
-            clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%);
-        }
-
-        /* Lower Pavilion Facets (Tapering Down) */
-        .facet-lower-left {
-            top: 98px;
-            left: 20px;
-            width: 60px;
-            height: 75px;
-            background: linear-gradient(180deg, #3a86ff, #06040c);
-            clip-path: polygon(20% 0%, 80% 0%, 50% 100%);
-        }
-
-        .facet-lower-right {
-            top: 98px;
-            right: 20px;
-            width: 60px;
-            height: 75px;
-            background: linear-gradient(180deg, #8338ec, #120d1e);
-            clip-path: polygon(20% 0%, 80% 0%, 50% 100%);
-        }
-
-        /* Central core shine layer */
-        .gem-core {
-            position: absolute;
-            inset: 30px 25px;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.85) 0%, rgba(155, 93, 229, 0.4) 50%, transparent 80%);
-            clip-path: polygon(50% 0%, 100% 25%, 85% 100%, 15% 100%, 0% 25%);
-            animation: pulseCore 2.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulseCore {
-            0% { opacity: 0.6; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1.05); }
+        @keyframes pulseGlow {
+            0% {
+                filter: brightness(1) hue-rotate(0deg);
+                box-shadow: 
+                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
+                    inset 10px 10px 20px rgba(255, 255, 255, 0.25),
+                    0 0 30px rgba(131, 56, 236, 0.5),
+                    0 0 60px rgba(58, 134, 255, 0.3);
+            }
+            100% {
+                filter: brightness(1.18) hue-rotate(10deg);
+                box-shadow: 
+                    inset -12px -12px 24px rgba(0, 0, 0, 0.55),
+                    inset 14px 14px 28px rgba(255, 255, 255, 0.45),
+                    0 0 55px rgba(131, 56, 236, 0.85),
+                    0 0 100px rgba(58, 134, 255, 0.65);
+            }
         }
 
         .floating-popup {
@@ -587,15 +539,7 @@
         </div>
 
         <div class="click-zone" id="crystalElement">
-            <div class="crystal-gem">
-                <div class="gem-facet facet-top-left"></div>
-                <div class="gem-facet facet-top-right"></div>
-                <div class="gem-facet facet-upper-left"></div>
-                <div class="gem-facet facet-upper-right"></div>
-                <div class="gem-facet facet-lower-left"></div>
-                <div class="gem-facet facet-lower-right"></div>
-                <div class="gem-core"></div>
-            </div>
+            <div class="crystal-gem"></div>
         </div>
 
         <div class="tab-bar">
@@ -608,39 +552,8 @@
 
         <div class="content-section active" id="shopTab">
             <div class="section-header"><span>Crystal Enhancements</span></div>
-            <div class="list-container">
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name" id="clickUpgradeName">Prismatic Focus</div>
-                        <div class="item-desc">Increases raw shards earned per click</div>
-                        <div class="item-cost" id="clickCostLabel">Cost: 15 Shards</div>
-                    </div>
-                    <button class="action-button" id="buyClickBtn" onclick="buyClickUpgrade()">Upgrade</button>
-                </div>
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name" id="critChanceName">Quantum Lens</div>
-                        <div class="item-desc">Increases critical click chance by +1%</div>
-                        <div class="item-cost" id="critChanceCostLabel">Cost: 100 Shards</div>
-                    </div>
-                    <button class="action-button" id="buyCritChanceBtn" onclick="buyCritChanceUpgrade()">Upgrade</button>
-                </div>
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name" id="critMultName">Hyper Resonance</div>
-                        <div class="item-desc">Increases critical click multiplier by +0.5x</div>
-                        <div class="item-cost" id="critMultCostLabel">Cost: 500 Shards</div>
-                    </div>
-                    <button class="action-button" id="buyCritMultBtn" onclick="buyCritMultUpgrade()">Upgrade</button>
-                </div>
-                <div class="store-item">
-                    <div class="item-details">
-                        <div class="item-name">Global Harmonic Matrix</div>
-                        <div class="item-desc">Multiplies total production and click power by +5%</div>
-                        <div class="item-cost" id="resonanceCostLabel">Cost: 1,250 Shards</div>
-                    </div>
-                    <button class="action-button" id="buyResonanceBtn" onclick="buyResonanceUpgrade()">Buy</button>
-                </div>
+            <div class="list-container" id="shopListContainer">
+                <!-- Drop-down categories for shop upgrades will be populated dynamically -->
             </div>
         </div>
 
@@ -727,7 +640,7 @@
             }
         };
 
-        // Track accordion collapsed states
+        // Track accordion collapsed states for all drop-downs
         let collapsedCategories = {};
 
         const scoreDisplay = document.getElementById('scoreDisplay');
@@ -889,7 +802,88 @@
 
         function toggleCategory(categoryName) {
             collapsedCategories[categoryName] = !collapsedCategories[categoryName];
+            renderShopList();
             renderBuildingsList();
+        }
+
+        function renderShopList() {
+            const container = document.getElementById('shopListContainer');
+            
+            // Define shop categories with dropdown groups
+            let shopCategories = {
+                "Manual Power": [
+                    {
+                        name: `<span id="clickUpgradeName">Prismatic Focus (Lvl ${game.clickLevel})</span>`,
+                        desc: "Increases raw shards earned per click",
+                        costText: `Cost: ${game.clickCost.toLocaleString()} Shards`,
+                        disabled: game.shards < game.clickCost,
+                        action: "buyClickUpgrade()",
+                        btnText: "Upgrade"
+                    }
+                ],
+                "Mastery & Critical": [
+                    {
+                        name: `<span id="critChanceName">Quantum Lens (Lvl ${game.critChanceLevel})</span>`,
+                        desc: "Increases critical click chance by +1%",
+                        costText: `Cost: ${game.critChanceCost.toLocaleString()} Shards`,
+                        disabled: game.shards < game.critChanceCost || game.critChance >= 0.50,
+                        action: "buyCritChanceUpgrade()",
+                        btnText: "Upgrade"
+                    },
+                    {
+                        name: `<span id="critMultName">Hyper Resonance (Lvl ${game.critMultLevel})</span>`,
+                        desc: "Increases critical click multiplier by +0.5x",
+                        costText: `Cost: ${game.critMultCost.toLocaleString()} Shards`,
+                        disabled: game.shards < game.critMultCost,
+                        action: "buyCritMultUpgrade()",
+                        btnText: "Upgrade"
+                    }
+                ],
+                "Global Synergy": [
+                    {
+                        name: "Global Harmonic Matrix",
+                        desc: "Multiplies total production and click power by +5%",
+                        costText: `<span id="resonanceCostLabel">Cost: ${game.resonanceCost.toLocaleString()} Shards</span>`,
+                        disabled: game.shards < game.resonanceCost,
+                        action: "buyResonanceUpgrade()",
+                        btnText: "Buy"
+                    }
+                ]
+            };
+
+            container.innerHTML = '';
+            for (let catName in shopCategories) {
+                let isCollapsed = !!collapsedCategories['shop_' + catName];
+                
+                let groupDiv = document.createElement('div');
+                groupDiv.className = `category-group ${isCollapsed ? 'collapsed' : ''}`;
+                
+                let headerDiv = document.createElement('div');
+                headerDiv.className = 'category-header';
+                headerDiv.onclick = () => toggleCategory('shop_' + catName);
+                headerDiv.innerHTML = `<span>${catName}</span><span class="arrow">▼</span>`;
+                groupDiv.appendChild(headerDiv);
+
+                let contentDiv = document.createElement('div');
+                contentDiv.className = 'category-content';
+
+                shopCategories[catName].forEach(itemData => {
+                    let item = document.createElement('div');
+                    item.className = 'store-item';
+                    item.innerHTML = `
+                        <div class="item-details">
+                            <div class="item-name">${itemData.name}</div>
+                            <div class="item-desc">${itemData.desc}</div>
+                            <div class="item-cost">${itemData.costText}</div>
+                        </div>
+                        <button class="action-button" ${itemData.disabled ? 'disabled' : ''} onclick="${itemData.action}">${itemData.btnText}</button>
+                    `;
+                    contentDiv.appendChild(item);
+                });
+
+                groupDiv.appendChild(contentDiv);
+                container.appendChild(groupDiv);
+            }
         }
 
         function renderBuildingsList() {
@@ -906,14 +900,14 @@
 
             container.innerHTML = '';
             for (let catName in categories) {
-                let isCollapsed = !!collapsedCategories[catName];
+                let isCollapsed = !!collapsedCategories['build_' + catName];
                 
                 let groupDiv = document.createElement('div');
                 groupDiv.className = `category-group ${isCollapsed ? 'collapsed' : ''}`;
                 
                 let headerDiv = document.createElement('div');
                 headerDiv.className = 'category-header';
-                headerDiv.onclick = () => toggleCategory(catName);
+                headerDiv.onclick = () => toggleCategory('build_' + catName);
                 headerDiv.innerHTML = `<span>${catName} Harvesters</span><span class="arrow">▼</span>`;
                 groupDiv.appendChild(headerDiv);
 
@@ -970,21 +964,6 @@
                 document.getElementById('prestigeBadge').textContent = `Essence: ${game.essence} (+${game.essence * 10}%)`;
             }
 
-            document.getElementById('clickUpgradeName').textContent = `Prismatic Focus (Lvl ${game.clickLevel})`;
-            document.getElementById('clickCostLabel').textContent = `Cost: ${game.clickCost.toLocaleString()} Shards`;
-            document.getElementById('buyClickBtn').disabled = game.shards < game.clickCost;
-
-            document.getElementById('critChanceName').textContent = `Quantum Lens (Lvl ${game.critChanceLevel})`;
-            document.getElementById('critChanceCostLabel').textContent = `Cost: ${game.critChanceCost.toLocaleString()} Shards`;
-            document.getElementById('buyCritChanceBtn').disabled = game.shards < game.critChanceCost || game.critChance >= 0.50;
-
-            document.getElementById('critMultName').textContent = `Hyper Resonance (Lvl ${game.critMultLevel})`;
-            document.getElementById('critMultCostLabel').textContent = `Cost: ${game.critMultCost.toLocaleString()} Shards`;
-            document.getElementById('buyCritMultBtn').disabled = game.shards < game.critMultCost;
-
-            document.getElementById('resonanceCostLabel').textContent = `Cost: ${game.resonanceCost.toLocaleString()} Shards`;
-            document.getElementById('buyResonanceBtn').disabled = game.shards < game.resonanceCost;
-
             let pending = calculatePendingEssence();
             document.getElementById('pendingEssenceDisplay').textContent = `Available: ${pending} Essence`;
             document.getElementById('prestigeTriggerBtn').disabled = pending <= 0;
@@ -996,6 +975,7 @@
                 Time Elapsed: <span>${game.secondsPlayed}s</span>
             `;
 
+            renderShopList();
             renderBuildingsList();
         }
 
