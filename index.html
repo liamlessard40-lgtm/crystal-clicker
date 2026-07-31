@@ -24,17 +24,17 @@
             width: 100%;
             background: #110d21;
             border-bottom: 2px solid #21193d;
-            padding: 12px 0;
+            padding: 10px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
         h1 {
-            font-size: 28px;
+            font-size: 24px;
             margin: 0;
             color: #00f0ff;
             text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
@@ -42,9 +42,9 @@
         }
         .sub-header {
             display: flex;
-            gap: 16px;
+            gap: 14px;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -59,10 +59,10 @@
             background: linear-gradient(135deg, #ff0077 0%, #7000ff 100%);
             color: #fff;
             border: none;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 0, 119, 0.4);
             transition: transform 0.1s ease;
@@ -78,12 +78,13 @@
             transform: none;
         }
         
-        /* Redesigned Clean Navigation Grid */
+        /* Clean, non-cramped compact navigation tab grid */
         .nav-tabs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 6px;
-            padding: 8px 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+            padding: 6px 10px;
             background: #0d0b18;
             width: 100%;
             max-width: 950px;
@@ -93,13 +94,14 @@
             background: #17122e;
             color: #9d8ec4;
             border: 1px solid rgba(0, 240, 255, 0.15);
-            padding: 8px 10px;
-            border-radius: 6px;
+            padding: 6px 10px;
+            border-radius: 5px;
             font-weight: 600;
             font-size: 11px;
             cursor: pointer;
             text-align: center;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
         .tab-btn:hover {
             background: #21193d;
@@ -111,7 +113,7 @@
             color: #0d0b18;
             border-color: #00f0ff;
             font-weight: bold;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
         }
 
         .main-layout {
@@ -126,9 +128,6 @@
             .main-layout {
                 flex-direction: column;
             }
-            .nav-tabs {
-                grid-template-columns: repeat(3, 1fr);
-            }
         }
         
         .crystal-container {
@@ -139,7 +138,7 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            gap: 24px;
+            gap: 20px;
             background: radial-gradient(circle at center, #151128 0%, #080612 80%);
             transition: background 0.5s ease;
         }
@@ -149,52 +148,42 @@
         .crystal-container.env-space { background: radial-gradient(circle at center, #0a113d 0%, #080612 80%); }
         .crystal-container.env-forest { background: radial-gradient(circle at center, #0e331b 0%, #080612 80%); }
 
-        .crystal {
-            width: 140px;
-            height: 170px;
-            background: linear-gradient(135deg, #00ffff 0%, #7000ff 50%, #ff0077 100%);
-            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
-            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.6));
+        /* Solid SVG Crystal Vector Fix - Perfectly proportioned and sharp */
+        .crystal-wrapper {
+            width: 160px;
+            height: 200px;
             cursor: pointer;
             transition: transform 0.05s ease;
             position: relative;
             z-index: 2;
+            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.5));
         }
-        .crystal.ruby { background: linear-gradient(135deg, #ff3333 0%, #990000 50%, #550000 100%); filter: drop-shadow(0 0 25px rgba(255, 50, 50, 0.6)); }
-        .crystal.sapphire { background: linear-gradient(135deg, #3366ff 0%, #000099 50%, #000044 100%); filter: drop-shadow(0 0 25px rgba(50, 100, 255, 0.6)); }
-        .crystal.emerald { background: linear-gradient(135deg, #33ff66 0%, #009933 50%, #004411 100%); filter: drop-shadow(0 0 25px rgba(50, 255, 100, 0.6)); }
-        .crystal.gold-theme { background: linear-gradient(135deg, #ffcc00 0%, #cc6600 50%, #663300 100%); filter: drop-shadow(0 0 25px rgba(255, 200, 0, 0.6)); }
-
-        .crystal::after {
-            content: '';
-            position: absolute;
-            top: 5%; left: 5%;
-            width: 90%; height: 90%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 40%, rgba(0,0,0,0.4) 100%);
-            clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
-            pointer-events: none;
+        .crystal-wrapper svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
         }
-        .crystal:active {
-            transform: scale(0.92) rotate(3deg);
+        .crystal-wrapper:active {
+            transform: scale(0.93) rotate(2deg);
         }
         
         .meters-container {
             width: 80%;
-            max-width: 280px;
+            max-width: 260px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             z-index: 5;
         }
         .meter-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #9d8ec4;
             display: flex;
             justify-content: space-between;
         }
         .meter-bar {
             width: 100%;
-            height: 8px;
+            height: 7px;
             background: #151128;
             border-radius: 4px;
             border: 1px solid rgba(0, 240, 255, 0.2);
@@ -212,37 +201,37 @@
 
         .shrine-obj {
             position: absolute;
-            width: 50px;
-            height: 60px;
+            width: 45px;
+            height: 55px;
             background: linear-gradient(135deg, #ffea00 0%, #ff6600 100%);
             clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
             cursor: pointer;
             border: 2px solid rgba(255, 255, 255, 0.8);
-            filter: drop-shadow(0 0 18px rgba(255, 234, 0, 0.8));
+            filter: drop-shadow(0 0 15px rgba(255, 234, 0, 0.8));
             z-index: 6;
             animation: driftAcross 8s linear forwards;
         }
         @keyframes driftAcross {
-            0% { transform: translate(-150px, 120px) scale(0.5); opacity: 0; }
-            15% { opacity: 1; transform: translate(0, -60px) scale(1.1); }
+            0% { transform: translate(-120px, 100px) scale(0.5); opacity: 0; }
+            15% { opacity: 1; transform: translate(0, -50px) scale(1.1); }
             85% { opacity: 1; }
-            100% { transform: translate(280px, 140px) scale(0.8); opacity: 0; }
+            100% { transform: translate(250px, 120px) scale(0.8); opacity: 0; }
         }
 
         .side-panel {
-            width: 380px;
+            width: 360px;
             background: #0d0b18;
             border-left: 2px solid #21193d;
-            padding: 14px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             overflow-y: auto;
         }
         @media (max-width: 768px) {
             .side-panel {
                 width: 100%;
-                max-height: 45vh;
+                max-height: 42vh;
                 border-left: none;
                 border-top: 2px solid #21193d;
             }
@@ -250,7 +239,7 @@
         .panel-tab-content {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
         .hidden {
             display: none !important;
@@ -260,22 +249,22 @@
             justify-content: space-between;
             align-items: center;
             background: #151128;
-            padding: 10px 14px;
-            border-radius: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
             border: 1px solid rgba(0, 240, 255, 0.15);
-            box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.04);
         }
         .shop-item button {
             background: #00f0ff;
             color: #0d0b18;
             border: none;
-            padding: 7px 14px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 5px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
             transition: transform 0.1s ease;
+            white-space: nowrap;
         }
         .shop-item button:hover:not(:disabled) {
             transform: scale(1.05);
@@ -288,57 +277,56 @@
         }
         .item-info div:first-child {
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
             color: #ff88dc;
         }
         .item-info div:last-child {
-            font-size: 11px;
+            font-size: 10px;
             color: #9d8ec4;
-            margin-top: 3px;
+            margin-top: 2px;
         }
 
         /* Profile & Card Layouts */
         .profile-card {
             background: linear-gradient(135deg, #181330 0%, #110d21 100%);
             border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 10px;
-            padding: 16px;
+            border-radius: 8px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            gap: 10px;
         }
         .profile-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .profile-avatar {
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: linear-gradient(135deg, #00f0ff, #7000ff);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
             border: 2px solid #00f0ff;
         }
         .profile-titles {
             display: flex;
             flex-direction: column;
         }
-        .profile-name { font-size: 16px; font-weight: bold; color: #fff; }
-        .profile-rank { font-size: 11px; color: #ff00aa; font-weight: bold; }
+        .profile-name { font-size: 15px; font-weight: bold; color: #fff; }
+        .profile-rank { font-size: 10px; color: #ff00aa; font-weight: bold; }
 
         .card-item {
             display: flex;
             align-items: center;
             background: #151128;
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 8px 10px;
+            border-radius: 6px;
             border: 1px solid rgba(255, 0, 119, 0.2);
-            gap: 12px;
+            gap: 10px;
         }
         .card-item.ready {
             border-color: rgba(255, 234, 0, 0.8);
@@ -350,14 +338,14 @@
             opacity: 0.8;
         }
         .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
             background: linear-gradient(135deg, #7000ff 0%, #00f0ff 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             flex-shrink: 0;
         }
         .card-details {
@@ -366,9 +354,9 @@
             flex-direction: column;
             gap: 2px;
         }
-        .card-title { font-weight: bold; font-size: 13px; color: #ffffff; }
-        .card-desc { font-size: 11px; color: #9d8ec4; }
-        .card-reward { font-size: 10px; color: #ffea00; font-weight: bold; }
+        .card-title { font-weight: bold; font-size: 12px; color: #ffffff; }
+        .card-desc { font-size: 10px; color: #9d8ec4; }
+        .card-reward { font-size: 9px; color: #ffea00; font-weight: bold; }
         
         .claim-btn {
             background: #ffea00 !important;
@@ -383,23 +371,23 @@
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
         .stat-box {
             background: #151128;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 6px;
             border: 1px solid rgba(0, 240, 255, 0.1);
             text-align: center;
         }
-        .stat-val { font-size: 16px; font-weight: bold; color: #00f0ff; margin-top: 4px; }
-        .stat-lbl { font-size: 11px; color: #9d8ec4; }
+        .stat-val { font-size: 15px; font-weight: bold; color: #00f0ff; margin-top: 2px; }
+        .stat-lbl { font-size: 10px; color: #9d8ec4; }
 
         .floating-text {
             position: absolute;
             color: #00f0ff;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 18px;
             pointer-events: none;
             text-shadow: 0 0 8px #ff00ff;
             animation: floatUp 0.8s ease-out forwards;
@@ -407,12 +395,12 @@
         }
         .floating-text.crit {
             color: #ffea00;
-            font-size: 26px;
+            font-size: 24px;
             text-shadow: 0 0 12px #ff0000;
         }
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-100px) scale(0.8); }
+            100% { opacity: 0; transform: translateY(-90px) scale(0.8); }
         }
     </style>
 </head>
@@ -443,7 +431,47 @@
 
     <div class="main-layout">
         <div class="crystal-container" id="crystalContainer">
-            <div class="crystal" id="crystalBtn"></div>
+            <!-- Flawless Vector SVG Crystal with dynamic theme support -->
+            <div class="crystal-wrapper" id="crystalBtn">
+                <svg viewBox="0 0 100 130" id="crystalSvg">
+                    <defs>
+                        <linearGradient id="grad-default" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#00ffff" />
+                            <stop offset="50%" stop-color="#7000ff" />
+                            <stop offset="100%" stop-color="#ff0077" />
+                        </linearGradient>
+                        <linearGradient id="grad-ruby" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ff3333" />
+                            <stop offset="50%" stop-color="#990000" />
+                            <stop offset="100%" stop-color="#550000" />
+                        </linearGradient>
+                        <linearGradient id="grad-sapphire" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#3366ff" />
+                            <stop offset="50%" stop-color="#000099" />
+                            <stop offset="100%" stop-color="#000044" />
+                        </linearGradient>
+                        <linearGradient id="grad-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#33ff66" />
+                            <stop offset="50%" stop-color="#009933" />
+                            <stop offset="100%" stop-color="#004411" />
+                        </linearGradient>
+                        <linearGradient id="grad-gold-theme" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ffcc00" />
+                            <stop offset="50%" stop-color="#cc6600" />
+                            <stop offset="100%" stop-color="#663300" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Crystal Faces -->
+                    <polygon points="50,2 25,35 50,25" fill="url(#crystalGrad)" opacity="0.9" />
+                    <polygon points="50,2 75,35 50,25" fill="url(#crystalGrad)" opacity="0.6" />
+                    <polygon points="25,35 50,25 50,105 10,65" fill="url(#crystalGrad)" opacity="0.7" />
+                    <polygon points="75,35 50,25 50,105 90,65" fill="url(#crystalGrad)" opacity="0.5" />
+                    <polygon points="10,65 50,105 50,128" fill="url(#crystalGrad)" opacity="0.8" />
+                    <polygon points="90,65 50,105 50,128" fill="url(#crystalGrad)" opacity="0.4" />
+                    <!-- Highlight reflection overlay -->
+                    <polygon points="50,8 35,35 50,30" fill="#ffffff" opacity="0.4" />
+                </svg>
+            </div>
             
             <div class="meters-container">
                 <div>
@@ -681,7 +709,7 @@
                             <div class="profile-rank" id="profileRankTitle">Novice Breaker</div>
                         </div>
                     </div>
-                    <div style="font-size: 11px; color: #9d8ec4; border-top: 1px solid rgba(0,240,255,0.1); padding-top: 8px;">
+                    <div style="font-size: 11px; color: #9d8ec4; border-top: 1px solid rgba(0,240,255,0.1); padding-top: 6px;">
                         <div>Prestige Level: <span id="profileAscend">0</span></div>
                         <div>Total Shards Collected: <span id="profileShards">0</span></div>
                         <div>Active Environment: <span id="profileEnv" style="color:#00f0ff;">Standard Cavern</span></div>
@@ -813,6 +841,7 @@
 
         const crystalBtn = document.getElementById('crystalBtn');
         const crystalContainer = document.getElementById('crystalContainer');
+        const crystalSvg = document.getElementById('crystalSvg');
 
         function triggerClick(clientX, clientY) {
             totalClicks++;
@@ -922,7 +951,10 @@
 
         function setSkin(skin, playSnd = true) {
             currentSkin = skin;
-            crystalBtn.className = 'crystal ' + (skin === 'default' ? '' : skin);
+            const gradId = skin === 'default' ? 'grad-default' : `grad-${skin}`;
+            crystalSvg.querySelectorAll('polygon[fill*="crystalGrad"]').forEach(poly => {
+                poly.setAttribute('fill', `url(#${gradId})`);
+            });
             if (playSnd) playSound('click');
         }
 
@@ -1247,6 +1279,8 @@
             localStorage.setItem('crystalClickerUltimateSave', JSON.stringify(saveObj));
         }, 10000);
 
+        // Initial application of default skin to vector fill
+        setSkin('default', false);
         updateUI();
     </script>
 </body>
