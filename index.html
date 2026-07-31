@@ -24,17 +24,17 @@
             width: 100%;
             background: #110d21;
             border-bottom: 2px solid #21193d;
-            padding: 10px 0;
+            padding: 12px 0;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
         h1 {
-            font-size: 26px;
+            font-size: 28px;
             margin: 0;
             color: #00f0ff;
             text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
@@ -42,9 +42,9 @@
         }
         .sub-header {
             display: flex;
-            gap: 10px;
+            gap: 16px;
             align-items: center;
-            font-size: 13px;
+            font-size: 14px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -59,46 +59,61 @@
             background: linear-gradient(135deg, #ff0077 0%, #7000ff 100%);
             color: #fff;
             border: none;
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 6px 14px;
+            border-radius: 6px;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 12px;
             cursor: pointer;
             box-shadow: 0 0 10px rgba(255, 0, 119, 0.4);
+            transition: transform 0.1s ease;
+        }
+        .prestige-btn:hover {
+            transform: scale(1.05);
         }
         .prestige-btn:disabled {
             background: #231e3d;
             color: #5c5280;
             cursor: not-allowed;
             box-shadow: none;
+            transform: none;
         }
+        
+        /* Redesigned Clean Navigation Grid */
         .nav-tabs {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 4px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 6px;
+            padding: 8px 12px;
             background: #0d0b18;
             width: 100%;
-            border-bottom: 1px solid #21193d;
+            max-width: 950px;
+            border-bottom: 2px solid #21193d;
         }
         .tab-btn {
-            background: #21193d;
+            background: #17122e;
             color: #9d8ec4;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 10px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 11px;
             cursor: pointer;
+            text-align: center;
             transition: all 0.2s ease;
         }
+        .tab-btn:hover {
+            background: #21193d;
+            color: #00f0ff;
+            border-color: rgba(0, 240, 255, 0.4);
+        }
         .tab-btn.active {
-            background: #00f0ff;
+            background: linear-gradient(135deg, #00f0ff 0%, #0088ff 100%);
             color: #0d0b18;
             border-color: #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
         }
+
         .main-layout {
             flex: 1;
             display: flex;
@@ -111,7 +126,11 @@
             .main-layout {
                 flex-direction: column;
             }
+            .nav-tabs {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
+        
         .crystal-container {
             flex: 1;
             display: flex;
@@ -120,11 +139,19 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            gap: 20px;
+            gap: 24px;
+            background: radial-gradient(circle at center, #151128 0%, #080612 80%);
+            transition: background 0.5s ease;
         }
+        
+        /* Dynamic Environment Background Styles */
+        .crystal-container.env-volcanic { background: radial-gradient(circle at center, #3d120c 0%, #080612 80%); }
+        .crystal-container.env-space { background: radial-gradient(circle at center, #0a113d 0%, #080612 80%); }
+        .crystal-container.env-forest { background: radial-gradient(circle at center, #0e331b 0%, #080612 80%); }
+
         .crystal {
-            width: 130px;
-            height: 160px;
+            width: 140px;
+            height: 170px;
             background: linear-gradient(135deg, #00ffff 0%, #7000ff 50%, #ff0077 100%);
             clip-path: polygon(50% 0%, 100% 30%, 100% 70%, 50% 100%, 0% 70%, 0% 30%);
             filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.6));
@@ -133,7 +160,6 @@
             position: relative;
             z-index: 2;
         }
-        /* Crystal Themes */
         .crystal.ruby { background: linear-gradient(135deg, #ff3333 0%, #990000 50%, #550000 100%); filter: drop-shadow(0 0 25px rgba(255, 50, 50, 0.6)); }
         .crystal.sapphire { background: linear-gradient(135deg, #3366ff 0%, #000099 50%, #000044 100%); filter: drop-shadow(0 0 25px rgba(50, 100, 255, 0.6)); }
         .crystal.emerald { background: linear-gradient(135deg, #33ff66 0%, #009933 50%, #004411 100%); filter: drop-shadow(0 0 25px rgba(50, 255, 100, 0.6)); }
@@ -152,17 +178,16 @@
             transform: scale(0.92) rotate(3deg);
         }
         
-        /* Meters & UI Bars */
         .meters-container {
             width: 80%;
-            max-width: 250px;
+            max-width: 280px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             z-index: 5;
         }
         .meter-label {
-            font-size: 11px;
+            font-size: 12px;
             color: #9d8ec4;
             display: flex;
             justify-content: space-between;
@@ -185,7 +210,7 @@
             background: linear-gradient(90deg, #ffea00, #ff0000);
         }
 
-        .bonus-crystal, .shrine-obj {
+        .shrine-obj {
             position: absolute;
             width: 50px;
             height: 60px;
@@ -205,13 +230,13 @@
         }
 
         .side-panel {
-            width: 360px;
+            width: 380px;
             background: #0d0b18;
             border-left: 2px solid #21193d;
-            padding: 12px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             overflow-y: auto;
         }
         @media (max-width: 768px) {
@@ -225,7 +250,7 @@
         .panel-tab-content {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .hidden {
             display: none !important;
@@ -235,7 +260,7 @@
             justify-content: space-between;
             align-items: center;
             background: #151128;
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-radius: 8px;
             border: 1px solid rgba(0, 240, 255, 0.15);
             box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.04);
@@ -244,12 +269,16 @@
             background: #00f0ff;
             color: #0d0b18;
             border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
+            padding: 7px 14px;
+            border-radius: 6px;
             font-weight: bold;
             font-size: 12px;
             cursor: pointer;
             box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+            transition: transform 0.1s ease;
+        }
+        .shop-item button:hover:not(:disabled) {
+            transform: scale(1.05);
         }
         .shop-item button:disabled {
             background: #231e3d;
@@ -263,20 +292,53 @@
             color: #ff88dc;
         }
         .item-info div:last-child {
-            font-size: 10px;
+            font-size: 11px;
             color: #9d8ec4;
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
-        /* Achievement & Quest Cards */
+        /* Profile & Card Layouts */
+        .profile-card {
+            background: linear-gradient(135deg, #181330 0%, #110d21 100%);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            border: 2px solid #00f0ff;
+        }
+        .profile-titles {
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-name { font-size: 16px; font-weight: bold; color: #fff; }
+        .profile-rank { font-size: 11px; color: #ff00aa; font-weight: bold; }
+
         .card-item {
             display: flex;
             align-items: center;
             background: #151128;
-            padding: 8px 10px;
+            padding: 10px 12px;
             border-radius: 8px;
             border: 1px solid rgba(255, 0, 119, 0.2);
-            gap: 10px;
+            gap: 12px;
         }
         .card-item.ready {
             border-color: rgba(255, 234, 0, 0.8);
@@ -288,9 +350,9 @@
             opacity: 0.8;
         }
         .card-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             background: linear-gradient(135deg, #7000ff 0%, #00f0ff 100%);
             display: flex;
             align-items: center;
@@ -298,21 +360,15 @@
             font-size: 18px;
             flex-shrink: 0;
         }
-        .card-item.ready .card-icon {
-            background: linear-gradient(135deg, #ffea00 0%, #ff6600 100%);
-        }
-        .card-item.completed .card-icon {
-            background: linear-gradient(135deg, #00ff88 0%, #0088ff 100%);
-        }
         .card-details {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
-        .card-title { font-weight: bold; font-size: 12px; color: #ffffff; }
-        .card-desc { font-size: 10px; color: #9d8ec4; }
-        .card-reward { font-size: 9px; color: #ffea00; font-weight: bold; }
+        .card-title { font-weight: bold; font-size: 13px; color: #ffffff; }
+        .card-desc { font-size: 11px; color: #9d8ec4; }
+        .card-reward { font-size: 10px; color: #ffea00; font-weight: bold; }
         
         .claim-btn {
             background: #ffea00 !important;
@@ -324,21 +380,20 @@
             100% { transform: scale(1.05); }
         }
 
-        /* Stats & Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
         .stat-box {
             background: #151128;
-            padding: 10px;
-            border-radius: 6px;
+            padding: 12px;
+            border-radius: 8px;
             border: 1px solid rgba(0, 240, 255, 0.1);
             text-align: center;
         }
         .stat-val { font-size: 16px; font-weight: bold; color: #00f0ff; margin-top: 4px; }
-        .stat-lbl { font-size: 10px; color: #9d8ec4; }
+        .stat-lbl { font-size: 11px; color: #9d8ec4; }
 
         .floating-text {
             position: absolute;
@@ -371,16 +426,19 @@
         </div>
     </div>
     
+    <!-- Clean, non-cramped navigation tab grid -->
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('shop')">Pickaxes</button>
         <button class="tab-btn" onclick="switchTab('clicks')">Click Upgrades</button>
+        <button class="tab-btn" onclick="switchTab('profile')">Profile</button>
         <button class="tab-btn" onclick="switchTab('achievements')">Achievements</button>
         <button class="tab-btn" onclick="switchTab('quests')">Quests</button>
         <button class="tab-btn" onclick="switchTab('artifacts')">Artifacts</button>
         <button class="tab-btn" onclick="switchTab('pets')">Pets</button>
         <button class="tab-btn" onclick="switchTab('ascendTree')">Skill Tree</button>
-        <button class="tab-btn" onclick="switchTab('stats')">Stats</button>
         <button class="tab-btn" onclick="switchTab('skins')">Skins</button>
+        <button class="tab-btn" onclick="switchTab('environments')">Environments</button>
+        <button class="tab-btn" onclick="switchTab('stats')">Stats</button>
     </div>
 
     <div class="main-layout">
@@ -402,18 +460,19 @@
         <div class="side-panel">
             <div id="shopContent" class="panel-tab-content"></div>
             <div id="clicksContent" class="panel-tab-content hidden"></div>
+            <div id="profileContent" class="panel-tab-content hidden"></div>
             <div id="achievementsContent" class="panel-tab-content hidden"></div>
             <div id="questsContent" class="panel-tab-content hidden"></div>
             <div id="artifactsContent" class="panel-tab-content hidden"></div>
             <div id="petsContent" class="panel-tab-content hidden"></div>
             <div id="ascendTreeContent" class="panel-tab-content hidden"></div>
-            <div id="statsContent" class="panel-tab-content hidden"></div>
             <div id="skinsContent" class="panel-tab-content hidden"></div>
+            <div id="environmentsContent" class="panel-tab-content hidden"></div>
+            <div id="statsContent" class="panel-tab-content hidden"></div>
         </div>
     </div>
 
     <script>
-        // Anti-inspect defense
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', event => {
             if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && ['I','J','C'].includes(event.key)) || (event.ctrlKey && event.key === 'U')) {
@@ -421,7 +480,6 @@
             }
         });
 
-        // Web Audio API Sound Generator
         let soundEnabled = true;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
@@ -461,11 +519,8 @@
         let totalClicks = 0;
         let timePlayed = 0;
         let currentSkin = 'default';
+        let currentEnvironment = 'default';
         
-        let clickPowerLevel = 1;
-        let critChanceLevel = 0;
-        
-        // Dynamic Meters
         let comboMeter = 0;
         let feverMeter = 0;
         let isFeverActive = false;
@@ -473,7 +528,6 @@
         let shrineActive = false;
         let shrineMultiplier = 1;
 
-        // Upgrades (40 Pickaxes)
         const upgrades = {
             pickaxe1:  { name: "Copper Pickaxe", qty: 0, cost: 15, baseCost: 15, cps: 0.2 },
             pickaxe2:  { name: "Tin Pickaxe", qty: 0, cost: 100, baseCost: 100, cps: 1.2 },
@@ -517,7 +571,6 @@
             pickaxe40: { name: "Absolute Pickaxe", qty: 0, cost: 250000000000000000000000000000000n, baseCost: 250000000000000000000000000000000n, cps: 2000000000000000000000000000000n }
         };
 
-        // Click Upgrades (Starting at 75k and scaling up fast)
         const clickUpgrades = {
             click1: { name: "Sharpened Edge", cost: 75000, mult: 2, purchased: false },
             click2: { name: "Diamond Tip", cost: 850000, mult: 3, purchased: false },
@@ -529,28 +582,24 @@
             click8: { name: "Cosmic Hammer", cost: 8000000000000, mult: 15, purchased: false }
         };
 
-        // Artifacts (Prestige Shop)
         const artifacts = {
             art1: { name: "Shard Resonance", desc: "+10% Shard gain per Ascension", cost: 5, level: 0, max: 10 },
             art2: { name: "Crystalline Core", desc: "+15% Global Production Multiplier", cost: 10, level: 0, max: 10 },
             art3: { name: "Fever Generator", desc: "Fever meter builds 20% faster", cost: 15, level: 0, max: 5 }
         };
 
-        // New feature: Pets
         const pets = {
             pet1: { name: "Ruby Sprite", desc: "Auto-clicks once every 3 seconds", cost: 50, owned: false },
             pet2: { name: "Astral Wisp", desc: "+10% Shard gain multiplier", cost: 200, owned: false },
             pet3: { name: "Void Guardian", desc: "+25% Global Production Multiplier", cost: 1000, owned: false }
         };
 
-        // New feature: Ascension Skill Tree
         const ascendTree = {
             node1: { name: "Hyper Strike", desc: "+10% Click power per level", cost: 2, level: 0, max: 5 },
             node2: { name: "Deep Earth", desc: "+15% Pickaxe production per level", cost: 3, level: 0, max: 5 },
             node3: { name: "Fever Mastery", desc: "+2 seconds duration on Fever mode", cost: 5, level: 0, max: 3 }
         };
 
-        // Skins Shop Setup
         const skinsShop = {
             'default': { name: "Default Skin", cost: 0, owned: true },
             'ruby': { name: "Ruby Skin", cost: 500000, owned: false },
@@ -559,7 +608,13 @@
             'gold-theme': { name: "Gold Theme Skin", cost: 500000000, owned: false }
         };
 
-        // Expanded Achievements (status: 0 = locked, 1 = ready to claim, 2 = claimed)
+        const environmentsShop = {
+            'default': { name: "Standard Cavern", desc: "The classic crystal excavation site.", cost: 0, owned: true, perk: "None" },
+            'volcanic': { name: "Volcanic Core", desc: "+5% Critical Hit Chance boost.", cost: 1000000, owned: false, perk: "+5% Crit Chance" },
+            'space': { name: "Deep-Space Asteroid", desc: "+10% Global Idle CPS boost.", cost: 10000000, owned: false, perk: "+10% Idle CPS" },
+            'forest': { name: "Mystical Forest", desc: "+10% Shard gain on Ascend.", cost: 50000000, owned: false, perk: "+10% Shards" }
+        };
+
         const achievements = {
             ach1: { title: "First Spark", desc: "Reach 50 crystals", reward: "+10 Crystals", icon: "💎", status: 0, check: () => crystals >= 50, rewardGiven: () => crystals += 10 },
             ach2: { title: "Steady Pounding", desc: "Reach 500 crystals", reward: "+50 Crystals", icon: "⛏️", status: 0, check: () => crystals >= 500, rewardGiven: () => crystals += 50 },
@@ -579,7 +634,6 @@
             ach16: { title: "Transcendent", desc: "Perform 20 Ascensions", reward: "+1,000,000 Crystals", icon: "🪐", status: 0, check: () => prestigeCount >= 20, rewardGiven: () => crystals += 1000000 }
         };
 
-        // Quests
         const quests = {
             q1: { title: "Quick Hands", desc: "Click 50 times in a session", reward: "+100 Crystals", status: 0, check: () => totalClicks >= (window.sessionClicks || 0) + 50, rewardGiven: () => crystals += 100 }
         };
@@ -595,7 +649,6 @@
             return hash.toString(36);
         }
 
-        // Build UI Panels
         function buildUI() {
             // Shop
             const shop = document.getElementById('shopContent');
@@ -616,6 +669,25 @@
                 div.innerHTML = `<div class="item-info"><div>${item.name} (${item.mult}x)</div><div>Cost: ${formatNum(item.cost)}</div></div><button id="buyClick_${key}" onclick="buyClickUpgrade('${key}')">Unlock</button>`;
                 clickPanel.appendChild(div);
             });
+
+            // Profile
+            const profilePanel = document.getElementById('profileContent');
+            profilePanel.innerHTML = `
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">⛏️</div>
+                        <div class="profile-titles">
+                            <div class="profile-name">Master Miner</div>
+                            <div class="profile-rank" id="profileRankTitle">Novice Breaker</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 11px; color: #9d8ec4; border-top: 1px solid rgba(0,240,255,0.1); padding-top: 8px;">
+                        <div>Prestige Level: <span id="profileAscend">0</span></div>
+                        <div>Total Shards Collected: <span id="profileShards">0</span></div>
+                        <div>Active Environment: <span id="profileEnv" style="color:#00f0ff;">Standard Cavern</span></div>
+                    </div>
+                </div>
+            `;
 
             // Achievements
             const achPanel = document.getElementById('achievementsContent');
@@ -649,7 +721,7 @@
                 artPanel.appendChild(div);
             });
 
-            // Pets Panel
+            // Pets
             const petPanel = document.getElementById('petsContent');
             Object.keys(pets).forEach(key => {
                 const pet = pets[key];
@@ -659,7 +731,7 @@
                 petPanel.appendChild(div);
             });
 
-            // Skill Tree Panel
+            // Skill Tree
             const treePanel = document.getElementById('ascendTreeContent');
             Object.keys(ascendTree).forEach(key => {
                 const node = ascendTree[key];
@@ -679,6 +751,16 @@
                 skinPanel.appendChild(div);
             });
 
+            // Environments
+            const envPanel = document.getElementById('environmentsContent');
+            Object.keys(environmentsShop).forEach(envKey => {
+                const env = environmentsShop[envKey];
+                const div = document.createElement('div');
+                div.className = 'shop-item';
+                div.innerHTML = `<div class="item-info"><div>${env.name}</div><div>${env.desc}</div><div>Cost: ${formatNum(env.cost)} Crystals</div></div><button id="envBtn_${envKey}" onclick="buyOrSelectEnvironment('${envKey}')">Select</button>`;
+                envPanel.appendChild(div);
+            });
+
             // Stats
             const statsPanel = document.getElementById('statsContent');
             statsPanel.innerHTML = `<div class="stats-grid">
@@ -690,7 +772,6 @@
         }
         buildUI();
 
-        // Load Save & Offline Progression
         if (localStorage.getItem('crystalClickerUltimateSave')) {
             try {
                 const save = JSON.parse(localStorage.getItem('crystalClickerUltimateSave'));
@@ -704,6 +785,8 @@
                     timePlayed = d.timePlayed || 0;
                     currentSkin = d.currentSkin || 'default';
                     setSkin(currentSkin, false);
+                    currentEnvironment = d.currentEnvironment || 'default';
+                    setEnvironment(currentEnvironment, false);
 
                     if (d.upgrades) Object.keys(d.upgrades).forEach(k => { upgrades[k].qty = d.upgrades[k].qty; upgrades[k].cost = BigInt(d.upgrades[k].cost); });
                     if (d.clickUpgrades) Object.keys(d.clickUpgrades).forEach(k => { clickUpgrades[k].purchased = d.clickUpgrades[k]; });
@@ -711,14 +794,14 @@
                     if (d.pets) Object.keys(d.pets).forEach(k => { pets[k].owned = d.pets[k]; });
                     if (d.ascendTree) Object.keys(d.ascendTree).forEach(k => { ascendTree[k].level = d.ascendTree[k]; });
                     if (d.skinsShop) Object.keys(d.skinsShop).forEach(k => { skinsShop[k].owned = d.skinsShop[k]; });
+                    if (d.environmentsShop) Object.keys(d.environmentsShop).forEach(k => { environmentsShop[k].owned = d.environmentsShop[k]; });
                     if (d.achievements) Object.keys(d.achievements).forEach(k => { if(achievements[k]) achievements[k].status = d.achievements[k]; });
                     if (d.quests) Object.keys(d.quests).forEach(k => { if(quests[k]) quests[k].status = d.quests[k]; });
 
-                    // Offline progression simulation
                     if (d.lastTimestamp) {
                         const offlineSeconds = (Date.now() - d.lastTimestamp) / 1000;
                         if (offlineSeconds > 10) {
-                            const earned = getCps() * offlineSeconds * 0.5; // 50% efficiency offline
+                            const earned = getCps() * offlineSeconds * 0.5;
                             crystals += earned;
                             lifetimeCrystals += earned;
                             setTimeout(() => alert(`Welcome back! While you were away, your pickaxes mined ${formatNum(earned)} crystals.`), 500);
@@ -739,7 +822,10 @@
             Object.keys(clickUpgrades).forEach(k => { if (clickUpgrades[k].purchased) clickMultiplier *= clickUpgrades[k].mult; });
             clickMultiplier *= (1 + ascendTree.node1.level * 0.1);
             
-            const isCrit = Math.random() < 0.05;
+            let critChance = 0.05;
+            if (currentEnvironment === 'volcanic') critChance = 0.10;
+
+            const isCrit = Math.random() < critChance;
             let gain = (isCrit ? 5 : 1) * clickMultiplier * (shrineActive ? shrineMultiplier : 1);
             if (isFeverActive) gain *= 3;
 
@@ -752,7 +838,7 @@
             feverMeter = Math.min(100, feverMeter + feverSpeed);
             if (feverMeter >= 100 && !isFeverActive) {
                 isFeverActive = true;
-                feverTimer = 10 + (ascendTree.node3.level * 2); // 10 seconds + skill tree upgrade
+                feverTimer = 10 + (ascendTree.node3.level * 2);
             }
 
             createFloatingText(clientX, clientY, isCrit ? `+${formatNum(gain)} CRIT!` : `+${formatNum(gain)}`, isCrit);
@@ -840,6 +926,25 @@
             if (playSnd) playSound('click');
         }
 
+        function buyOrSelectEnvironment(envKey) {
+            const env = environmentsShop[envKey];
+            if (env.owned) {
+                setEnvironment(envKey);
+            } else if (crystals >= env.cost) {
+                crystals -= env.cost;
+                env.owned = true;
+                setEnvironment(envKey);
+                playSound('unlock');
+                updateUI();
+            }
+        }
+
+        function setEnvironment(envKey, playSnd = true) {
+            currentEnvironment = envKey;
+            crystalContainer.className = 'crystal-container ' + (envKey === 'default' ? '' : 'env-' + envKey);
+            if (playSnd) playSound('click');
+        }
+
         function getTotalPickaxes() {
             let total = 0;
             Object.keys(upgrades).forEach(k => total += upgrades[k].qty);
@@ -858,6 +963,7 @@
             });
             total *= (1 + artifacts.art2.level * 0.15);
             total *= (1 + ascendTree.node2.level * 0.15);
+            if (currentEnvironment === 'space') total *= 1.10;
             if (pets.pet3.owned) total *= 1.25;
             if (shrineActive) total *= shrineMultiplier;
             return total;
@@ -866,6 +972,7 @@
         function triggerPrestige() {
             if (crystals < 1000000) return;
             let shardMultiplier = 1 + artifacts.art1.level * 0.1;
+            if (currentEnvironment === 'forest') shardMultiplier += 0.10;
             if (pets.pet2.owned) shardMultiplier += 0.1;
             const earnedShards = Math.floor(Math.sqrt(crystals / 1000000) * shardMultiplier);
             shards += earnedShards;
@@ -878,7 +985,7 @@
         }
 
         function switchTab(tab) {
-            ['shopContent', 'clicksContent', 'achievementsContent', 'questsContent', 'artifactsContent', 'petsContent', 'ascendTreeContent', 'statsContent', 'skinsContent'].forEach(id => {
+            ['shopContent', 'clicksContent', 'profileContent', 'achievementsContent', 'questsContent', 'artifactsContent', 'petsContent', 'ascendTreeContent', 'skinsContent', 'environmentsContent', 'statsContent'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
             document.querySelectorAll('.nav-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -890,13 +997,13 @@
             Object.keys(achievements).forEach(key => {
                 const ach = achievements[key];
                 if (ach.status === 0 && ach.check()) {
-                    ach.status = 1; // ready to claim
+                    ach.status = 1;
                 }
             });
             Object.keys(quests).forEach(key => {
                 const q = quests[key];
                 if (q.status === 0 && q.check()) {
-                    q.status = 1; // ready to claim
+                    q.status = 1;
                 }
             });
         }
@@ -904,7 +1011,7 @@
         function claimAchievement(key) {
             const ach = achievements[key];
             if (ach.status === 1) {
-                ach.status = 2; // claimed
+                ach.status = 2;
                 ach.rewardGiven();
                 playSound('unlock');
                 updateUI();
@@ -914,7 +1021,7 @@
         function claimQuest(key) {
             const q = quests[key];
             if (q.status === 1) {
-                q.status = 2; // claimed
+                q.status = 2;
                 q.rewardGiven();
                 playSound('unlock');
                 updateUI();
@@ -941,12 +1048,11 @@
             setTimeout(() => text.remove(), 800);
         }
 
-        // Random Shrine Events & Pet auto-clicker
         let petTimer = 0;
         setInterval(() => {
             if (pets.pet1.owned) {
                 petTimer++;
-                if (petTimer >= 30) { // every 3 seconds
+                if (petTimer >= 30) {
                     petTimer = 0;
                     const rect = crystalContainer.getBoundingClientRect();
                     triggerClick(rect.left + rect.width / 2, rect.top + rect.height / 2);
@@ -974,18 +1080,27 @@
             document.getElementById('cpsCount').innerText = "per second: " + formatNum(getCps());
             document.getElementById('shardsCount').innerText = shards;
 
-            // Meters
             document.getElementById('comboText').innerText = comboMeter + '%';
             document.getElementById('comboFill').style.width = comboMeter + '%';
             document.getElementById('feverText').innerText = isFeverActive ? `FEVER! (${Math.ceil(feverTimer)}s)` : feverMeter + '%';
             document.getElementById('feverFill').style.width = feverMeter + '%';
 
-            // Stats tab update
             if (document.getElementById('statLifetime')) {
                 document.getElementById('statLifetime').innerText = formatNum(lifetimeCrystals);
                 document.getElementById('statClicks').innerText = totalClicks;
                 document.getElementById('statTime').innerText = timePlayed + 's';
                 document.getElementById('statAscend').innerText = prestigeCount;
+            }
+
+            if (document.getElementById('profileAscend')) {
+                document.getElementById('profileAscend').innerText = prestigeCount;
+                document.getElementById('profileShards').innerText = shards;
+                document.getElementById('profileEnv').innerText = environmentsShop[currentEnvironment].name;
+                let rankTitle = "Novice Breaker";
+                if (prestigeCount >= 5) rankTitle = "Veteran Excavator";
+                if (prestigeCount >= 15) rankTitle = "Master Geologist";
+                if (prestigeCount >= 30) rankTitle = "Transcendent Overlord";
+                document.getElementById('profileRankTitle').innerText = rankTitle;
             }
 
             Object.keys(upgrades).forEach(k => {
@@ -1004,7 +1119,6 @@
                 }
             });
 
-            // Update Achievements UI
             Object.keys(achievements).forEach(k => {
                 const ach = achievements[k];
                 const card = document.getElementById(`card_${k}`);
@@ -1026,7 +1140,6 @@
                 }
             });
 
-            // Update Quests UI
             Object.keys(quests).forEach(k => {
                 const q = quests[k];
                 const card = document.getElementById(`quest_${k}`);
@@ -1082,9 +1195,23 @@
                     btn.disabled = crystals < skin.cost;
                 }
             });
+
+            Object.keys(environmentsShop).forEach(envKey => {
+                const env = environmentsShop[envKey];
+                const btn = document.getElementById(`envBtn_${envKey}`);
+                if (currentEnvironment === envKey) {
+                    btn.innerText = "Active";
+                    btn.disabled = true;
+                } else if (env.owned) {
+                    btn.innerText = "Select";
+                    btn.disabled = false;
+                } else {
+                    btn.innerText = "Buy";
+                    btn.disabled = crystals < env.cost;
+                }
+            });
         }
 
-        // Main game loops
         setInterval(() => {
             crystals += getCps() / 10;
             lifetimeCrystals += getCps() / 10;
@@ -1100,17 +1227,17 @@
             updateUI();
         }, 100);
 
-        // Auto Save
         setInterval(() => {
             const saveObj = {
                 data: {
-                    crystals, lifetimeCrystals, shards, prestigeCount, totalClicks, timePlayed, currentSkin,
+                    crystals, lifetimeCrystals, shards, prestigeCount, totalClicks, timePlayed, currentSkin, currentEnvironment,
                     upgrades: Object.fromEntries(Object.keys(upgrades).map(k => [k, { qty: upgrades[k].qty, cost: upgrades[k].cost.toString() }])),
                     clickUpgrades: Object.fromEntries(Object.keys(clickUpgrades).map(k => [k, clickUpgrades[k].purchased])),
                     artifacts: Object.fromEntries(Object.keys(artifacts).map(k => [k, artifacts[k].level])),
                     pets: Object.fromEntries(Object.keys(pets).map(k => [k, pets[k].owned])),
                     ascendTree: Object.fromEntries(Object.keys(ascendTree).map(k => [k, ascendTree[k].level])),
                     skinsShop: Object.fromEntries(Object.keys(skinsShop).map(k => [k, skinsShop[k].owned])),
+                    environmentsShop: Object.fromEntries(Object.keys(environmentsShop).map(k => [k, environmentsShop[k].owned])),
                     achievements: Object.fromEntries(Object.keys(achievements).map(k => [k, achievements[k].status])),
                     quests: Object.fromEntries(Object.keys(quests).map(k => [k, quests[k].status])),
                     lastTimestamp: Date.now()
